@@ -12,7 +12,7 @@ MVP task breakdown (Gameweek mode only). Planner and roast are v1: see `v1-backl
 | 04 | [FPL API client + public/private boundaries](04-fpl-api-client.md) | done (2026-10-17) |
 | 05 | [Team loading service](05-team-loading-service.md) 🛑 👤 | done (approved 2026-10-17) |
 | 06 | [Positions adapter module](06-positions-adapter.md) | done (2026-10-17) |
-| 07 | [Offline sync script + season backfill](07-offline-sync-script.md) | todo |
+| 07 | [Offline sync script + season backfill](07-offline-sync-script.md) | done (2026-10-17) |
 | 08 | [Player ID auto-matching + coverage report](08-player-id-matching.md) | todo |
 | 09 | [Manual override file + coverage target](09-mapping-overrides.md) | todo |
 | 10 | [Position logic I: frame, last match played, ghosts](10-position-logic-core.md) | todo |

@@ -1,6 +1,6 @@
 # 07 — Offline sync script + season backfill
 
-**Status:** todo
+**Status:** done (2026-10-17)
 **Depends on:** 04, 06.
 
 ## Goal
@@ -21,15 +21,23 @@ The owner refreshes data by running a script **on their own machine**. It update
 - `docs/release.md`: the owner's release routine: run sync, check the site locally, commit `backend/data/fpl.db`, push / `vercel deploy --prod`.
 
 ## Done when
-- [ ] `backfill` populates all finished GWs of the current season (row counts per GW in Notes).
-- [ ] Running `run` immediately again fetches 0 matches.
-- [ ] Every stored match has a `gw` taken from its FPL fixture; any Sofascore round ≠ FPL GW cases are listed in Notes.
-- [ ] Test with a rescheduled match in a double gameweek: both of the club's matches carry the DGW's `gw`, so a (player, gw) lookup returns 2 rows.
-- [ ] Database file size after backfill recorded in Notes (expected: a few MB).
-- [ ] `docs/release.md` exists.
+- [x] `backfill` populates all finished GWs of the current season (row counts per GW in Notes).
+- [x] Running `run` immediately again fetches 0 matches.
+- [x] Every stored match has a `gw` taken from its FPL fixture; any Sofascore round ≠ FPL GW cases are listed in Notes.
+- [x] Test with a rescheduled match in a double gameweek: both of the club's matches carry the DGW's `gw`, so a (player, gw) lookup returns 2 rows.
+- [x] Database file size after backfill recorded in Notes (expected: a few MB).
+- [x] `docs/release.md` exists.
 
 ## Wrap-up (required: last step of every task)
-- [ ] Update this task's **Status** and the table in `tasks/README.md`.
-- [ ] Update the root `README.md`: add this task under **Tasks completed** with a short summary of the work done, and set **Next task** to the next task and its file path (for a 🛑 task: "waiting for owner approval on task NN").
+- [x] Update this task's **Status** and the table in `tasks/README.md`.
+- [x] Update the root `README.md`: add this task under **Tasks completed** with a short summary of the work done, and set **Next task** to the next task and its file path (for a 🛑 task: "waiting for owner approval on task NN").
 
 ## Notes
+- **Club mapping pulled forward from task 08.** `fpl_clubs.sofascore_team_id` was empty, and the sync cannot list a club's matches without it. `backend/app/mapping/clubs.py` holds a static table of the 20 clubs keyed by FPL short name (IDs read from Sofascore's 2026/27 round 6); `apply_club_mapping()` runs on every sync and reports clubs missing from the table. Task 08 still owns the player mapping.
+- **Backfill (2026-10-17, run 1):** 254 s, 60 matches (10 each in GW1-6), 1849 position rows, 555 squad players, GW1-6 `positions_synced`, 0 errors, 0 warnings. Position rows per GW: GW1 307, GW2 312, GW3 306, GW4 307, GW5 302, GW6 315. 562 `sofascore_players` rows. GW7 had not started.
+- **Re-run:** `run` straight after (run 2, 101 s, mostly the squad refresh) added 0 matches and fetched 0 positions.
+- **Gameweeks:** all 60 stored matches have an FPL fixture ID and `gw`; `player_match_positions.gw` matches `matches.gw` for every row. No Sofascore round ≠ FPL GW cases yet (no rescheduled matches so far this season).
+- **Double gameweek / rescheduled match:** covered by `tests/test_sync.py` with a fake FPL client and source: BOU v ARS (Sofascore round 3) moved by FPL into GW5 next to ARS v BOU, so a (player, GW5) lookup returns 2 rows; also a fixture moving GW3 → GW5 after it was stored updates both tables, and a fixture with `event = null` is skipped. 10 new tests, 117 pass.
+- **Database size:** `backend/data/fpl.db` 143 KB → 463 KB after the backfill.
+- **Failure handling:** a 404 on positions is recorded in `sync_runs.errors` and retried next run; a 403 stops the run with everything fetched so far kept (one commit per match); the `sync_runs` row is always closed. The CLI exits 1 on any error.
+- **Not done here:** re-running the player ID mapping at the end of the sync is a `TODO(task 08)` in `service.py`. The summary's "unmapped players" (436) counts Sofascore players with positions and no `player_id_map` row, so it is everyone until task 08.

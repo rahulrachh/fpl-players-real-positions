@@ -8,7 +8,7 @@ Automatically link each FPL player to his Sofascore player and measure how well 
 
 ## Scope
 - `backend/app/mapping/`:
-  - Club mapping first: fill `fpl_clubs.sofascore_team_id` (20 clubs; a small static table is fine).
+  - Club mapping first: fill `fpl_clubs.sofascore_team_id` (20 clubs; a small static table is fine). **Done in task 07** (`app/mapping/clubs.py`).
   - Name normalization: strip accents (O-slash to o, e-acute to e...), lowercase, remove punctuation, handle hyphens and name order.
   - Candidates restricted to the same club; strategies in order: exact full name, then web/short name, then surname + first initial, then fuzzy score (e.g. `rapidfuzz`) above a threshold.
   - Write results into `player_id_map` (`fpl_id`, `sofascore_id`, `match_method`, `match_confidence`, `matched_at`). A re-run rebuilds non-override rows; never overwrite rows with `is_override = true`. A `UNIQUE(sofascore_id)` clash (two FPL players claiming one Sofascore player) is reported for manual fixing, not silently resolved. Unmatched players get no row.

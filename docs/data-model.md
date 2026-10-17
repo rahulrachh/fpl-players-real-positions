@@ -33,7 +33,7 @@ Sofascore's own axes are different (its `averageX` is depth, `averageY` high = l
 |---|---|---|
 | `id` | int PK | FPL club (team) ID |
 | `name`, `short_name` | str | e.g. "Man City", "MCI" |
-| `sofascore_team_id` | int, unique, nullable | Sofascore team ID, used to fetch the club's matches. Set from the owner's list |
+| `sofascore_team_id` | int, unique, nullable | Sofascore team ID, used to fetch the club's matches. Set on every sync from the static table in `app/mapping/clubs.py` |
 
 ### `fpl_players`
 Refreshed from FPL on every sync. Holds **no mapping data**, so a refresh never touches the mapping.
