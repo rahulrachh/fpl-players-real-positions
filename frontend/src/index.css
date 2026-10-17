@@ -567,9 +567,13 @@ input:focus-visible {
   color: #fff;
 }
 
-.share-button:hover,
-.share-button[aria-expanded='true'] {
+.share-button:hover {
   background: rgba(0, 0, 0, 0.55);
+}
+
+.share-button[aria-busy='true'] {
+  opacity: 0.6;
+  cursor: progress;
 }
 
 .share-button svg {
@@ -582,43 +586,25 @@ input:focus-visible {
   stroke-linejoin: round;
 }
 
-.share-menu {
+.share-note {
   position: absolute;
   right: 0;
   bottom: calc(100% + 0.4rem);
   z-index: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
   width: max-content;
   max-width: 14rem;
-  padding: 0.6rem;
+  margin: 0;
+  padding: 0.45rem 0.6rem;
   border: 1px solid var(--card-line);
   border-radius: 10px;
   background: var(--card);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-}
-
-.share-menu button {
-  white-space: nowrap;
-}
-
-.share-status {
-  margin: 0;
   font-size: 0.8rem;
-  color: var(--muted);
+  color: var(--ink);
 }
 
-.share-status.error {
+.share-note.error {
   color: var(--error);
-}
-
-button.link {
-  padding: 0;
-  background: none;
-  color: inherit;
-  font-weight: 700;
-  text-decoration: underline;
 }
 
 /* Pitch SVG (units are metres) */

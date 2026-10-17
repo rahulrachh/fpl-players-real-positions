@@ -61,8 +61,6 @@ function pageCss() {
   const rules = readRules()
     .filter(({ rule }) => !(rule instanceof CSSFontFaceRule))
     .map(({ rule }) => rule.cssText)
-  // !important: html-to-image writes each element's on-screen style inline.
-  rules.push('[data-export-ignore] { visibility: hidden !important; }')
   return rules.join('\n')
 }
 
@@ -84,18 +82,27 @@ export async function renderPng(card: HTMLElement): Promise<Blob> {
     // transparency (which some apps show as black).
     backgroundColor: getComputedStyle(document.body).backgroundColor,
   }
+  // Drawn from an off-screen copy of the card, so the page itself never
+  // changes while the image is drawn (it may be drawn ahead of a tap).
+  const copy = card.cloneNode(true) as HTMLElement
+  for (const el of copy.querySelectorAll<HTMLElement>('[data-export-ignore]')) el.style.visibility = 'hidden'
   const style = document.createElement('style')
   style.textContent = pageCss()
-  card.prepend(style)
+  copy.prepend(style)
+  const holder = document.createElement('div')
+  holder.setAttribute('aria-hidden', 'true')
+  holder.style.cssText = `position: fixed; top: 0; left: -10000px; width: ${card.offsetWidth}px; pointer-events: none`
+  holder.append(copy)
+  document.body.append(holder)
   try {
     // Safari can draw the first image before the embedded font has loaded;
     // the second one is complete.
-    if (/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) await toBlob(card, options)
-    const blob = await toBlob(card, options)
+    if (/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) await toBlob(copy, options)
+    const blob = await toBlob(copy, options)
     if (!blob) throw new Error('The card could not be drawn.')
     return blob
   } finally {
-    style.remove()
+    holder.remove()
   }
 }
 

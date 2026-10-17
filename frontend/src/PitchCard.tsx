@@ -7,7 +7,7 @@ import { useRef } from 'react'
 import type { BenchPlayer, Plot, Role } from './api'
 import { exportFilename } from './exportImage'
 import Pitch from './Pitch'
-import ShareMenu from './ShareMenu'
+import ShareButton from './ShareButton'
 
 const ROLE_NAMES: Record<Role, string> = {
   GK: 'Goalkeeper',
@@ -125,7 +125,7 @@ export default function PitchCard({ plot, nav }: { plot: Plot; nav?: GwNav }) {
           chip={plot.chip}
           title={`${plot.team_name}, gameweek ${plot.gw}: real average positions`}
         />
-        <ShareMenu
+        <ShareButton
           card={card}
           filename={exportFilename(plot.team_id, plot.gw)}
           title={`${plot.team_name}, GW${plot.gw}: Real Shape`}
