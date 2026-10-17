@@ -1,5 +1,5 @@
 // Team ID → the latest (or ?gw=) gameweek graphic. Team and gameweek are kept in
-// the URL: ?team=2020649&gw=6. The arrows under the team ID box (and the arrow
+// the URL: ?team=2020649&gw=6. Arrows on the sides of the pitch (and the arrow
 // keys) step through the team's gameweeks (the plot API says which exist).
 
 import { type FormEvent, useEffect, useState } from 'react'
@@ -146,9 +146,7 @@ function App() {
       {inputError && <p className="error">{inputError}</p>}
       {plot && !fixture && (
         <nav className="gw-nav" aria-label="Gameweek">
-          <GwArrow direction="prev" gw={prevGw} onGo={setGw} />
           <span className="gw-nav-current">Gameweek {loading && gw !== null ? gw : plot.gw}</span>
-          <GwArrow direction="next" gw={nextGw} onGo={setGw} />
         </nav>
       )}
       {plot && (
@@ -173,7 +171,18 @@ function App() {
       {!plot && loading && <p className="muted">Loading…</p>}
       {plot && (
         <div className={loading && !fixture ? 'card-slot is-loading' : 'card-slot'} aria-busy={loading && !fixture}>
-          <PitchCard plot={plot} depth={depth} />
+          <PitchCard
+            plot={plot}
+            depth={depth}
+            pitchSides={
+              fixture ? undefined : (
+                <>
+                  <GwArrow direction="prev" gw={prevGw} onGo={setGw} />
+                  <GwArrow direction="next" gw={nextGw} onGo={setGw} />
+                </>
+              )
+            }
+          />
         </div>
       )}
     </main>
@@ -193,7 +202,7 @@ function GwArrow({
   return (
     <button
       type="button"
-      className="gw-arrow"
+      className={`gw-arrow gw-arrow-${direction}`}
       disabled={gw === null}
       onClick={() => gw !== null && onGo(gw)}
       aria-label={gw === null ? label : `${label} (GW${gw})`}

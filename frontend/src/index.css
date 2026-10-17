@@ -115,9 +115,29 @@ input:focus-visible {
 
 .gw-nav {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: center;
   margin-bottom: 0.75rem;
+}
+
+.pitch-wrap {
+  position: relative;
+}
+
+/* Arrows centred in the dark side margins of the pitch (7.5 of 83 m each),
+   halfway down. Inside the card, so the page never scrolls sideways. */
+.pitch-sides .gw-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.pitch-sides .gw-arrow-prev {
+  left: calc(4.5% - 1.25rem);
+}
+
+.pitch-sides .gw-arrow-next {
+  right: calc(4.5% - 1.25rem);
 }
 
 .gw-nav-current {
@@ -156,7 +176,7 @@ input:focus-visible {
 
 .gw-arrow:disabled {
   color: var(--muted);
-  opacity: 0.35;
+  opacity: 0.45;
   cursor: default;
 }
 

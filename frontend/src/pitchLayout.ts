@@ -171,8 +171,18 @@ function labelAt(d: LaidDot, angle: number, px: number, py: number): LaidDot['la
   return { x: px, y: sin > 0 ? py + NAME_SIZE * 0.8 : py - h + NAME_SIZE * 0.8, anchor: 'middle' }
 }
 
+// Where the gameweek arrows sit over the side margins, halfway down (see
+// `.pitch-sides` in index.css), with room for the larger arrow on a phone.
+// Labels keep clear of them.
+const ARROW_HALF = 6
+const ARROW_REACH = 10
+const ARROW_BOXES: Box[] = [
+  { x0: 0, y0: VIEW_H / 2 - ARROW_HALF, x1: ARROW_REACH, y1: VIEW_H / 2 + ARROW_HALF },
+  { x0: VIEW_W - ARROW_REACH, y0: VIEW_H / 2 - ARROW_HALF, x1: VIEW_W, y1: VIEW_H / 2 + ARROW_HALF },
+]
+
 function placeLabels(dots: LaidDot[]) {
-  const placed: Box[] = []
+  const placed: Box[] = [...ARROW_BOXES]
   const lines: Segment[] = []
   const inside = (b: Box) => b.x0 >= 0 && b.x1 <= VIEW_W && b.y0 >= 0 && b.y1 <= VIEW_H
   const crowded = new Set(

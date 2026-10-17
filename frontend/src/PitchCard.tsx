@@ -1,6 +1,8 @@
 // One gameweek graphic: team name, gameweek, the pitch and its legend.
 // Kept self-contained so it can be exported as an image later (task 15).
 
+import type { ReactNode } from 'react'
+
 import type { Plot, Role } from './api'
 import Pitch from './Pitch'
 import { type DepthMode, ROLE_LETTER } from './pitchLayout'
@@ -27,7 +29,17 @@ function formatDate(iso: string) {
   return new Date(`${iso}Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
-export default function PitchCard({ plot, depth = 'all' }: { plot: Plot; depth?: DepthMode }) {
+export default function PitchCard({
+  plot,
+  depth = 'all',
+  pitchSides,
+}: {
+  plot: Plot
+  depth?: DepthMode
+  // Controls laid over the pitch's side margins (the gameweek arrows). Marked
+  // so the image export can leave them out.
+  pitchSides?: ReactNode
+}) {
   const state = STATE_TEXT[plot.state]
   const hasGhosts = plot.dots.some((d) => d.is_ghost)
   const hasLinks = plot.dots.some((d) => d.link_group !== null)
@@ -51,11 +63,18 @@ export default function PitchCard({ plot, depth = 'all' }: { plot: Plot; depth?:
         </div>
       </header>
 
-      <Pitch
-        dots={plot.dots}
-        depth={depth}
-        title={`${plot.team_name}, gameweek ${plot.gw}: real average positions`}
-      />
+      <div className="pitch-wrap">
+        <Pitch
+          dots={plot.dots}
+          depth={depth}
+          title={`${plot.team_name}, gameweek ${plot.gw}: real average positions`}
+        />
+        {pitchSides && (
+          <div className="pitch-sides" data-export-ignore>
+            {pitchSides}
+          </div>
+        )}
+      </div>
 
       <footer className="card-foot">
         <ul className="legend">
