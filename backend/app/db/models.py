@@ -71,6 +71,8 @@ class FplPlayer(Base):
     # FPL availability code: a (available), d (doubtful), i, s, u, n.
     status: Mapped[str] = mapped_column(String(1))
     news: Mapped[str] = mapped_column(Text, default="")
+    # FPL season minutes; > 0 = an "active" player for mapping coverage.
+    minutes: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
 
     club: Mapped[FplClub] = relationship(back_populates="players")
     mapping: Mapped["PlayerIdMap | None"] = relationship(back_populates="fpl_player")

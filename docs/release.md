@@ -14,7 +14,7 @@ From `backend/`:
    ```sh
    uv run python -m app.sync run
    ```
-   Refreshes FPL clubs, players and gameweeks, stores each club's last 3 finished league matches, downloads their average positions, refreshes squad lists and writes a `sync_runs` row. Takes 2-3 minutes (requests are spaced 2.5 s apart). The summary lists matches added per gameweek, fully synced gameweeks, unmapped players, warnings and errors. Exit code 1 means at least one error.
+   Refreshes FPL clubs, players and gameweeks, stores each club's last 3 finished league matches, downloads their average positions, refreshes squad lists, rebuilds the FPL ↔ Sofascore player mapping, rewrites `docs/mapping-coverage.md` and writes a `sync_runs` row. Takes 2-3 minutes (requests are spaced 2.5 s apart). The summary lists matches added per gameweek, fully synced gameweeks, unmapped players, mapping coverage, warnings and errors. Exit code 1 means at least one error.
    - Running it again straight away fetches nothing: it is safe to re-run.
    - `backfill` instead of `run` walks the whole season. Needed once per season (or after the database is rebuilt); also works to fill gaps if more than 3 matches per club were missed.
 2. **Check the summary**
@@ -22,10 +22,11 @@ From `backend/`:
    - *Blocked by the positions source*: Sofascore answered 403. Stop, wait a few hours, then re-run. Do not loop it.
    - *Sofascore round N != FPL GW M*: a rescheduled match. Expected; the FPL gameweek is used.
    - *Club XXX has no Sofascore team ID*: a promoted club is missing from `backend/app/mapping/clubs.py`. Add it, then re-run.
+   - *Player mapping clash* or a drop in active coverage: open `docs/mapping-coverage.md` and fix the listed players (override file, task 09). `uv run python -m app.mapping run` re-runs only the mapping, offline.
 3. **Check the site locally**: `uv run uvicorn app.main:app --reload` and `npm run dev` in `frontend/`, then load a team for the new gameweek.
 4. **Commit the database**
    ```sh
-   git add backend/data/fpl.db
+   git add backend/data/fpl.db docs/mapping-coverage.md
    git commit -m "Data: sync after GW<n>"
    ```
 5. **Deploy**: `git push` (if the Vercel project deploys from git) or `vercel deploy --prod`. Set up in task 16.

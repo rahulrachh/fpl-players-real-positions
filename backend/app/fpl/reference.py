@@ -57,6 +57,7 @@ def apply_bootstrap(session: Session, data: BootstrapStatic) -> RefreshCounts:
         player.price = element.now_cost
         player.status = element.status
         player.news = element.news
+        player.minutes = element.minutes
         session.add(player)
 
     for event in data.events:

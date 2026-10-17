@@ -27,7 +27,7 @@ New migration: `uv run alembic revision --autogenerate -m "<message>"`.
 
 Positions source check (live Sofascore requests, offline use only): `uv run python -m app.positions round 6`. See `docs/positions-source.md`.
 
-Data refresh (offline, on the owner's machine): `uv run python -m app.sync run` (or `backfill` once per season). See `docs/release.md`.
+Data refresh (offline, on the owner's machine): `uv run python -m app.sync run` (or `backfill` once per season). Player mapping only (no network): `uv run python -m app.mapping run`. See `docs/release.md`.
 
 ## Frontend
 ```sh

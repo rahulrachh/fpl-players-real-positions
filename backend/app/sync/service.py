@@ -13,7 +13,9 @@ calls the positions source. Steps, in order:
 4. Fetch positions for every stored match without them, one commit per match.
 5. Mark gameweeks whose matches all have positions as `positions_synced`.
 6. Refresh squad lists (players who have not played yet).
-7. Close the `sync_runs` row.
+7. Rebuild the player ID mapping (`app/mapping/players.py`), also after a
+   block, since it only reads the local database.
+8. Close the `sync_runs` row.
 
 Idempotent: a re-run fetches nothing already stored. A 403 stops the run;
 other source failures are recorded and the match is retried next run.
@@ -41,6 +43,7 @@ from app.fpl.client import FplClient
 from app.fpl.reference import refresh_fpl_reference_data
 from app.fpl.schemas import Fixture
 from app.mapping.clubs import apply_club_mapping
+from app.mapping.players import MappingResult, run_player_mapping
 from app.positions.base import (
     PositionsSource,
     PositionsSourceError,
@@ -65,7 +68,9 @@ class SyncSummary:
     matches_fetched: int = 0
     positions_stored: int = 0
     squad_players: int = 0
-    # Sofascore players with positions but no FPL mapping (task 08).
+    # Player ID mapping rebuilt at the end of the run (task 08).
+    mapping: MappingResult | None = None
+    # Sofascore players with positions but no FPL mapping.
     unmapped_players: int = 0
     synced_gameweeks: list[int] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
@@ -103,28 +108,14 @@ def run_sync(
     summary.run_id = sync_run.id
 
     try:
-        refresh_fpl_reference_data(session, fpl)
-        for short_name in apply_club_mapping(session):
-            summary.warn(f"club {short_name} has no Sofascore team ID: matches skipped")
-        session.commit()
-
-        fixtures = fpl.fixtures()
-        _move_rescheduled(session, fixtures, summary)
-        session.commit()
-
-        _store_new_matches(session, source, fixtures, trigger, summary)
-        _fetch_positions(session, source, summary)
-        _mark_synced_gameweeks(session, fixtures, summary)
-        session.commit()
-
-        if not summary.blocked:
-            _refresh_squads(session, source, summary)
-        # TODO(task 08): re-run the player ID mapping here.
-        summary.unmapped_players = _count_unmapped(session)
-    except SourceBlockedError as exc:
-        session.rollback()
-        summary.blocked = True
-        summary.error(f"blocked by the positions source, run stopped: {exc}")
+        try:
+            _sync_source_data(session, fpl, source, trigger, summary)
+        except SourceBlockedError as exc:
+            session.rollback()
+            summary.blocked = True
+            summary.error(f"blocked by the positions source, run stopped: {exc}")
+        # Local only, so it also runs after a block (matches stored so far).
+        _map_players(session, summary)
     except Exception as exc:
         session.rollback()
         summary.error(f"sync failed: {exc!r}")
@@ -132,6 +123,31 @@ def run_sync(
         raise
     _close_run(session, sync_run, summary, started, clock)
     return summary
+
+
+def _sync_source_data(
+    session: Session,
+    fpl: FplClient,
+    source: PositionsSource,
+    trigger: str,
+    summary: SyncSummary,
+) -> None:
+    refresh_fpl_reference_data(session, fpl)
+    for short_name in apply_club_mapping(session):
+        summary.warn(f"club {short_name} has no Sofascore team ID: matches skipped")
+    session.commit()
+
+    fixtures = fpl.fixtures()
+    _move_rescheduled(session, fixtures, summary)
+    session.commit()
+
+    _store_new_matches(session, source, fixtures, trigger, summary)
+    _fetch_positions(session, source, summary)
+    _mark_synced_gameweeks(session, fixtures, summary)
+    session.commit()
+
+    if not summary.blocked:
+        _refresh_squads(session, source, summary)
 
 
 # --- steps -----------------------------------------------------------------
@@ -325,6 +341,17 @@ def _upsert_player(session: Session, player: SourcePlayer, team_id: int | None) 
         row.sofascore_team_id = team_id
     session.add(row)
     session.flush()
+
+
+def _map_players(session: Session, summary: SyncSummary) -> None:
+    summary.mapping = run_player_mapping(session)
+    session.commit()
+    for sofa_id, fpl_ids in summary.mapping.clashes:
+        summary.warn(
+            f"player mapping clash: Sofascore {sofa_id} claimed by FPL "
+            f"{', '.join(map(str, fpl_ids))}, none mapped"
+        )
+    summary.unmapped_players = _count_unmapped(session)
 
 
 def _count_unmapped(session: Session) -> int:

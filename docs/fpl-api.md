@@ -13,7 +13,7 @@ The official Fantasy Premier League API at `https://fantasy.premierleague.com/ap
 
 | Client method | Endpoint | Used for | Fields used |
 |---|---|---|---|
-| `bootstrap_static()` | `bootstrap-static/` (~1.8 MB) | Players, clubs, roles, prices, availability, gameweeks | `events[]`: `id`, `deadline_time`, `finished`, `data_checked`, `is_previous`/`is_current`/`is_next` · `teams[]`: `id`, `name`, `short_name` · `element_types[]`: `id`, `singular_name_short` · `elements[]`: `id`, `first_name`, `second_name`, `web_name`, `team`, `element_type`, `now_cost`, `status`, `news` |
+| `bootstrap_static()` | `bootstrap-static/` (~1.8 MB) | Players, clubs, roles, prices, availability, gameweeks | `events[]`: `id`, `deadline_time`, `finished`, `data_checked`, `is_previous`/`is_current`/`is_next` · `teams[]`: `id`, `name`, `short_name` · `element_types[]`: `id`, `singular_name_short` · `elements[]`: `id`, `first_name`, `second_name`, `web_name`, `team`, `element_type`, `now_cost`, `status`, `news`, `minutes` |
 | `fixtures(event=None)` | `fixtures/` or `fixtures/?event={gw}` | Linking Sofascore matches to FPL fixtures and gameweeks (task 07) | `id`, `event`, `team_h`, `team_a`, `kickoff_time`, `started`, `finished`, `finished_provisional` |
 | `entry(id)` | `entry/{id}/` | Validate a team ID; which gameweeks have picks | `id`, `name`, `player_first_name`, `player_last_name`, `started_event`, `current_event`, `entered_events`, `last_deadline_bank`, `last_deadline_value` |
 | `entry_history(id)` | `entry/{id}/history/` | Bank and value per gameweek, chips | `current[]`: `event`, `points`, `total_points`, `bank`, `value`, `event_transfers`, `event_transfers_cost`, `points_on_bench` · `chips[]`: `name`, `event` |
@@ -100,7 +100,7 @@ Error bodies are `{"code": ..., "detail": ...}`.
 | Table | From | Columns written | Left alone |
 |---|---|---|---|
 | `fpl_clubs` | `teams[]` | `name`, `short_name` | `sofascore_team_id` |
-| `fpl_players` | `elements[]` | names, `club_id`, `role`, `price` (`now_cost`), `status`, `news` | (no mapping data lives here) |
+| `fpl_players` | `elements[]` | names, `club_id`, `role`, `price` (`now_cost`), `status`, `news`, `minutes` | (no mapping data lives here) |
 | `gameweeks` | `events[]` | `deadline` (naive UTC), `finished`, `data_checked` | `positions_synced` |
 
 It flushes but does not commit (the caller owns the transaction). Players that disappear from FPL are kept, since the mapping and position history may refer to them. Run by the offline sync script (task 07); the web app never writes.

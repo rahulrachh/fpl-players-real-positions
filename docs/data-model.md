@@ -1,6 +1,6 @@
 # Data model
 
-**Task:** 03 · Models: `backend/app/db/models.py` · Migration: `backend/alembic/versions/5cba41167c0a_mvp_tables.py`
+**Task:** 03 · Models: `backend/app/db/models.py` · Migrations: `backend/alembic/versions/5cba41167c0a_mvp_tables.py`, `259b15793154_fpl_player_minutes.py` (task 08)
 
 ## How the database is used
 - One SQLite file, `backend/data/fpl.db`, **committed to git and shipped with each deployment**.
@@ -47,6 +47,7 @@ Refreshed from FPL on every sync. Holds **no mapping data**, so a refresh never 
 | `price` | int | FPL `now_cost`, tenths of £m (55 = £5.5m) |
 | `status` | str(1) | FPL availability code (`a`, `d`, `i`, `s`, `u`, `n`) |
 | `news` | text | FPL news, empty string if none |
+| `minutes` | int, default 0 | FPL season minutes. > 0 = **active** player for the mapping coverage (task 08) |
 
 ### `sofascore_players`
 Source side of the ID mapping.
@@ -71,6 +72,8 @@ FPL player ↔ Sofascore player. One row per **matched** FPL player; unmatched p
 | `matched_at` | datetime | |
 
 Both keys are indexed through their PK / UNIQUE constraints.
+
+Rebuilt by `run_player_mapping()` (`backend/app/mapping/players.py`, task 08) at the end of every sync and by `python -m app.mapping run`: non-override rows are recomputed (unchanged ones keep `matched_at`); `is_override` rows are never touched. Coverage: `docs/mapping-coverage.md`.
 
 ### `gameweeks`
 | Column | Type | Notes |

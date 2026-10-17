@@ -58,6 +58,8 @@ class Element(_Model):
     # u (unavailable, e.g. left the club), n (not in squad)
     status: str
     news: str
+    # Minutes played this season (all gameweeks so far).
+    minutes: int
 
 
 class BootstrapStatic(_Model):

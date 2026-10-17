@@ -5,17 +5,21 @@ SQLite file. Run on the owner's machine, then commit `backend/data/fpl.db`
 From backend/:
     uv run python -m app.sync backfill   # whole season so far (run once)
     uv run python -m app.sync run        # regular refresh: each club's last 3 matches
+
+Both end by rebuilding the player ID mapping and `docs/mapping-coverage.md`.
 """
 
 import argparse
 import logging
 import sys
+from datetime import UTC, datetime
 
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
 from app.db.engine import get_read_write_engine
 from app.fpl.client import get_fpl_client
+from app.mapping.report import render_report, summary_lines, write_report
 from app.positions import get_positions_source
 from app.sync.service import SyncSummary, run_sync
 
@@ -55,7 +59,11 @@ def main(argv: list[str] | None = None) -> int:
 
     with Session(get_read_write_engine()) as session:
         summary = run_sync(args.trigger, session, get_fpl_client(), get_positions_source())
-    print_summary(summary)
+        print_summary(summary)
+        if summary.mapping is not None:
+            print("\n".join(summary_lines(session, summary.mapping)))
+            path = write_report(render_report(session, summary.mapping, datetime.now(UTC)))
+            print(f"  Coverage report: {path}")
     return 1 if summary.blocked or summary.errors else 0
 
 

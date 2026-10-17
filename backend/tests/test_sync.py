@@ -15,7 +15,15 @@ from sqlalchemy.orm import Session
 
 from app.db.base import Base
 from app.db.engine import make_read_write_engine
-from app.db.models import FplClub, Gameweek, Match, PlayerMatchPosition, SofascorePlayer, SyncRun
+from app.db.models import (
+    FplClub,
+    Gameweek,
+    Match,
+    PlayerIdMap,
+    PlayerMatchPosition,
+    SofascorePlayer,
+    SyncRun,
+)
 from app.fpl.schemas import BootstrapStatic, Fixture
 from app.mapping.clubs import apply_club_mapping
 from app.positions.base import (
@@ -172,7 +180,12 @@ def test_backfill_stores_season_with_fpl_gameweeks(session):
     # Squads add players who have not played yet.
     assert session.get(SofascorePlayer, ARS * 1000).sofascore_team_id == ARS
     assert summary.squad_players == 6
-    assert summary.unmapped_players == 3
+
+    # The mapping ran: Watkins is in the recorded bootstrap, Saka and
+    # Semenyo are not (it predates their FPL entries).
+    assert summary.mapping.by_method == {"exact": 1}
+    assert session.get(PlayerIdMap, 55).sofascore_id == WATKINS.id
+    assert summary.unmapped_players == 2
 
     sync_run = session.scalars(select(SyncRun)).one()
     assert sync_run.trigger == "backfill" and sync_run.finished_at is not None
@@ -258,6 +271,8 @@ def test_blocked_stops_run_and_keeps_earlier_matches(session):
     assert count(session, Match, Match.positions_fetched_at.is_not(None)) == 2
     sync_run = session.scalars(select(SyncRun)).one()
     assert sync_run.finished_at is not None and "blocked" in sync_run.errors[0]
+    # Mapping is local, so it still ran on what was stored.
+    assert summary.mapping is not None
 
 
 def test_unknown_trigger(session):
