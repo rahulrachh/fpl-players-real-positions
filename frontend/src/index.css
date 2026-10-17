@@ -1,50 +1,69 @@
 :root {
-  font-family: system-ui, sans-serif;
+  font-family: 'Archivo Variable', system-ui, sans-serif;
+  font-stretch: 100%;
   color-scheme: light dark;
-  --muted: #6b7280;
-  --line: #d1d5db;
-  --captain: #b45309;
-  --vice: #4b5563;
-  --sub-in: #15803d;
-  --sub-out: #b91c1c;
+
+  --page: #e7ece4;
+  --ink: #15211b;
+  --muted: #5d6b63;
+  --card: #f8faf5;
+  --card-line: #cfd8cc;
+  --error: #b42318;
+
+  /* The pitch looks the same in both themes so exports match. */
+  --grass: #2f7a45;
+  --grass-dark: #2a6f3f;
+  --surround: #24613a;
+  --chalk: rgba(255, 255, 255, 0.78);
+  --halo: #1d4f2d;
+
+  /* FPL roles. Chosen to stay apart from each other and from the grass. */
+  --gk: #ffd23f;
+  --def: #5cc8ff;
+  --mid: #ff8fd6;
+  --fwd: #ff5a36;
+  --captain: #000;
+  --ghost: #9aa59e;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --muted: #9ca3af;
-    --line: #374151;
-    --captain: #fbbf24;
-    --vice: #9ca3af;
-    --sub-in: #4ade80;
-    --sub-out: #f87171;
+    --page: #111a15;
+    --ink: #e8efe9;
+    --muted: #93a39a;
+    --card: #19251f;
+    --card-line: #2c3b33;
+    --error: #ff8a7a;
   }
 }
 
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+}
+
 main {
-  max-width: 40rem;
-  margin: 2rem auto;
-  padding: 0 1rem;
+  max-width: 34rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
 }
 
-dt {
-  font-weight: 600;
+.site-head h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 850;
+  font-stretch: 125%;
+  letter-spacing: -0.01em;
 }
 
-dd {
-  margin: 0 0 0.5rem;
-}
-
-.error {
-  color: #c62828;
-}
-
-.muted {
+.site-head p {
+  margin: 0.2rem 0 1.25rem;
   color: var(--muted);
-}
-
-footer {
-  margin-top: 3rem;
-  font-size: 0.85rem;
 }
 
 .team-form {
@@ -52,131 +71,277 @@ footer {
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.team-form label {
+  font-weight: 600;
 }
 
 .team-form input {
-  width: 10rem;
-  padding: 0.35rem 0.5rem;
+  width: 9rem;
+  padding: 0.45rem 0.6rem;
   font: inherit;
+  border: 1px solid var(--card-line);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--ink);
 }
 
 button {
   font: inherit;
-  padding: 0.35rem 0.75rem;
+  font-weight: 650;
+  padding: 0.45rem 0.9rem;
+  border: 0;
+  border-radius: 6px;
+  background: var(--grass);
+  color: #fff;
   cursor: pointer;
 }
 
-button:disabled {
-  cursor: default;
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--def);
+  outline-offset: 2px;
 }
 
-.gw-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 1.25rem 0;
+.error {
+  color: var(--error);
 }
 
-.team-header h2 {
-  margin-bottom: 0;
-}
-
-.team-header > p {
-  margin-top: 0.25rem;
-}
-
-.facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 1.5rem;
-  margin: 0.75rem 0;
-}
-
-.facts dt {
-  font-size: 0.8rem;
-  font-weight: 400;
+.muted {
   color: var(--muted);
 }
 
-.facts dd {
-  margin: 0;
-  font-weight: 600;
+/* Gameweek card */
+
+.pitch-card {
+  background: var(--card);
+  border: 1px solid var(--card-line);
+  border-radius: 14px;
+  padding: 1rem 1rem 0.9rem;
 }
 
-.subs {
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.card-team {
+  min-width: 0;
+}
+
+.card-team h2 {
+  margin: 0;
+  font-size: 1.45rem;
+  line-height: 1.1;
+  font-weight: 800;
+  font-stretch: 112%;
+  overflow-wrap: anywhere;
+}
+
+.card-team p {
+  margin: 0.2rem 0 0;
+  color: var(--muted);
   font-size: 0.9rem;
 }
 
-h3 {
-  margin: 1.5rem 0 0.25rem;
-}
-
-h4 {
-  margin: 0.75rem 0 0.25rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--muted);
-}
-
-.picks {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.picks li {
-  display: grid;
-  grid-template-columns: 2.75rem 1fr 3rem 9rem;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.role,
-.club {
-  font-size: 0.8rem;
-  color: var(--muted);
-}
-
-.name {
-  font-weight: 500;
-}
-
-.badges {
+.card-gw {
   display: flex;
-  gap: 0.35rem;
-  justify-content: flex-end;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
 }
 
-.badge {
-  font-size: 0.72rem;
+.gw-number {
+  font-size: 2.6rem;
+  line-height: 0.85;
+  font-weight: 900;
+  font-stretch: 70%;
+  font-variant-numeric: tabular-nums;
+  color: var(--grass);
+}
+
+.state {
+  margin-top: 0.3rem;
+  font-size: 0.78rem;
   font-weight: 700;
-  padding: 0.05rem 0.4rem;
-  border: 1px solid currentColor;
+  padding: 0.1rem 0.5rem;
   border-radius: 999px;
 }
 
-.badge-captain {
-  color: var(--captain);
+.state-locked {
+  background: var(--ink);
+  color: var(--card);
 }
 
-.badge-vice {
-  color: var(--vice);
+.state-preview {
+  border: 1.5px dashed var(--muted);
+  color: var(--muted);
 }
 
-.badge-sub-in {
-  color: var(--sub-in);
+.card-foot {
+  margin-top: 0.75rem;
 }
 
-.badge-sub-out {
-  color: var(--sub-out);
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.9rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.85rem;
 }
 
-.mult {
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.key {
+  display: inline-grid;
+  place-items: center;
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 50%;
+  font-size: 0.66rem;
+  font-weight: 800;
+  color: #10241a;
+  border: 1.5px solid #fff;
+  box-shadow: 0 0 0 1px var(--card-line);
+}
+
+.key.role-GK { background: var(--gk); }
+.key.role-DEF { background: var(--def); }
+.key.role-MID { background: var(--mid); }
+.key.role-FWD { background: var(--fwd); }
+
+.key-captain {
+  width: 0.95rem;
+  height: 0.95rem;
+  background: var(--captain);
+  color: #fff;
+  border-color: var(--gk);
+}
+
+.key-link {
+  width: 1.3rem;
+  height: 0;
+  border: 0;
+  border-top: 2px dashed var(--ink);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.key-ghost {
+  background: transparent;
+  border: 1.5px dashed var(--ghost);
+  box-shadow: none;
+}
+
+.card-note {
+  margin: 0.6rem 0 0;
   font-size: 0.8rem;
   color: var(--muted);
+}
+
+/* Pitch SVG (units are metres) */
+
+.pitch {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.pitch-surround {
+  fill: var(--surround);
+}
+
+.stripe {
+  fill: var(--grass);
+}
+
+.stripe-dark {
+  fill: var(--grass-dark);
+}
+
+.pitch-lines {
+  fill: none;
+  stroke: var(--chalk);
+  stroke-width: 0.3;
+}
+
+.pitch-lines .spot {
+  fill: var(--chalk);
+  stroke: none;
+}
+
+.pitch-lines .goal {
+  stroke-width: 0.25;
+}
+
+.link {
+  stroke: #fff;
+  stroke-width: 0.45;
+  stroke-dasharray: 1.1 0.8;
+  opacity: 0.85;
+}
+
+.dot-body {
+  stroke: #fff;
+  stroke-width: 0.45;
+}
+
+.role-GK .dot-body { fill: var(--gk); }
+.role-DEF .dot-body { fill: var(--def); }
+.role-MID .dot-body { fill: var(--mid); }
+.role-FWD .dot-body { fill: var(--fwd); }
+
+.dot-letter {
+  font-weight: 800;
+  fill: #10241a;
+  pointer-events: none;
+}
+
+.armband circle {
+  fill: var(--captain);
+  stroke: var(--gk);
+  stroke-width: 0.3;
+}
+
+.armband text {
+  fill: #fff;
+  font-weight: 800;
+}
+
+.label {
+  fill: #fff;
+  font-weight: 650;
+  font-stretch: 80%;
+  stroke: var(--halo);
+  stroke-width: 0.55;
+  stroke-linejoin: round;
+  paint-order: stroke;
+}
+
+.label-sub {
+  fill: #d9f5c4;
+  font-weight: 500;
+}
+
+.ghost circle {
+  fill: rgba(255, 255, 255, 0.08);
+  stroke: var(--ghost);
+  stroke-width: 0.35;
+  stroke-dasharray: 0.8 0.6;
+}
+
+.ghost .label {
+  fill: var(--ghost);
 }

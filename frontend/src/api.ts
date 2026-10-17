@@ -65,3 +65,38 @@ export const fetchLatestGameweeks = () => getJson<LatestGameweeks>('/api/gamewee
 
 export const fetchTeamGameweek = (teamId: number, gw: number) =>
   getJson<TeamGameweek>(`/api/team/${teamId}/gameweek/${gw}`)
+
+// Response of GET /api/team/{id}/plot/{gw} (backend/app/logic/plot.py, docs/api.md).
+
+export type PlotDot = {
+  fpl_id: number
+  name: string
+  web_name: string
+  role: Role
+  club: string
+  slot: number
+  // 0-100, attacking upward: x 0 = left touchline, y 0 = own goal line. null for a ghost.
+  x: number | null
+  y: number | null
+  is_captain: boolean
+  is_ghost: boolean
+  ghost_reason: 'no_match' | 'no_mapping' | null
+  from_gw: number | null
+  link_group: number | null
+  replaces: number | null
+}
+
+export type Plot = {
+  team_id: number
+  team_name: string
+  manager_name: string
+  gw: number
+  state: 'preview' | 'locked'
+  prev_gw: number | null
+  next_gw: number | null
+  data_as_of: string | null
+  dots: PlotDot[]
+}
+
+export const fetchPlot = (teamId: number, gw: number | 'latest') =>
+  getJson<Plot>(`/api/team/${teamId}/plot/${gw}`)

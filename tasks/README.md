@@ -18,7 +18,7 @@ MVP task breakdown (Gameweek mode only). Planner and roast are v1: see `v1-backl
 | 10 | [Position logic I: frame, last match played, ghosts](10-position-logic-core.md) | done (2026-10-17) |
 | 11 | [Position logic II: gameweek states, auto-subs, double gameweek](11-position-logic-gw-states.md) | done (2026-10-17) |
 | 12 | [Gameweek plot API endpoint](12-gameweek-api.md) | done (2026-10-17) |
-| 13 | [Pitch rendering (static, one locked GW)](13-pitch-rendering.md) 🛑 | todo |
+| 13 | [Pitch rendering (static, one locked GW)](13-pitch-rendering.md) 🛑 | awaiting-approval |
 | 14 | [Gameweek mode UI + navigation](14-gameweek-mode-ui.md) | todo |
 | 15 | [Image export](15-image-export.md) | todo |
 | 16 | [Deploy-readiness + Vercel deployment](16-deploy-vercel.md) 🛑 👤 | todo |

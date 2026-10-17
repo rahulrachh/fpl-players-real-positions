@@ -37,4 +37,4 @@ npm run dev        # http://localhost:5173, proxies /api to API_PROXY_TARGET (de
 npm run build      # type-check + production build into frontend/dist
 npm run lint
 ```
-Start the backend first; the page shows the `/api/health` response.
+Start the backend first, then open `http://localhost:5173/?team=<FPL team ID>` (optionally `&gw=<n>`). Dev only: `?fixture=edges` shows a sample graphic with every edge case (ghosts, double gameweek, "from GW", auto-sub).
