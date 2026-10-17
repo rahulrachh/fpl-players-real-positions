@@ -46,6 +46,10 @@ class Settings(BaseSettings):
     # if its average is built from at least this many on-ball actions
     # (`points_count`); otherwise the player falls back to an earlier match.
     position_min_points_count: int = Field(default=1, ge=0)
+    # Double gameweek: two matches give two linked dots only when they are on
+    # opposite sides of the center line, each more than this far from it
+    # (frame units, 0-100 pitch width); otherwise one averaged dot.
+    dgw_flank_margin: float = Field(default=10.0, ge=0, le=50)
 
     log_level: str = "INFO"
 

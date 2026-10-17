@@ -5,7 +5,7 @@ from collections.abc import Iterable
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.db.models import PlayerIdMap, PlayerMatchPosition
+from app.db.models import Gameweek, PlayerIdMap, PlayerMatchPosition
 from app.logic.positions import MatchPosition
 
 
@@ -49,3 +49,9 @@ def load_match_positions(
             )
         )
     return result
+
+
+def load_positions_synced(session: Session, gw: int) -> bool:
+    """Whether every match of `gw` has its positions in the database."""
+    synced = session.scalar(select(Gameweek.positions_synced).where(Gameweek.id == gw))
+    return bool(synced)

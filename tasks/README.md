@@ -16,7 +16,7 @@ MVP task breakdown (Gameweek mode only). Planner and roast are v1: see `v1-backl
 | 08 | [Player ID auto-matching + coverage report](08-player-id-matching.md) | done (2026-10-17) |
 | 09 | [Manual override file + coverage target](09-mapping-overrides.md) | done (2026-10-17) |
 | 10 | [Position logic I: frame, last match played, ghosts](10-position-logic-core.md) | done (2026-10-17) |
-| 11 | [Position logic II: gameweek states, auto-subs, double gameweek](11-position-logic-gw-states.md) | todo |
+| 11 | [Position logic II: gameweek states, auto-subs, double gameweek](11-position-logic-gw-states.md) | done (2026-10-17) |
 | 12 | [Gameweek plot API endpoint](12-gameweek-api.md) | todo |
 | 13 | [Pitch rendering (static, one locked GW)](13-pitch-rendering.md) 🛑 | todo |
 | 14 | [Gameweek mode UI + navigation](14-gameweek-mode-ui.md) | todo |
