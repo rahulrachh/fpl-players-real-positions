@@ -1,6 +1,6 @@
 # 16 — Deploy-readiness + Vercel deployment 🛑 👤
 
-**Status:** awaiting-approval
+**Status:** done (approved 2026-10-17)
 **Gate:** 👤 Needs the owner's Vercel account linked (`vercel login` / `vercel link`). 🛑 Deploying is outward-facing: prepare everything, then set `awaiting-approval` and STOP **before the production deploy**. Deploy only after the owner approves.
 **Depends on:** all previous tasks.
 
@@ -16,12 +16,12 @@ A fresh clone runs locally from `docs/setup.md` alone, and the MVP is live on Ve
 - [x] Fresh clone in a temp directory runs locally following only `docs/setup.md`; gaps fixed (noted).
 - [x] No secrets or absolute local paths in the repo (grep check in Notes).
 - [x] Preview deployment works end to end (owner's team renders); then `awaiting-approval`, stopped. (The first deployment landed on production; see Notes.)
-- [ ] After owner approval: production deployed and the owner's team renders on the live URL.
-- [ ] One full release cycle tested: run sync locally, commit, redeploy, live site shows the new "data as of" time.
+- [x] After owner approval: production deployed and the owner's team renders on the live URL.
+- [x] One full release cycle tested: run sync locally, commit, redeploy, live site shows the new "data as of" time.
 
 ## Wrap-up (required: last step of every task)
-- [ ] Update this task's **Status** and the table in `tasks/README.md`.
-- [ ] Update the root `README.md`: add this task under **Tasks completed** with a short summary of the work done, and set **Next task** to the next task and its file path (for a 🛑 task: "waiting for owner approval on task NN").
+- [x] Update this task's **Status** and the table in `tasks/README.md`.
+- [x] Update the root `README.md`: add this task under **Tasks completed** with a short summary of the work done, and set **Next task** to the next task and its file path (for a 🛑 task: "waiting for owner approval on task NN").
 
 ## Notes
 - **Vercel layout (2026-10-17):** classic static build + one Python function. `vercel.json`: `framework: null`, install / build in `frontend/`, output `frontend/dist`, rewrite `/api/(.*)` → `/api/index`, and `functions["api/index.py"].includeFiles = backend/{app/**,data/fpl.db}` (excluding `app/positions`, `app/sync`, tests, `.venv`). `api/index.py` adds `backend/` to `sys.path`, defaults `DATABASE_IMMUTABLE=true` (Vercel's filesystem is read-only and nothing writes the file) and imports `app.main:app`. No env vars need setting in the Vercel dashboard. `.vercelignore` keeps `.venv`, `node_modules`, docs, spikes, tasks and tests out of the upload.
@@ -33,4 +33,7 @@ A fresh clone runs locally from `docs/setup.md` alone, and the MVP is live on Ve
 - **First deployment went to production:** `vercel deploy` (no `--prod`) was the project's first deployment, and Vercel assigns a project's first deployment to production, so https://fpl-real-shape.vercel.app went live before the owner's approval. Lesson: on a new project, make the first deployment with production protection or a throwaway project, or ask first. Later `vercel deploy` calls make preview deployments.
 - **Live check (2026-10-17, deployment `fpl-real-shape-liu9wi1jz-watching-sunset.vercel.app`):** `/` 200; `/api/health` ok, `query_only` and `read_only` true; `/api/team/2020649/plot/latest` = GW6, locked, 11 dots, `data_as_of` 2026-10-17T05:21:57 (the bundled database). Headless Chrome on `/?team=2020649` draws the full card: `docs/screenshots/deploy-live.png`.
 - **Owner change + preview (2026-10-17):** Save image removed from the share menu (see task 15 notes). Preview deployment `fpl-real-shape-i8tntmsw9-watching-sunset.vercel.app` (behind Vercel's deployment protection; checked with `vercel curl`, run from PowerShell because Git Bash rewrites `/api/...` into a Windows path): health ok and read-only, team 2020649 GW6 locked with 11 dots, bundle has "Share image" and no "Save image". Production still serves the first deployment.
-- **Waiting for the owner:** approve promoting the preview to production (then the release-cycle test), or have it taken down until approval.
+- **One-tap share (owner, 2026-10-17):** the share icon now opens the share sheet directly (details in task 15 notes). Checked locally and on production with a Playwright script (emulated Pixel 7, stubbed share sheet): 8 / 8 checks pass.
+- **Approved (owner, 2026-10-17):** "deploy to production". Production deployment `fpl-real-shape-6iwehxwto-watching-sunset.vercel.app` → https://fpl-real-shape.vercel.app; health ok and read-only; owner's team renders and shares.
+- **Release cycle (2026-10-17):** `uv run python -m app.sync run` (run 4, 101 s; GW7 still in play, so 0 matches added, GW1-6 synced, 436 / 436 active mapped), committed `fpl.db` + `docs/mapping-coverage.md`, `vercel deploy --prod` (`fpl-real-shape-n5evwn3zv-watching-sunset.vercel.app`). Live `data_as_of` moved from 2026-10-17T05:21:57 to 2026-10-17T09:10:00 (the first read, straight after the deploy finished, still showed the old value for a few seconds).
+- **Preview vs production:** `vercel deploy` gives a preview on its own URL behind Vercel login; only `vercel deploy --prod` (or `vercel promote <url>`) updates https://fpl-real-shape.vercel.app. Release deploys use `--prod`.

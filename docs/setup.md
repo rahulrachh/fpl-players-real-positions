@@ -92,7 +92,7 @@ vercel link              # create or pick the project; accept the settings from 
 vercel deploy            # preview URL
 vercel deploy --prod     # production
 ```
-After that, `vercel deploy --prod` after each release commit (or `git push` if the project is connected to the git repository).
+`vercel deploy` makes a preview on its own URL (behind Vercel login); only `--prod` updates https://fpl-real-shape.vercel.app. A new project's very first deployment goes to production regardless. After that, `vercel deploy --prod` after each release commit (or `git push` if the project is connected to the git repository).
 
 Check a deployment: `<url>/api/health` should say `"status": "ok"` with `"read_only": true`, and `<url>/?team=<ID>` should draw the team.
 
