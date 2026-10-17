@@ -1,6 +1,6 @@
 import pytest
 
-from app.logic.depth import DepthPools, percentile, rank_depth
+from app.logic.depth import outfield_pool, percentile, rank_depth
 
 
 def test_percentile():
@@ -13,35 +13,24 @@ def test_percentile():
     assert percentile([], 20.0) is None
 
 
-def test_pools_leave_out_goalkeepers():
-    pools = DepthPools.from_rows(
-        [("GK", 11.0), ("DEF", 40.0), ("FWD", 62.0), ("MID", 55.0), ("DEF", 35.0)]
-    )
-    assert pools.outfield == [35.0, 40.0, 55.0, 62.0]
-    assert pools.by_role == {"DEF": [35.0, 40.0], "MID": [55.0], "FWD": [62.0]}
+def test_pool_leaves_out_goalkeepers():
+    rows = [("GK", 11.0), ("DEF", 40.0), ("FWD", 62.0), ("MID", 55.0), ("DEF", 35.0)]
+    assert outfield_pool(rows) == [35.0, 40.0, 55.0, 62.0]
 
 
-@pytest.fixture
-def pools():
-    # Defenders deep, forwards high: a "deep" forward is still above most players.
-    return DepthPools.from_rows(
+def test_rank_against_every_outfield_player():
+    pool = outfield_pool(
         [("DEF", y) for y in (35.0, 40.0, 45.0)]
         + [("MID", y) for y in (50.0, 55.0, 60.0)]
         + [("FWD", y) for y in (55.0, 62.0, 70.0)]
     )
+    # A forward at 56 is above 6 of the 9 players, whatever their role.
+    assert rank_depth(pool, "FWD", 56.0) == pytest.approx(100 * 6 / 9, abs=0.1)
+    # An attacking defender at 50: three below, one tie.
+    assert rank_depth(pool, "DEF", 50.0) == pytest.approx(100 * 3.5 / 9, abs=0.1)
 
 
-def test_rank_against_everyone_and_own_role(pools):
-    # A forward at 56: above 6 of 9 players, but only 1 of 3 forwards.
-    all_pct, role_pct = rank_depth(pools, "FWD", 56.0)
-    assert all_pct == pytest.approx(100 * 6 / 9, abs=0.1)
-    assert role_pct == pytest.approx(100 / 3, abs=0.1)
-    # An attacking defender at 50 tops the defenders but is mid-table overall.
-    all_pct, role_pct = rank_depth(pools, "DEF", 50.0)
-    assert role_pct == 100.0
-    assert all_pct == pytest.approx(100 * 3.5 / 9, abs=0.1)
-
-
-def test_goalkeepers_and_ghosts_are_not_ranked(pools):
-    assert rank_depth(pools, "GK", 11.0) == (None, None)
-    assert rank_depth(pools, "MID", None) == (None, None)
+def test_goalkeepers_and_ghosts_are_not_ranked():
+    pool = [40.0, 50.0]
+    assert rank_depth(pool, "GK", 11.0) is None
+    assert rank_depth(pool, "MID", None) is None

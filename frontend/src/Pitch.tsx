@@ -5,7 +5,6 @@ import { useMemo } from 'react'
 
 import type { PlotDot } from './api'
 import {
-  type DepthMode,
   type LaidDot,
   layoutDots,
   MARGIN,
@@ -130,16 +129,8 @@ function Ghost({ d }: { d: LaidDot }) {
   )
 }
 
-export default function Pitch({
-  dots,
-  title,
-  depth = 'all',
-}: {
-  dots: PlotDot[]
-  title: string
-  depth?: DepthMode
-}) {
-  const layout = useMemo(() => layoutDots(dots, depth), [dots, depth])
+export default function Pitch({ dots, title }: { dots: PlotDot[]; title: string }) {
+  const layout = useMemo(() => layoutDots(dots), [dots])
   return (
     <svg className="pitch" viewBox={`0 0 ${VIEW_W} ${VIEW_H}`} role="img" aria-label={title}>
       <rect className="pitch-surround" x={0} y={0} width={VIEW_W} height={VIEW_H} rx={2} />

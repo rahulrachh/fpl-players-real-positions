@@ -7,7 +7,6 @@ import { type FormEvent, useEffect, useState } from 'react'
 
 import { ApiError, fetchPlot, type Plot } from './api'
 import PitchCard from './PitchCard'
-import type { DepthMode } from './pitchLayout'
 
 const ERROR_MESSAGES: Record<string, string> = {
   team_not_found: 'No FPL team has this ID.',
@@ -27,13 +26,7 @@ function readUrl() {
     const value = Number(params.get(key))
     return Number.isInteger(value) && value > 0 ? value : null
   }
-  const depth = params.get('depth')
-  return {
-    team: num('team'),
-    gw: num('gw'),
-    fixture: params.get('fixture'),
-    depth: (depth === 'role' ? 'role' : 'all') as DepthMode,
-  }
+  return { team: num('team'), gw: num('gw'), fixture: params.get('fixture') }
 }
 
 function writeUrl(team: number, gw: number) {
@@ -43,24 +36,11 @@ function writeUrl(team: number, gw: number) {
   window.history.replaceState(null, '', url)
 }
 
-const DEPTH_VIEWS: { mode: DepthMode; label: string; hint: string }[] = [
-  { mode: 'all', label: 'All outfield players', hint: 'Height: how far forward compared with every outfield player' },
-  { mode: 'role', label: 'Same position', hint: 'Height: how far forward compared with players in the same FPL position' },
-]
-
-function writeDepth(depth: DepthMode) {
-  const url = new URL(window.location.href)
-  if (depth === 'all') url.searchParams.delete('depth')
-  else url.searchParams.set('depth', depth)
-  window.history.replaceState(null, '', url)
-}
-
 function App() {
   const initial = readUrl()
   const [input, setInput] = useState(initial.team ? String(initial.team) : '')
   const [teamId, setTeamId] = useState<number | null>(initial.team)
   const [gw, setGw] = useState<number | null>(initial.gw)
-  const [depth, setDepth] = useState<DepthMode>(initial.depth)
   const [result, setResult] = useState<Result | null>(null)
   // The last graphic loaded for this team: stays on screen (dimmed) while the
   // next gameweek loads, and gives the prev / next gameweeks.
@@ -145,31 +125,12 @@ function App() {
       </form>
 
       {inputError && <p className="error">{inputError}</p>}
-      {plot && (
-        <div className="view-switch" role="group" aria-label="Depth view">
-          {DEPTH_VIEWS.map((v) => (
-            <button
-              key={v.mode}
-              type="button"
-              title={v.hint}
-              aria-pressed={depth === v.mode}
-              onClick={() => {
-                setDepth(v.mode)
-                writeDepth(v.mode)
-              }}
-            >
-              {v.label}
-            </button>
-          ))}
-        </div>
-      )}
       {!fixture && current && 'error' in current && <p className="error">{current.error}</p>}
       {!plot && loading && <p className="muted">Loading…</p>}
       {plot && (
         <div className={loading && !fixture ? 'card-slot is-loading' : 'card-slot'} aria-busy={loading && !fixture}>
           <PitchCard
             plot={plot}
-            depth={depth}
             nav={fixture ? undefined : { prev: prevGw, next: nextGw, go: setGw }}
           />
         </div>

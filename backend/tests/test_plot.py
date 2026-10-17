@@ -129,13 +129,12 @@ def test_locked_gameweek(api):
     captain = [d for d in body["dots"] if d["is_captain"]]
     assert len(captain) == 1
 
-    # Depth ranks: outfield dots only. Every stored match is at y 15 (GW5) or
+    # Depth rank: outfield dots only. Every stored match is at y 15 (GW5) or
     # 16 (GW6), so a GW6 dot at 16 is above half the pool (ties count half).
-    assert dots[1]["depth_pct_all"] is dots[1]["depth_pct_role"] is None
-    assert 0 < gabriel["depth_pct_all"] < 100
-    assert 0 < gabriel["depth_pct_role"] < 100
+    assert dots[1]["depth_pct"] is None
+    assert 0 < gabriel["depth_pct"] < 100
     keeper = next(d for d in body["dots"] if d["role"] == "GK")
-    assert keeper["depth_pct_all"] is None
+    assert keeper["depth_pct"] is None
 
 
 def test_preview_when_not_synced(api, db):

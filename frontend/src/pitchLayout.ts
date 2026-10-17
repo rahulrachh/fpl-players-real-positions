@@ -47,20 +47,17 @@ export type Layout = {
   links: [LaidDot, LaidDot][]
 }
 
-// --- Depth views ------------------------------------------------------------
+// --- Depth -------------------------------------------------------------------
 // Average positions bunch up in midfield, so outfield depth is drawn as a rank
-// from the API (backend `app/logic/depth.py`): against every outfield player
-// ('all') or only players of the same FPL role ('role'). Keepers keep their real
-// depth.
-export type DepthMode = 'all' | 'role'
+// from the API (`depth_pct`, backend `app/logic/depth.py`): how far forward
+// compared with every outfield player. Keepers keep their real depth.
 
 // Ranks 0-100 are drawn between these depths, clear of both penalty boxes.
 const RANK_BOTTOM = 20
 const RANK_TOP = 90
 
-export function displayDepth(dot: PlotDot, y: number, mode: DepthMode): number {
-  const pct = mode === 'all' ? dot.depth_pct_all : dot.depth_pct_role
-  return pct === null ? y : RANK_BOTTOM + (pct / 100) * (RANK_TOP - RANK_BOTTOM)
+export function displayDepth(dot: PlotDot, y: number): number {
+  return dot.depth_pct === null ? y : RANK_BOTTOM + (dot.depth_pct / 100) * (RANK_TOP - RANK_BOTTOM)
 }
 
 export function toSvg(x: number, y: number): [number, number] {
@@ -236,7 +233,7 @@ function placeLabels(dots: LaidDot[]) {
   }
 }
 
-export function layoutDots(dots: PlotDot[], depth: DepthMode = 'all'): Layout {
+export function layoutDots(dots: PlotDot[]): Layout {
   const onPitch: LaidDot[] = []
   const ghosts: LaidDot[] = []
   dots.forEach((dot, i) => {
@@ -256,7 +253,7 @@ export function layoutDots(dots: PlotDot[], depth: DepthMode = 'all'): Layout {
       })
       return
     }
-    const [cx, cy] = toSvg(dot.x, displayDepth(dot, dot.y, depth))
+    const [cx, cy] = toSvg(dot.x, displayDepth(dot, dot.y))
     onPitch.push({ dot, key, cx, cy, r: DOT_R, label: { x: cx, y: cy, anchor: 'middle' }, sub: subLabel(dot), leader: null })
   })
 

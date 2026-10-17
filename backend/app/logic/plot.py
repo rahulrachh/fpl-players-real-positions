@@ -17,7 +17,7 @@ from app.logic.gameweek import GameweekState, build_dots, team_state
 from app.logic.positions import GhostReason
 from app.logic.repository import (
     load_data_as_of,
-    load_depth_pools,
+    load_depth_pool,
     load_match_positions,
     load_positions_synced,
     load_sofascore_ids,
@@ -50,10 +50,10 @@ class PlotDot(_Model):
     link_group: int | None
     # Locked only: FPL ID of the picked starter this auto-sub replaced.
     replaces: int | None
-    # Percentile (0-100) of y among every outfield player-match / those of
-    # the same FPL role (`app/logic/depth.py`). None for a goalkeeper or ghost.
-    depth_pct_all: float | None
-    depth_pct_role: float | None
+    # Percentile (0-100) of y among every outfield player-match
+    # (`app/logic/depth.py`); the pitch draws it as the dot's height. None for
+    # a goalkeeper or a ghost.
+    depth_pct: float | None
 
 
 class Plot(_Model):
@@ -96,13 +96,12 @@ def build_plot(team: TeamGameweek, session: Session, latest_gw: int | None) -> P
     sofascore_ids = load_sofascore_ids(session, [p.player.id for p in team.picks])
     rows = load_match_positions(session, sofascore_ids.values())
     players = {p.player.id: p.player for p in team.picks}
-    pools = load_depth_pools(session, POOL_MIN_MINUTES)
+    pool = load_depth_pool(session, POOL_MIN_MINUTES)
 
     dots = []
     for dot in build_dots(team, state, sofascore_ids, rows):
         player = players[dot.fpl_id]
         y = _round(dot.y)
-        pct_all, pct_role = rank_depth(pools, dot.role, y)
         dots.append(
             PlotDot(
                 fpl_id=dot.fpl_id,
@@ -119,8 +118,7 @@ def build_plot(team: TeamGameweek, session: Session, latest_gw: int | None) -> P
                 from_gw=dot.from_gw,
                 link_group=dot.link_group,
                 replaces=dot.replaces,
-                depth_pct_all=pct_all,
-                depth_pct_role=pct_role,
+                depth_pct=rank_depth(pool, dot.role, y),
             )
         )
 

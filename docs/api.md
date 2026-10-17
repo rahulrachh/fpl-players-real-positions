@@ -39,7 +39,7 @@ Each dot:
 | `from_gw` | "from GWx" label when the position comes from an older gameweek (preview only), otherwise `null`. |
 | `link_group` | Same value (the FPL ID) on the two linked dots of a double gameweek, otherwise `null`. |
 | `replaces` | Locked only: FPL ID of the picked starter this auto-sub replaced. |
-| `depth_pct_all` / `depth_pct_role` | How far forward the dot is: percentile (0-100, 1 decimal, ties count half) of `y` among every outfield player-match in the database / only those of the same FPL role. A player-match counts at 60+ minutes. `null` for a goalkeeper or a ghost. The pitch draws one of them as the dot's height (`app/logic/depth.py`). |
+| `depth_pct` | How far forward the dot is: percentile (0-100, 1 decimal, ties count half) of `y` among every outfield player-match in the database (defenders, midfielders and forwards together; a player-match counts at 60+ minutes). `null` for a goalkeeper or a ghost. The pitch draws it as the dot's height (`app/logic/depth.py`). |
 
 ## Errors
 Same codes as the team endpoint, as `{code, detail}`:

@@ -3,12 +3,7 @@
 
 import type { Plot, Role } from './api'
 import Pitch from './Pitch'
-import { type DepthMode, ROLE_LETTER } from './pitchLayout'
-
-const DEPTH_NOTE: Record<DepthMode, string> = {
-  all: 'Height: how far forward compared with every Premier League outfield player.',
-  role: 'Height: how far forward compared with players in the same FPL position.',
-}
+import { ROLE_LETTER } from './pitchLayout'
 
 const ROLE_NAMES: Record<Role, string> = {
   GK: 'Goalkeeper',
@@ -51,7 +46,7 @@ function GwArrow({ direction, nav }: { direction: 'prev' | 'next'; nav: GwNav })
   )
 }
 
-export default function PitchCard({ plot, depth = 'all', nav }: { plot: Plot; depth?: DepthMode; nav?: GwNav }) {
+export default function PitchCard({ plot, nav }: { plot: Plot; nav?: GwNav }) {
   const state = STATE_TEXT[plot.state]
   const hasGhosts = plot.dots.some((d) => d.is_ghost)
   const hasLinks = plot.dots.some((d) => d.link_group !== null)
@@ -81,7 +76,6 @@ export default function PitchCard({ plot, depth = 'all', nav }: { plot: Plot; de
 
       <Pitch
         dots={plot.dots}
-        depth={depth}
         title={`${plot.team_name}, gameweek ${plot.gw}: real average positions`}
       />
 
@@ -111,7 +105,7 @@ export default function PitchCard({ plot, depth = 'all', nav }: { plot: Plot; de
           )}
         </ul>
         <p className="card-note">
-          {state.note} Attacking upward. {DEPTH_NOTE[depth]}
+          {state.note} Attacking upward. Height: how far forward compared with every Premier League outfield player.
           {plot.data_as_of && ` Positions as of ${formatDate(plot.data_as_of)}.`}
         </p>
       </footer>
