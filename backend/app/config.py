@@ -42,6 +42,11 @@ class Settings(BaseSettings):
     sofascore_max_retries: int = Field(default=3, ge=0)
     sofascore_backoff_seconds: float = Field(default=5.0, ge=0)
 
+    # Position logic (`app/logic/`): a stored match is usable for a dot only
+    # if its average is built from at least this many on-ball actions
+    # (`points_count`); otherwise the player falls back to an earlier match.
+    position_min_points_count: int = Field(default=1, ge=0)
+
     log_level: str = "INFO"
 
     @property

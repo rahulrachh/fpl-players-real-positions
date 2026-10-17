@@ -23,6 +23,7 @@ Pitch seen from behind the player's own goal, his team **attacking upward**:
 - **y**: 0 = own goal line, 100 = opponent's goal line. A goalkeeper sits at y ≈ 10, a striker at y ≈ 55-70.
 - Both are in 0-100 (`CHECK` enforced).
 - To draw a pitch attacking upward: screen x = `x`, screen y = `y` measured from the bottom.
+- In code, the frame's bounds and center live in `backend/app/logic/positions.py` (task 10, `docs/position-logic.md`).
 
 Sofascore's own axes are different (its `averageX` is depth, `averageY` high = left); the adapter converts with x = 100 - `averageY`, y = `averageX`. See `docs/positions-source.md`.
 
