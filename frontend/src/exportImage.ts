@@ -1,6 +1,6 @@
 // Draws the gameweek card as a PNG in the browser from the card's DOM
 // (html-to-image), so fonts and colors are the ones on screen, then shares it
-// through the device's share sheet or saves it. Elements marked
+// through the device's share sheet. Elements marked
 // data-export-ignore (the gameweek arrows, the share button) are hidden but
 // keep their space, so the card is laid out as on screen.
 //
@@ -97,18 +97,6 @@ export async function renderPng(card: HTMLElement): Promise<Blob> {
   } finally {
     style.remove()
   }
-}
-
-export function savePng(png: Blob, filename: string) {
-  const url = URL.createObjectURL(png)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = filename
-  // Firefox only follows a download link that is in the document.
-  document.body.append(link)
-  link.click()
-  link.remove()
-  setTimeout(() => URL.revokeObjectURL(url), 10_000)
 }
 
 function pngFile(png: Blob, filename: string) {

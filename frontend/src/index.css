@@ -603,12 +603,6 @@ input:focus-visible {
   white-space: nowrap;
 }
 
-.share-menu .secondary {
-  background: transparent;
-  color: var(--ink);
-  border: 1px solid var(--card-line);
-}
-
 .share-status {
   margin: 0;
   font-size: 0.8rem;

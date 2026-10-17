@@ -1,11 +1,11 @@
 // The share button in the pitch's bottom-right corner and its menu: share the
-// card as an image through the device's share sheet (where the browser can),
-// or save it. The image is drawn as soon as the menu opens, because phones
-// only let a page share straight after a tap.
+// card as an image through the device's share sheet. Shown only where the
+// browser can share files (most phones). The image is drawn as soon as the
+// menu opens, because phones only let a page share straight after a tap.
 
 import { type RefObject, useEffect, useRef, useState } from 'react'
 
-import { canSharePng, renderPng, savePng, sharePng } from './exportImage'
+import { canSharePng, renderPng, sharePng } from './exportImage'
 
 type Props = {
   card: RefObject<HTMLElement | null>
@@ -78,24 +78,14 @@ export default function ShareMenu({ card, filename, title }: Props) {
     }
   }
 
-  function save() {
-    if (!png) return
-    savePng(png, filename)
-    setOpen(false)
-  }
-
   const ready = png !== null
+  if (!canShare) return null
   return (
     <div className="share" ref={root} data-export-ignore>
       {open && (
         <div className="share-menu" role="dialog" aria-label="Share this gameweek">
-          {canShare && (
-            <button type="button" onClick={share} disabled={!ready}>
-              Share image
-            </button>
-          )}
-          <button type="button" className={canShare ? 'secondary' : undefined} onClick={save} disabled={!ready}>
-            Save image
+          <button type="button" onClick={share} disabled={!ready}>
+            Share image
           </button>
           {!current && <p className="share-status">Preparing the image…</p>}
           {failed && (
@@ -106,14 +96,14 @@ export default function ShareMenu({ card, filename, title }: Props) {
               </button>
             </p>
           )}
-          {shareFailed && <p className="share-status error">Sharing didn't work here. Save the image instead.</p>}
+          {shareFailed && <p className="share-status error">Sharing didn't work here.</p>}
         </div>
       )}
       <button
         type="button"
         className="share-button"
-        aria-label="Share or save as image"
-        title="Share or save as image"
+        aria-label="Share as image"
+        title="Share as image"
         aria-expanded={open}
         onClick={toggle}
       >
