@@ -9,7 +9,7 @@ MVP task breakdown (Gameweek mode only). Planner and roast are v1: see `v1-backl
 | 01 | [Sofascore positions spike](01-positions-source-spike.md) 🛑 | done (approved 2026-10-16) |
 | 02 | [Project scaffold](02-project-scaffold.md) | done (2026-10-16) |
 | 03 | [Database schema + migrations](03-database-schema.md) | done (2026-10-16) |
-| 04 | [FPL API client + public/private boundaries](04-fpl-api-client.md) | todo |
+| 04 | [FPL API client + public/private boundaries](04-fpl-api-client.md) | done (2026-10-17) |
 | 05 | [Team loading service](05-team-loading-service.md) 🛑 👤 | todo |
 | 06 | [Positions adapter module](06-positions-adapter.md) | todo |
 | 07 | [Offline sync script + season backfill](07-offline-sync-script.md) | todo |
