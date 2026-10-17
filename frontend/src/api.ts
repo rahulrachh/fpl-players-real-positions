@@ -89,8 +89,8 @@ export type PlotDot = {
   // Percentile (0-100) of y among every outfield player-match, drawn as the
   // dot's height. null for a goalkeeper or ghost.
   depth_pct: number | null
-  // The player's own FPL points for the gameweek (live while in progress),
-  // before the captain multiplier.
+  // The points the player scored for the team (live while in progress): his
+  // own, doubled for the captain (tripled with Triple Captain).
   points: number
   // A bench player drawn because of Bench Boost.
   from_bench: boolean

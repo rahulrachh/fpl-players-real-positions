@@ -78,10 +78,6 @@ export const benchBoost: Plot = {
     dot({ fpl_id: 14, web_name: 'Burn', role: 'DEF', slot: 14, x: 22, y: 35, depth_pct: 20, points: 2, from_bench: true }),
     dot({ fpl_id: 15, web_name: 'Archer', role: 'FWD', slot: 15, x: 60, y: 82, depth_pct: 90, points: 5, from_bench: true }),
   ],
-  bench: [
-    bench({ fpl_id: 12, web_name: 'Kelleher', role: 'GK', points: 2 }),
-    bench({ fpl_id: 13, web_name: 'Merino', role: 'MID', points: 7 }),
-    bench({ fpl_id: 14, web_name: 'Burn', role: 'DEF', points: 2 }),
-    bench({ fpl_id: 15, web_name: 'Archer', role: 'FWD', points: 5 }),
-  ],
+  // Everyone is on the pitch under Bench Boost.
+  bench: [],
 }

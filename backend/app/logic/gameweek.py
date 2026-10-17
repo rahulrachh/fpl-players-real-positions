@@ -31,7 +31,7 @@ Bench
 -----
 Bench players are not dots, except under Bench Boost: all 15 score, so the
 four bench players are drawn too, with slots 12-15 (FPL makes no auto-subs
-under Bench Boost). The plot lists the bench separately either way.
+under Bench Boost), and there is no separate bench.
 """
 
 from collections.abc import Mapping, Sequence
@@ -119,6 +119,11 @@ def team_state(team: TeamGameweek, positions_synced: bool) -> GameweekState:
 
 
 BENCH_BOOST = "bboost"
+TRIPLE_CAPTAIN = "3xc"
+
+
+def captain_multiplier(team: TeamGameweek) -> int:
+    return 3 if team.chip == TRIPLE_CAPTAIN else 2
 
 
 def plotted_picks(team: TeamGameweek, state: GameweekState) -> list[tuple[int, TeamPick]]:
@@ -143,8 +148,11 @@ def plotted_picks(team: TeamGameweek, state: GameweekState) -> list[tuple[int, T
 
 def bench_picks(team: TeamGameweek, state: GameweekState) -> list[TeamPick]:
     """The four bench players in bench order: after FPL's auto-subs when
-    locked (a starter who did not play is among them), as picked in preview."""
-    if state is GameweekState.LOCKED or team.chip == BENCH_BOOST:
+    locked (a starter who did not play is among them), as picked in preview.
+    None under Bench Boost: they are all on the pitch."""
+    if team.chip == BENCH_BOOST:
+        return []
+    if state is GameweekState.LOCKED:
         return [p for p in team.picks if not p.starter]
     # Preview: a bench player FPL subbed in sat where the starter he replaced
     # now sits.

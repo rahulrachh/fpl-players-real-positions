@@ -24,7 +24,7 @@ The web app reads the bundled read-only `fpl.db` and live FPL data. It never cal
 | `prev_gw` / `next_gw` | The neighbouring gameweek to step to, or `null` at an edge. `prev_gw` stops at the team's first gameweek (and GW1). `next_gw` stops at the newest gameweek whose deadline has passed (so also at GW38). |
 | `data_as_of` | End of the latest finished offline sync (`sync_runs.finished_at`, UTC, no offset), or `null` if never synced. |
 | `dots` | One per XI player in slot order (slots 12-15 for the bench under Bench Boost). A double-gameweek player on opposite flanks has two. |
-| `bench` | The 4 bench players in bench order: `fpl_id`, `name`, `web_name`, `role`, `club`, `points`, `subbed_off` (locked only: a picked starter FPL auto-subbed off). After auto-subs when locked, as picked in preview. Listed under Bench Boost too. |
+| `bench` | The 4 bench players in bench order: `fpl_id`, `name`, `web_name`, `role`, `club`, `points` (their own), `subbed_off` (locked only: a picked starter FPL auto-subbed off). After auto-subs when locked, as picked in preview. Empty under Bench Boost (they are dots). |
 
 Each dot:
 
@@ -41,7 +41,7 @@ Each dot:
 | `from_gw` | "from GWx" label when the position comes from an older gameweek (preview only), otherwise `null`. |
 | `link_group` | Same value (the FPL ID) on the two linked dots of a double gameweek, otherwise `null`. |
 | `replaces` | Locked only: FPL ID of the picked starter this auto-sub replaced. |
-| `points` | The player's own FPL points for the gameweek (`event/{gw}/live`, live while in progress), before the captain multiplier. |
+| `points` | The points the player scored for the team (`event/{gw}/live`, live while in progress): his own, doubled for the captain, tripled with Triple Captain. The dots add up to the gameweek score before hits. |
 | `from_bench` | A bench player drawn because of Bench Boost. |
 | `depth_pct` | How far forward the dot is: percentile (0-100, 1 decimal, ties count half) of `y` among every outfield player-match in the database (defenders, midfielders and forwards together; a player-match counts at 60+ minutes). `null` for a goalkeeper or a ghost. The pitch draws it as the dot's height (`app/logic/depth.py`). |
 

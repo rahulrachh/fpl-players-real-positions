@@ -13,7 +13,13 @@ from sqlalchemy.orm import Session
 
 from app.fpl.team import TeamGameweek
 from app.logic.depth import POOL_MIN_MINUTES, rank_depth
-from app.logic.gameweek import GameweekState, bench_picks, build_dots, team_state
+from app.logic.gameweek import (
+    GameweekState,
+    bench_picks,
+    build_dots,
+    captain_multiplier,
+    team_state,
+)
 from app.logic.positions import GhostReason
 from app.logic.repository import (
     load_data_as_of,
@@ -54,14 +60,17 @@ class PlotDot(_Model):
     # (`app/logic/depth.py`); the pitch draws it as the dot's height. None for
     # a goalkeeper or a ghost.
     depth_pct: float | None
-    # The player's own FPL points for the gameweek (live while in progress),
-    # before the captain multiplier.
+    # The points the player scored for the team this gameweek (live while in
+    # progress): his own, doubled for the captain (tripled with Triple
+    # Captain). The dots of the XI add up to the gameweek score before hits.
     points: int
     # A bench player drawn because of Bench Boost (slot 12-15).
     from_bench: bool
 
 
 class BenchPlayer(_Model):
+    """Points are his own (they did not count for the team)."""
+
     fpl_id: int
     name: str
     web_name: str
@@ -89,7 +98,8 @@ class Plot(_Model):
     # End of the latest finished sync; None if the database was never synced.
     data_as_of: datetime | None
     dots: list[PlotDot]
-    # In bench order (see `app/logic/gameweek.py`).
+    # In bench order (see `app/logic/gameweek.py`); empty under Bench Boost,
+    # when the bench is drawn on the pitch.
     bench: list[BenchPlayer]
 
 
@@ -118,6 +128,7 @@ def build_plot(team: TeamGameweek, session: Session, latest_gw: int | None) -> P
     picks = {p.player.id: p for p in team.picks}
     players = {fpl_id: p.player for fpl_id, p in picks.items()}
     pool = load_depth_pool(session, POOL_MIN_MINUTES)
+    multiplier = captain_multiplier(team)
 
     dots = []
     for dot in build_dots(team, state, sofascore_ids, rows):
@@ -140,7 +151,7 @@ def build_plot(team: TeamGameweek, session: Session, latest_gw: int | None) -> P
                 link_group=dot.link_group,
                 replaces=dot.replaces,
                 depth_pct=rank_depth(pool, dot.role, y),
-                points=picks[dot.fpl_id].points,
+                points=picks[dot.fpl_id].points * (multiplier if dot.is_captain else 1),
                 from_bench=dot.slot > 11,
             )
         )

@@ -281,6 +281,11 @@ def test_bench_boost_plots_all_fifteen():
         assert [(d.fpl_id, d.slot) for d in dots] == [(i, i) for i in range(1, 16)]
 
 
+def test_no_bench_under_bench_boost():
+    for state in GameweekState:
+        assert bench_picks(make_team(chip="bboost"), state) == []
+
+
 def test_bench_order():
     # Locked: after FPL's auto-subs, so starter 5 (did not play) is on the
     # bench where 13 sat; preview: the bench as picked.

@@ -311,12 +311,6 @@ input:focus-visible {
   font-weight: 750;
 }
 
-.bench h3 span {
-  margin-left: 0.35rem;
-  font-weight: 450;
-  color: var(--muted);
-}
-
 .bench ol {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

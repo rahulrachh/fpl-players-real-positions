@@ -148,6 +148,22 @@ def test_locked_gameweek(api):
     assert keeper["depth_pct"] is None
 
 
+@pytest.mark.parametrize(("chip", "multiplier"), [(None, 2), ("3xc", 3)])
+def test_captain_dot_carries_multiplied_points(fake, db, chip, multiplier):
+    picks = load("picks-gw6.json")
+    picks["active_chip"] = chip
+    fake.routes["/api/entry/1234/event/6/picks/"] = picks
+    captain_id = next(p["element"] for p in picks["picks"] if p["is_captain"])
+    live = load("live-gw6.json")
+    live["elements"].append({"id": captain_id, "stats": {**live["elements"][0]["stats"], "total_points": 5}})
+    fake.routes["/api/event/6/live/"] = live
+
+    body = client_for(make_service(fake), db).get("/api/team/1234/plot/6").json()
+    captain = next(d for d in body["dots"] if d["is_captain"])
+    assert captain["points"] == 5 * multiplier
+    assert body["chip"] == chip
+
+
 def test_preview_when_not_synced(api, db):
     db.get(Gameweek, 6).positions_synced = False
     db.commit()

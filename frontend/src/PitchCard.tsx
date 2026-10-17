@@ -54,12 +54,11 @@ function GwArrow({ direction, nav }: { direction: 'prev' | 'next'; nav: GwNav })
   )
 }
 
-function Bench({ players, boosted }: { players: BenchPlayer[]; boosted: boolean }) {
+// Empty under Bench Boost (everyone is on the pitch), so not shown then.
+function Bench({ players }: { players: BenchPlayer[] }) {
   return (
     <section className="bench" aria-label="Bench">
-      <h3>
-        Bench <span>{boosted ? 'Bench Boost: these points counted' : 'points did not count'}</span>
-      </h3>
+      <h3>Bench</h3>
       <ol>
         {players.map((p) => (
           <li key={p.fpl_id} title={`${p.name} (${p.role}, ${p.club})`}>
@@ -108,7 +107,7 @@ export default function PitchCard({ plot, nav }: { plot: Plot; nav?: GwNav }) {
         title={`${plot.team_name}, gameweek ${plot.gw}: real average positions`}
       />
 
-      {plot.bench.length > 0 && <Bench players={plot.bench} boosted={plot.chip === 'bboost'} />}
+      {plot.bench.length > 0 && <Bench players={plot.bench} />}
 
       <footer className="card-foot">
         <ul className="legend">
@@ -146,8 +145,8 @@ export default function PitchCard({ plot, nav }: { plot: Plot; nav?: GwNav }) {
         </ul>
         <p className="card-note">
           {state.note} Attacking upward. Height: how far forward compared with every Premier League outfield
-          player. Circles show each player's own points; bigger circle, more points within this team this
-          gameweek.
+          player. Circles show the points each player scored for the team (the captain's multiplied); bigger
+          circle, more points within this team this gameweek.
           {plot.data_as_of && ` Positions as of ${formatDate(plot.data_as_of)}.`}
         </p>
       </footer>
