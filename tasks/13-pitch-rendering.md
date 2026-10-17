@@ -1,6 +1,6 @@
 # 13 — Pitch rendering (static, one locked GW) 🛑
 
-**Status:** awaiting-approval
+**Status:** done (approved 2026-10-17)
 **Gate:** 🛑 Owner approves the look. When finished, set status `awaiting-approval` and STOP.
 **Depends on:** 12.
 
@@ -17,7 +17,7 @@ A good-looking pitch graphic for one locked gameweek, drawn from the plot API.
 ## Done when
 - [x] The frontend shows the owner's team for one locked GW.
 - [x] Screenshot saved to `docs/screenshots/pitch-v1.png`.
-- [ ] Status `awaiting-approval`, stopped; **owner approves the look** and flips to `done` (or leaves feedback in Notes for another iteration).
+- [x] Status `awaiting-approval`, stopped; **owner approves the look** and flips to `done` (or leaves feedback in Notes for another iteration).
 
 ## Wrap-up (required: last step of every task)
 - [x] Update this task's **Status** and the table in `tasks/README.md`.
