@@ -5,6 +5,8 @@
 - **read-only**: the web app. Opens the file with SQLite's `mode=ro` URI (plus
   `immutable=1` when `DATABASE_IMMUTABLE` is set) and turns on
   `PRAGMA query_only`, so any write raises. The web app never writes.
+
+Both turn on `PRAGMA foreign_keys` (SQLite leaves it off by default).
 """
 
 from functools import lru_cache
@@ -33,13 +35,20 @@ def make_read_only_engine(path: Path, immutable: bool = False) -> Engine:
     @event.listens_for(engine, "connect")
     def _query_only(dbapi_conn, _record):
         dbapi_conn.execute("PRAGMA query_only = ON")
+        dbapi_conn.execute("PRAGMA foreign_keys = ON")
 
     return engine
 
 
 def make_read_write_engine(path: Path) -> Engine:
     path.parent.mkdir(parents=True, exist_ok=True)
-    return create_engine(f"sqlite:///{path.as_posix()}")
+    engine = create_engine(f"sqlite:///{path.as_posix()}")
+
+    @event.listens_for(engine, "connect")
+    def _foreign_keys(dbapi_conn, _record):
+        dbapi_conn.execute("PRAGMA foreign_keys = ON")
+
+    return engine
 
 
 @lru_cache
