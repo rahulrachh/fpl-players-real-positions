@@ -135,6 +135,10 @@ class TeamGameweek(_Model):
     # bank and uses market prices (see `docs/fpl-api.md`).
     bank: int
     squad_value: int
+    # Gameweek points before transfer hits (live while the gameweek is in
+    # progress) and the hit taken, as FPL reports them.
+    points: int
+    transfers_cost: int
     # As picked by the manager.
     captain_id: int
     vice_captain_id: int
@@ -253,6 +257,8 @@ class TeamService:
             chip=picks.active_chip,
             bank=picks.entry_history.bank,
             squad_value=picks.entry_history.value,
+            points=picks.entry_history.points,
+            transfers_cost=picks.entry_history.event_transfers_cost,
             captain_id=_one(picks.picks, "is_captain"),
             vice_captain_id=_one(picks.picks, "is_vice_captain"),
             effective_captain_id=next(

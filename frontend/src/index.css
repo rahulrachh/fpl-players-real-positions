@@ -156,17 +156,47 @@ input:focus-visible {
   flex-shrink: 0;
 }
 
-.gw-number {
-  font-size: 2.6rem;
+.gw-line {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.gw-label {
+  font-size: 1.05rem;
+  font-weight: 800;
+  font-stretch: 85%;
+}
+
+.score {
+  display: flex;
+  align-items: baseline;
+  gap: 0.2rem;
+  margin: 0.15rem 0 0;
+  color: var(--grass);
+}
+
+.score-number {
+  font-size: 2.9rem;
   line-height: 0.85;
   font-weight: 900;
   font-stretch: 70%;
   font-variant-numeric: tabular-nums;
-  color: var(--grass);
+}
+
+.score-unit {
+  font-size: 0.95rem;
+  font-weight: 750;
+  font-stretch: 85%;
+}
+
+.hit {
+  margin: 0.15rem 0 0;
+  font-size: 0.75rem;
+  color: var(--muted);
 }
 
 .state {
-  margin-top: 0.3rem;
   font-size: 0.78rem;
   font-weight: 700;
   padding: 0.1rem 0.5rem;
@@ -291,6 +321,12 @@ input:focus-visible {
   stroke-width: 0.45;
   stroke-dasharray: 1.1 0.8;
   opacity: 0.85;
+}
+
+.leader {
+  stroke: #fff;
+  stroke-width: 0.22;
+  opacity: 0.75;
 }
 
 .dot-body {

@@ -96,6 +96,8 @@ def make_team(
         chip=None,
         bank=0,
         squad_value=1000,
+        points=50,
+        transfers_cost=0,
         captain_id=captain,
         vice_captain_id=vice,
         effective_captain_id=effective_captain or captain,

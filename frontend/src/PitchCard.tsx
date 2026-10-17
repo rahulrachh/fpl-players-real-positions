@@ -34,8 +34,15 @@ export default function PitchCard({ plot }: { plot: Plot }) {
           <p>{plot.manager_name}</p>
         </div>
         <div className="card-gw">
-          <span className="gw-number">GW{plot.gw}</span>
-          <span className={`state state-${plot.state}`}>{state.badge}</span>
+          <div className="gw-line">
+            <span className="gw-label">GW{plot.gw}</span>
+            <span className={`state state-${plot.state}`}>{state.badge}</span>
+          </div>
+          <p className="score">
+            <span className="score-number">{plot.points}</span>
+            <span className="score-unit">pts</span>
+          </p>
+          {plot.transfers_cost > 0 && <p className="hit">−{plot.transfers_cost} transfer hit</p>}
         </div>
       </header>
 

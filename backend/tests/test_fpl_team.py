@@ -114,6 +114,7 @@ def test_loads_team_gameweek(service, session):
     assert team.deadline == datetime(2026, 10, 10, 10, tzinfo=UTC)
     assert team.chip is None
     assert (team.bank, team.squad_value) == (1, 1017)
+    assert (team.points, team.transfers_cost) == (77, 0)
 
     assert [p.position for p in team.picks] == list(range(1, 16))
     assert [p.starter for p in team.picks] == [True] * 11 + [False] * 4

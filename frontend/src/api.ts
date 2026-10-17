@@ -32,6 +32,8 @@ export type TeamGameweek = {
   // Tenths of £m.
   bank: number
   squad_value: number
+  points: number
+  transfers_cost: number
   captain_id: number
   vice_captain_id: number
   effective_captain_id: number | null
@@ -92,6 +94,9 @@ export type Plot = {
   manager_name: string
   gw: number
   state: 'preview' | 'locked'
+  // Gameweek score before transfer hits (live while in progress), and the hit.
+  points: number
+  transfers_cost: number
   prev_gw: number | null
   next_gw: number | null
   data_as_of: string | null

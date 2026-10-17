@@ -56,6 +56,9 @@ class Plot(_Model):
     manager_name: str
     gw: int
     state: GameweekState
+    # The team's gameweek score before hits, and the hit (FPL `entry_history`).
+    points: int
+    transfers_cost: int
     # Neighbouring gameweeks the team can be shown for; None at an edge.
     prev_gw: int | None
     next_gw: int | None
@@ -117,6 +120,8 @@ def build_plot(team: TeamGameweek, session: Session, latest_gw: int | None) -> P
         manager_name=team.manager_name,
         gw=team.gameweek,
         state=state,
+        points=team.points,
+        transfers_cost=team.transfers_cost,
         prev_gw=prev_gw,
         next_gw=next_gw,
         data_as_of=load_data_as_of(session),

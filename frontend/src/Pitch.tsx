@@ -143,6 +143,19 @@ export default function Pitch({ dots, title }: { dots: PlotDot[]; title: string 
       {layout.links.map(([a, b]) => (
         <line key={`${a.key}-link`} className="link" x1={a.cx} y1={a.cy} x2={b.cx} y2={b.cy} />
       ))}
+      {layout.dots.map(
+        (d) =>
+          d.leader && (
+            <line
+              key={`${d.key}-leader`}
+              className="leader"
+              x1={d.leader[0]}
+              y1={d.leader[1]}
+              x2={d.leader[2]}
+              y2={d.leader[3]}
+            />
+          ),
+      )}
       {layout.dots.map((d) => (
         <Dot key={d.key} d={d} />
       ))}

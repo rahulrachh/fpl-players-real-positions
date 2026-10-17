@@ -23,6 +23,8 @@ export const edgeCases: Plot = {
   manager_name: 'Sample data',
   gw: 7,
   state: 'preview',
+  points: 58,
+  transfers_cost: 4,
   prev_gw: 6,
   next_gw: null,
   data_as_of: '2026-10-17T05:21:57.469430',

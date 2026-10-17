@@ -107,6 +107,7 @@ def test_locked_gameweek(api):
     body = response.json()
     assert (body["team_id"], body["team_name"], body["gw"]) == (1234, "Test FC", 6)
     assert body["state"] == "locked"
+    assert (body["points"], body["transfers_cost"]) == (77, 0)
     assert (body["prev_gw"], body["next_gw"]) == (5, None)
     assert body["data_as_of"] == "2026-10-12T08:00:00"
 

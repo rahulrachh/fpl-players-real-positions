@@ -19,6 +19,7 @@ The web app reads the bundled read-only `fpl.db` and live FPL data. It never cal
 | `team_id`, `team_name`, `manager_name` | From FPL. |
 | `gw` | The gameweek shown (for `latest`, the one it resolved to). |
 | `state` | `locked`: finished in FPL and its positions are synced. Shows the XI after auto-subs, from that gameweek's matches. `preview`: anything else. Shows the XI as picked, each from his most recent match. See `docs/position-logic.md`. |
+| `points` / `transfers_cost` | The team's gameweek score before transfer hits (FPL `entry_history.points`, live while the gameweek is in progress) and the hit taken. |
 | `prev_gw` / `next_gw` | The neighbouring gameweek to step to, or `null` at an edge. `prev_gw` stops at the team's first gameweek (and GW1). `next_gw` stops at the newest gameweek whose deadline has passed (so also at GW38). |
 | `data_as_of` | End of the latest finished offline sync (`sync_runs.finished_at`, UTC, no offset), or `null` if never synced. |
 | `dots` | One per XI player in slot order. A double-gameweek player on opposite flanks has two. |
@@ -62,6 +63,8 @@ Owner's team 2020649, recorded 2026-10-17 against live FPL and the committed dat
   "manager_name": "RR R",
   "gw": 6,
   "state": "locked",
+  "points": 66,
+  "transfers_cost": 0,
   "prev_gw": 5,
   "next_gw": null,
   "data_as_of": "2026-10-17T05:21:57.469430",

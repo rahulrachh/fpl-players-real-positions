@@ -36,6 +36,8 @@ export type LaidDot = {
   label: { x: number; y: number; anchor: 'middle' | 'start' | 'end' }
   // Second line under the name ("from GW4", "auto-sub"), if any.
   sub: string | null
+  // Line from the dot's edge to a label placed away from a crowded dot.
+  leader: [number, number, number, number] | null
 }
 
 export type Layout = {
@@ -115,45 +117,106 @@ function separate(dots: LaidDot[]) {
   }
 }
 
+// A dot with another dot this close is "crowded": its label moves out of the
+// cluster on a leader line, so it is clear which dot a name belongs to.
+const CROWD_DIST = DOT_R * 4.2
+const LABEL_GAP = 1.1
+const CALLOUT_DISTANCES = [DOT_R + 4, DOT_R + 7, DOT_R + 10.5]
+
+const area = (a: Box, b: Box) =>
+  Math.max(0, Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0)) *
+  Math.max(0, Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0))
+
+type Segment = [number, number, number, number]
+
+function segmentsCross([ax, ay, bx, by]: Segment, [cx, cy, dx, dy]: Segment) {
+  const side = (px: number, py: number, qx: number, qy: number, rx: number, ry: number) =>
+    Math.sign((qx - px) * (ry - py) - (qy - py) * (rx - px))
+  return (
+    side(ax, ay, bx, by, cx, cy) * side(ax, ay, bx, by, dx, dy) < 0 &&
+    side(cx, cy, dx, dy, ax, ay) * side(cx, cy, dx, dy, bx, by) < 0
+  )
+}
+
+// Distance from a circle centre to a segment, to catch leader lines through dots.
+function segmentDistance([ax, ay, bx, by]: Segment, px: number, py: number) {
+  const len2 = (bx - ax) ** 2 + (by - ay) ** 2
+  const t = len2 === 0 ? 0 : Math.max(0, Math.min(1, ((px - ax) * (bx - ax) + (py - ay) * (by - ay)) / len2))
+  return Math.hypot(ax + t * (bx - ax) - px, ay + t * (by - ay) - py)
+}
+
+// The label whose box touches point (px, py) on the side facing `angle` from the dot.
+function labelAt(d: LaidDot, angle: number, px: number, py: number): LaidDot['label'] {
+  const h = NAME_SIZE + (d.sub ? SUB_SIZE + 0.4 : 0)
+  const cos = Math.cos(angle)
+  const sin = Math.sin(angle)
+  if (cos > 0.4) return { x: px, y: py - h / 2 + NAME_SIZE * 0.8, anchor: 'start' }
+  if (cos < -0.4) return { x: px, y: py - h / 2 + NAME_SIZE * 0.8, anchor: 'end' }
+  return { x: px, y: sin > 0 ? py + NAME_SIZE * 0.8 : py - h + NAME_SIZE * 0.8, anchor: 'middle' }
+}
+
 function placeLabels(dots: LaidDot[]) {
   const placed: Box[] = []
-  const bounds: Box = { x0: 0, y0: 0, x1: VIEW_W, y1: VIEW_H }
-  const inside = (b: Box) => b.x0 >= bounds.x0 && b.x1 <= bounds.x1 && b.y0 >= bounds.y0 && b.y1 <= bounds.y1
-  // Top of the pitch first, so attackers get first pick of the space below them.
-  const order = [...dots].sort((a, b) => a.cy - b.cy)
+  const lines: Segment[] = []
+  const inside = (b: Box) => b.x0 >= 0 && b.x1 <= VIEW_W && b.y0 >= 0 && b.y1 <= VIEW_H
+  const crowded = new Set(
+    dots.filter((d) => dots.some((o) => o !== d && Math.hypot(o.cx - d.cx, o.cy - d.cy) < CROWD_DIST)),
+  )
+  // Lone dots first (they only need the space next to them), each group top first.
+  const order = [...dots].sort((a, b) => Number(crowded.has(a)) - Number(crowded.has(b)) || a.cy - b.cy)
+
   for (const d of order) {
-    const lines = d.sub ? NAME_SIZE + SUB_SIZE + 0.4 : NAME_SIZE
-    const gap = 1.1
-    const candidates: LaidDot['label'][] = [
-      { x: d.cx, y: d.cy + d.r + gap + NAME_SIZE * 0.8, anchor: 'middle' },
-      { x: d.cx, y: d.cy - d.r - gap - lines + NAME_SIZE * 0.8, anchor: 'middle' },
-      { x: d.cx + d.r + gap, y: d.cy + NAME_SIZE * 0.3, anchor: 'start' },
-      { x: d.cx - d.r - gap, y: d.cy + NAME_SIZE * 0.3, anchor: 'end' },
-      { x: d.cx + d.r * 0.7, y: d.cy + d.r + gap + NAME_SIZE * 0.8, anchor: 'start' },
-      { x: d.cx - d.r * 0.7, y: d.cy + d.r + gap + NAME_SIZE * 0.8, anchor: 'end' },
-      { x: d.cx + d.r * 0.7, y: d.cy - d.r - gap - lines + NAME_SIZE * 0.8, anchor: 'start' },
-      { x: d.cx - d.r * 0.7, y: d.cy - d.r - gap - lines + NAME_SIZE * 0.8, anchor: 'end' },
-    ]
-    // First spot that collides with nothing, else the one with the least overlap.
-    const area = (a: Box, b: Box) =>
-      Math.max(0, Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0)) *
-      Math.max(0, Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0))
-    let chosen = candidates[0]
+    type Option = { label: LaidDot['label']; leader: Segment | null }
+    const options: Option[] = []
+    if (!crowded.has(d)) {
+      // Below, above, right, left, then the diagonals.
+      const angles = [90, -90, 0, 180, 45, 135, -45, -135].map((a) => (a * Math.PI) / 180)
+      for (const a of angles) {
+        const reach = d.r + LABEL_GAP
+        options.push({ label: labelAt(d, a, d.cx + Math.cos(a) * reach, d.cy + Math.sin(a) * reach), leader: null })
+      }
+    } else {
+      // Away from the neighbours first, sweeping round to the other side.
+      const near = dots.filter((o) => o !== d && Math.hypot(o.cx - d.cx, o.cy - d.cy) < CROWD_DIST)
+      const mx = near.reduce((s, o) => s + o.cx, 0) / near.length
+      const my = near.reduce((s, o) => s + o.cy, 0) / near.length
+      const away = Math.hypot(d.cx - mx, d.cy - my) < 1e-6 ? Math.PI / 2 : Math.atan2(d.cy - my, d.cx - mx)
+      const angles = Array.from({ length: 16 }, (_, i) => away + (Math.ceil(i / 2) * (i % 2 ? 1 : -1) * Math.PI) / 8)
+      for (const dist of CALLOUT_DISTANCES) {
+        for (const a of angles) {
+          const px = d.cx + Math.cos(a) * dist
+          const py = d.cy + Math.sin(a) * dist
+          const leader: Segment = [d.cx + Math.cos(a) * d.r, d.cy + Math.sin(a) * d.r, px, py]
+          options.push({ label: labelAt(d, a, px, py), leader })
+        }
+      }
+    }
+
+    // First option that collides with nothing, else the one with the least overlap.
+    let chosen = options[0]
     let best = Infinity
-    for (const c of candidates) {
-      const box = labelBox({ ...d, label: c })
-      const score =
-        dots.reduce((sum, o) => sum + (o === d ? 0 : area(box, circleBox(o))), 0) +
+    for (const o of options) {
+      const box = labelBox({ ...d, label: o.label })
+      let score =
+        dots.reduce((sum, other) => sum + (other === d ? 0 : area(box, circleBox(other))), 0) +
         placed.reduce((sum, p) => sum + area(box, p) * 2, 0) +
         (inside(box) ? 0 : 1000)
+      if (o.leader) {
+        const leader = o.leader
+        score += dots.filter((other) => other !== d && segmentDistance(leader, other.cx, other.cy) < other.r + 0.3).length * 20
+        score += lines.filter((l) => segmentsCross(leader, l)).length * 20
+        score += placed.filter((p) => segmentDistance(leader, (p.x0 + p.x1) / 2, (p.y0 + p.y1) / 2) < (p.y1 - p.y0) / 2).length * 20
+      }
       if (score < best) {
         best = score
-        chosen = c
+        chosen = o
       }
       if (score === 0) break
     }
-    d.label = chosen
+    d.label = chosen.label
+    d.leader = chosen.leader
     placed.push(labelBox(d))
+    if (chosen.leader) lines.push(chosen.leader)
   }
 }
 
@@ -173,11 +236,12 @@ export function layoutDots(dots: PlotDot[]): Layout {
         r: GHOST_R,
         label: { x: cx, y: cy + GHOST_R + 1 + SUB_SIZE * 0.8, anchor: 'middle' },
         sub: null,
+        leader: null,
       })
       return
     }
     const [cx, cy] = toSvg(dot.x, dot.y)
-    onPitch.push({ dot, key, cx, cy, r: DOT_R, label: { x: cx, y: cy, anchor: 'middle' }, sub: subLabel(dot) })
+    onPitch.push({ dot, key, cx, cy, r: DOT_R, label: { x: cx, y: cy, anchor: 'middle' }, sub: subLabel(dot), leader: null })
   })
 
   separate(onPitch)
