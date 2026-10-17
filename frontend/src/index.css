@@ -113,44 +113,11 @@ input:focus-visible {
   color: var(--muted);
 }
 
-.gw-nav {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 0.75rem;
-}
-
-.pitch-wrap {
-  position: relative;
-}
-
-/* Arrows centred in the dark side margins of the pitch (7.5 of 83 m each),
-   halfway down. Inside the card, so the page never scrolls sideways. */
-.pitch-sides .gw-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-}
-
-.pitch-sides .gw-arrow-prev {
-  left: calc(4.5% - 1.25rem);
-}
-
-.pitch-sides .gw-arrow-next {
-  right: calc(4.5% - 1.25rem);
-}
-
-.gw-nav-current {
-  font-size: 1.1rem;
-  font-weight: 800;
-  font-stretch: 90%;
-}
-
 .gw-arrow {
   display: grid;
   place-items: center;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.2rem;
+  height: 2.2rem;
   padding: 0;
   border-radius: 50%;
   border: 1px solid var(--card-line);
@@ -159,8 +126,8 @@ input:focus-visible {
 }
 
 .gw-arrow svg {
-  width: 1.3rem;
-  height: 1.3rem;
+  width: 1.15rem;
+  height: 1.15rem;
   fill: none;
   stroke: currentColor;
   stroke-width: 2.5;
@@ -226,15 +193,18 @@ input:focus-visible {
   padding: 1rem 1rem 0.9rem;
 }
 
+/* Team name | < GW6 > | points, the gameweek centred on the card. */
 .card-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 1rem;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-areas: 'team gw score';
+  align-items: center;
+  gap: 0.75rem;
   margin-bottom: 0.8rem;
 }
 
 .card-team {
+  grid-area: team;
   min-width: 0;
 }
 
@@ -254,41 +224,44 @@ input:focus-visible {
 }
 
 .card-gw {
+  grid-area: gw;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.gw-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.card-score {
+  grid-area: score;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  flex-shrink: 0;
 }
 
-/* Phones: team name on its own line, then the gameweek arrows and the score. */
+/* Phones: team name and points on the first line, < GW6 > centred below. */
 @media (max-width: 30rem) {
   .card-head {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.6rem;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'team score'
+      'gw gw';
+    row-gap: 0.6rem;
   }
 
   .card-gw {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.4rem;
+    justify-self: center;
   }
-
-  .card-gw .score {
-    margin: 0;
-  }
-}
-
-.gw-line {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
 }
 
 .gw-label {
-  font-size: 1.05rem;
+  font-size: 1.3rem;
+  line-height: 1;
   font-weight: 800;
   font-stretch: 85%;
 }

@@ -1,8 +1,6 @@
 // One gameweek graphic: team name, gameweek, the pitch and its legend.
 // Kept self-contained so it can be exported as an image later (task 15).
 
-import type { ReactNode } from 'react'
-
 import type { Plot, Role } from './api'
 import Pitch from './Pitch'
 import { type DepthMode, ROLE_LETTER } from './pitchLayout'
@@ -29,17 +27,31 @@ function formatDate(iso: string) {
   return new Date(`${iso}Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
-export default function PitchCard({
-  plot,
-  depth = 'all',
-  pitchSides,
-}: {
-  plot: Plot
-  depth?: DepthMode
-  // Controls laid over the pitch's side margins (the gameweek arrows). Marked
-  // so the image export can leave them out.
-  pitchSides?: ReactNode
-}) {
+// Gameweeks the arrows go to (null = disabled). Left out for a static card.
+export type GwNav = { prev: number | null; next: number | null; go: (gw: number) => void }
+
+// Marked so the image export (task 15) leaves the arrows out.
+function GwArrow({ direction, nav }: { direction: 'prev' | 'next'; nav: GwNav }) {
+  const gw = direction === 'prev' ? nav.prev : nav.next
+  const label = direction === 'prev' ? 'Previous gameweek' : 'Next gameweek'
+  return (
+    <button
+      type="button"
+      className="gw-arrow"
+      data-export-ignore
+      disabled={gw === null}
+      onClick={() => gw !== null && nav.go(gw)}
+      aria-label={gw === null ? label : `${label} (GW${gw})`}
+      title={gw === null ? label : `GW${gw}`}
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d={direction === 'prev' ? 'M15 5 8 12l7 7' : 'M9 5l7 7-7 7'} />
+      </svg>
+    </button>
+  )
+}
+
+export default function PitchCard({ plot, depth = 'all', nav }: { plot: Plot; depth?: DepthMode; nav?: GwNav }) {
   const state = STATE_TEXT[plot.state]
   const hasGhosts = plot.dots.some((d) => d.is_ghost)
   const hasLinks = plot.dots.some((d) => d.link_group !== null)
@@ -51,10 +63,14 @@ export default function PitchCard({
           <p>{plot.manager_name}</p>
         </div>
         <div className="card-gw">
-          <div className="gw-line">
+          {nav && <GwArrow direction="prev" nav={nav} />}
+          <div className="gw-center">
             <span className="gw-label">GW{plot.gw}</span>
             <span className={`state state-${plot.state}`}>{state.badge}</span>
           </div>
+          {nav && <GwArrow direction="next" nav={nav} />}
+        </div>
+        <div className="card-score">
           <p className="score">
             <span className="score-number">{plot.points}</span>
             <span className="score-unit">pts</span>
@@ -63,18 +79,11 @@ export default function PitchCard({
         </div>
       </header>
 
-      <div className="pitch-wrap">
-        <Pitch
-          dots={plot.dots}
-          depth={depth}
-          title={`${plot.team_name}, gameweek ${plot.gw}: real average positions`}
-        />
-        {pitchSides && (
-          <div className="pitch-sides" data-export-ignore>
-            {pitchSides}
-          </div>
-        )}
-      </div>
+      <Pitch
+        dots={plot.dots}
+        depth={depth}
+        title={`${plot.team_name}, gameweek ${plot.gw}: real average positions`}
+      />
 
       <footer className="card-foot">
         <ul className="legend">
