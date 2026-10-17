@@ -107,6 +107,7 @@ def test_locked_gameweek(api):
     body = response.json()
     assert (body["team_id"], body["team_name"], body["gw"]) == (1234, "Test FC", 6)
     assert body["state"] == "locked"
+    assert body["status"] == "finished"
     assert (body["points"], body["transfers_cost"]) == (77, 0)
     assert (body["prev_gw"], body["next_gw"]) == (5, None)
     assert body["data_as_of"] == "2026-10-12T08:00:00"
@@ -168,7 +169,8 @@ def test_preview_when_not_synced(api, db):
     db.get(Gameweek, 6).positions_synced = False
     db.commit()
     body = api.get("/api/team/1234/plot/6").json()
-    assert body["state"] == "preview"
+    # Finished in FPL but not synced: preview, and the status says why.
+    assert (body["state"], body["status"]) == ("preview", "finished")
     ids = [d["fpl_id"] for d in body["dots"]]
     # XI as picked: 368 back in, 304 on the bench.
     assert 368 in ids and 304 not in ids

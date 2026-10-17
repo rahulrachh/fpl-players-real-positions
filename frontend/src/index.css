@@ -161,6 +161,49 @@ input:focus-visible {
   }
 }
 
+/* Empty and error states, and the first-load placeholder. */
+.notice {
+  margin-bottom: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--card-line);
+  border-radius: 10px;
+  background: var(--card);
+}
+
+.notice h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.notice p {
+  margin: 0;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.notice button {
+  margin-top: 0.7rem;
+}
+
+.notice-error {
+  border-color: var(--error);
+}
+
+.notice-error p {
+  color: var(--error);
+}
+
+.card-placeholder {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 83 / 111;
+  border-radius: 14px;
+  background: var(--grass);
+  color: #fff;
+  font-weight: 650;
+}
+
 /* Gameweek card */
 
 .pitch-card {

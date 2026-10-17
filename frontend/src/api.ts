@@ -113,6 +113,8 @@ export type Plot = {
   manager_name: string
   gw: number
   state: 'preview' | 'locked'
+  // FPL's status. A finished gameweek in preview is waiting for its positions.
+  status: 'in_progress' | 'finished'
   // bboost / 3xc / freehit / wildcard / manager; null = no chip.
   chip: string | null
   // Gameweek score before transfer hits (live while in progress), and the hit.

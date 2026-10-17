@@ -20,9 +20,20 @@ const CHIP_NAMES: Record<string, string> = {
   manager: 'Assistant Manager',
 }
 
-const STATE_TEXT: Record<Plot['state'], { badge: string; note: string }> = {
-  locked: { badge: 'Full time', note: 'Average positions in this gameweek, after auto-subs.' },
-  preview: { badge: 'Preview', note: "Picked XI, each from his most recent match." },
+function stateText(plot: Plot): { badge: string; note: string } {
+  if (plot.state === 'locked') {
+    return { badge: 'Full time', note: 'Average positions in this gameweek, after auto-subs.' }
+  }
+  if (plot.status === 'finished') {
+    return {
+      badge: 'Preview',
+      note: `GW${plot.gw} has finished, but its positions aren't in yet, so each player of the picked XI is shown from his most recent match.`,
+    }
+  }
+  return {
+    badge: 'Preview',
+    note: 'Gameweek in progress: the picked XI, each from his most recent match. Points are live.',
+  }
 }
 
 function formatDate(iso: string) {
@@ -73,7 +84,7 @@ function Bench({ players }: { players: BenchPlayer[] }) {
 }
 
 export default function PitchCard({ plot, nav }: { plot: Plot; nav?: GwNav }) {
-  const state = STATE_TEXT[plot.state]
+  const state = stateText(plot)
   const hasGhosts = plot.dots.some((d) => d.is_ghost)
   const hasLinks = plot.dots.some((d) => d.link_group !== null)
   return (

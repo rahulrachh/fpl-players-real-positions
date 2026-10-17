@@ -18,6 +18,7 @@ The web app reads the bundled read-only `fpl.db` and live FPL data. It never cal
 |---|---|
 | `team_id`, `team_name`, `manager_name` | From FPL. |
 | `gw` | The gameweek shown (for `latest`, the one it resolved to). |
+| `status` | FPL's gameweek status: `in_progress` or `finished`. A `finished` gameweek in the `preview` state is waiting for its positions (next sync + deploy). |
 | `chip` | Chip played this gameweek: `bboost` / `3xc` / `freehit` / `wildcard` / `manager`, or `null`. |
 | `state` | `locked`: finished in FPL and its positions are synced. Shows the XI after auto-subs, from that gameweek's matches. `preview`: anything else. Shows the XI as picked, each from his most recent match. See `docs/position-logic.md`. |
 | `points` / `transfers_cost` | The team's gameweek score before transfer hits (FPL `entry_history.points`, live while the gameweek is in progress) and the hit taken. |

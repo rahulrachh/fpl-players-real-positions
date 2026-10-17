@@ -11,7 +11,7 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy.orm import Session
 
-from app.fpl.team import TeamGameweek
+from app.fpl.team import GameweekStatus, TeamGameweek
 from app.logic.depth import POOL_MIN_MINUTES, rank_depth
 from app.logic.gameweek import (
     GameweekState,
@@ -87,6 +87,9 @@ class Plot(_Model):
     manager_name: str
     gw: int
     state: GameweekState
+    # FPL's status: in_progress or finished. A finished gameweek in the
+    # preview state is waiting for its positions (next sync + deploy).
+    status: GameweekStatus
     # bboost / 3xc / freehit / wildcard / manager; None = no chip.
     chip: str | None
     # The team's gameweek score before hits, and the hit (FPL `entry_history`).
@@ -175,6 +178,7 @@ def build_plot(team: TeamGameweek, session: Session, latest_gw: int | None) -> P
         manager_name=team.manager_name,
         gw=team.gameweek,
         state=state,
+        status=team.status,
         chip=team.chip,
         points=team.points,
         transfers_cost=team.transfers_cost,

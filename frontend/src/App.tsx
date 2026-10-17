@@ -1,5 +1,6 @@
 // Team ID → the latest (or ?gw=) gameweek graphic. Team and gameweek are kept in
-// the URL: ?team=2020649&gw=6. The arrows either side of "GW6" in the card
+// the URL: ?team=2020649&gw=6; the last team loaded is remembered in this
+// browser and opens next time. The arrows either side of "GW6" in the card
 // header (and the arrow keys) step through the team's gameweeks (the plot API
 // says which exist).
 
@@ -8,17 +9,57 @@ import { type FormEvent, useEffect, useState } from 'react'
 import { ApiError, fetchPlot, type Plot } from './api'
 import PitchCard from './PitchCard'
 
-const ERROR_MESSAGES: Record<string, string> = {
-  team_not_found: 'No FPL team has this ID.',
-  gameweek_before_team_started: 'This team had not joined yet in this gameweek.',
-  gameweek_not_started: "This gameweek's deadline has not passed yet, so its picks are private.",
-  gameweek_out_of_range: 'This gameweek is not in the season.',
-  fpl_unavailable: 'FPL is unavailable, try again shortly.',
+const GW_ERRORS: Record<string, (gw: string) => string> = {
+  gameweek_before_team_started: (gw) => `This team hadn't joined FPL yet in ${gw}.`,
+  gameweek_not_started: (gw) => `${gw} hasn't started yet: picks stay private until the deadline.`,
+  gameweek_out_of_range: (gw) => `${gw} isn't in this season.`,
+}
+
+// What went wrong with one request, and what the page offers next.
+type Failure = { code: string | null; message: string; action: 'retry' | 'latest' | null }
+
+function describeFailure(err: unknown, teamId: number, gw: number | null): Failure {
+  const code = err instanceof ApiError ? err.code : null
+  const label = gw === null ? 'The latest gameweek' : `GW${gw}`
+  if (code === 'team_not_found') {
+    return {
+      code,
+      message: `No FPL team has the ID ${teamId}. Your ID is the number in the address of your Points page on the FPL site.`,
+      action: null,
+    }
+  }
+  if (code && GW_ERRORS[code]) return { code, message: GW_ERRORS[code](label), action: 'latest' }
+  if (code === 'fpl_unavailable') {
+    return { code, message: "FPL isn't responding right now. It's often busy around deadlines.", action: 'retry' }
+  }
+  return { code, message: "Couldn't reach the Real Shape server.", action: 'retry' }
 }
 
 // The answer to one request, keyed by "team/gw": while the key differs from
 // the current team and gameweek, that request is still loading.
-type Result = { key: string } & ({ plot: Plot } | { error: string })
+type Result = { key: string } & ({ plot: Plot } | { failure: Failure })
+
+// The last team that loaded, so the page opens on it next time. Storage can be
+// unavailable (private windows, blocked site data): then nothing is remembered.
+const STORED_TEAM = 'realshape.team'
+
+function readStoredTeam(): number | null {
+  try {
+    const value = Number(window.localStorage.getItem(STORED_TEAM))
+    return Number.isInteger(value) && value > 0 ? value : null
+  } catch {
+    return null
+  }
+}
+
+function storeTeam(team: number | null) {
+  try {
+    if (team === null) window.localStorage.removeItem(STORED_TEAM)
+    else window.localStorage.setItem(STORED_TEAM, String(team))
+  } catch {
+    // Not remembered; the page still works.
+  }
+}
 
 function readUrl() {
   const params = new URLSearchParams(window.location.search)
@@ -26,7 +67,9 @@ function readUrl() {
     const value = Number(params.get(key))
     return Number.isInteger(value) && value > 0 ? value : null
   }
-  return { team: num('team'), gw: num('gw'), fixture: params.get('fixture') }
+  const team = num('team')
+  // A gameweek in the URL only makes sense with its team.
+  return { team: team ?? readStoredTeam(), gw: team ? num('gw') : null, fixture: params.get('fixture') }
 }
 
 function writeUrl(team: number, gw: number) {
@@ -42,6 +85,8 @@ function App() {
   const [teamId, setTeamId] = useState<number | null>(initial.team)
   const [gw, setGw] = useState<number | null>(initial.gw)
   const [result, setResult] = useState<Result | null>(null)
+  // Bumped by "Try again" to repeat the same request.
+  const [attempt, setAttempt] = useState(0)
   // The last graphic loaded for this team: stays on screen (dimmed) while the
   // next gameweek loads, and gives the prev / next gameweeks.
   const [shown, setShown] = useState<Plot | null>(null)
@@ -50,7 +95,8 @@ function App() {
   const key = teamId !== null ? `${teamId}/${gw ?? 'latest'}` : null
   const current = result !== null && result.key === key ? result : null
   const loading = key !== null && current === null
-  const failed = current !== null && 'error' in current
+  const failure = current !== null && 'failure' in current ? current.failure : null
+  const failed = failure !== null
   const plot = fixture ?? (shown && shown.team_id === teamId && !failed ? shown : null)
   const prevGw = plot && !fixture && !loading ? plot.prev_gw : null
   const nextGw = plot && !fixture && !loading ? plot.next_gw : null
@@ -82,29 +128,32 @@ function App() {
       .then((plot) => {
         if (cancelled) return
         writeUrl(teamId, plot.gw)
+        storeTeam(teamId)
         setResult({ key: requestKey, plot })
         setShown(plot)
       })
-      .catch((err: Error) => {
+      .catch((err: unknown) => {
         if (cancelled) return
-        const code = err instanceof ApiError ? err.code : null
-        setResult({ key: requestKey, error: (code && ERROR_MESSAGES[code]) || err.message })
+        const failure = describeFailure(err, teamId, gw)
+        // Don't reopen on a team that doesn't exist.
+        if (failure.code === 'team_not_found' && readStoredTeam() === teamId) storeTeam(null)
+        setResult({ key: requestKey, failure })
       })
     return () => {
       cancelled = true
     }
-  }, [teamId, gw])
+  }, [teamId, gw, attempt])
 
   function submit(event: FormEvent) {
     event.preventDefault()
     const id = Number(input.trim())
     const valid = Number.isInteger(id) && id > 0
     setInputError(valid ? null : 'A team ID is a positive number.')
-    if (valid && id !== teamId) {
-      setTeamId(id)
-      // A new team opens on its latest gameweek.
-      setGw(null)
-    }
+    if (!valid) return
+    // Opens on the team's latest gameweek; the same team again reloads it.
+    setTeamId(id)
+    setGw(null)
+    setAttempt((n) => n + 1)
   }
 
   return (
@@ -127,8 +176,36 @@ function App() {
       </form>
 
       {inputError && <p className="error">{inputError}</p>}
-      {!fixture && current && 'error' in current && <p className="error">{current.error}</p>}
-      {!plot && loading && <p className="muted">Loading…</p>}
+      {!fixture && teamId === null && (
+        <section className="notice">
+          <h2>See where your team really played</h2>
+          <p>
+            Enter your FPL team ID to plot your players where they actually played, gameweek by gameweek. It's the
+            number in the address of your Points page on the FPL site, for example
+            fantasy.premierleague.com/entry/<strong>2020649</strong>/event/6.
+          </p>
+        </section>
+      )}
+      {!fixture && failure && (
+        <section className="notice notice-error" role="alert">
+          <p>{failure.message}</p>
+          {failure.action === 'retry' && (
+            <button type="button" onClick={() => setAttempt((n) => n + 1)}>
+              Try again
+            </button>
+          )}
+          {failure.action === 'latest' && gw !== null && (
+            <button type="button" onClick={() => setGw(null)}>
+              Show the latest gameweek
+            </button>
+          )}
+        </section>
+      )}
+      {!plot && loading && (
+        <div className="card-placeholder" aria-busy="true">
+          <p>Loading {gw === null ? 'the latest gameweek' : `GW${gw}`}…</p>
+        </div>
+      )}
       {plot && (
         <div className={loading && !fixture ? 'card-slot is-loading' : 'card-slot'} aria-busy={loading && !fixture}>
           <PitchCard
