@@ -20,5 +20,5 @@ MVP task breakdown (Gameweek mode only). Planner and roast are v1: see `v1-backl
 | 12 | [Gameweek plot API endpoint](12-gameweek-api.md) | done (2026-10-17) |
 | 13 | [Pitch rendering (static, one locked GW)](13-pitch-rendering.md) 🛑 | done (approved 2026-10-17) |
 | 14 | [Gameweek mode UI + navigation](14-gameweek-mode-ui.md) | done (2026-10-17) |
-| 15 | [Image export](15-image-export.md) | todo |
+| 15 | [Image export](15-image-export.md) | done (2026-10-17) |
 | 16 | [Deploy-readiness + Vercel deployment](16-deploy-vercel.md) 🛑 👤 | todo |

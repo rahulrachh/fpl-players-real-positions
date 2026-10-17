@@ -17,12 +17,15 @@
   --chalk: rgba(255, 255, 255, 0.78);
   --halo: #1d4f2d;
 
-  /* FPL roles. Chosen to stay apart from each other and from the grass. */
-  --gk: #ffd23f;
+  /* FPL roles. Chosen to stay apart from each other and from the grass.
+     The keeper's white is slightly grey so the white dot outline still shows. */
+  --gk: #f2f2f2;
   --def: #5cc8ff;
-  --mid: #ff8fd6;
+  --mid: #ffd23f;
   --fwd: #ff5a36;
   --captain: #000;
+  /* Chip and Triple Captain tags, captain armband edge. */
+  --gold: #ffc21a;
   --ghost: #9aa59e;
 }
 
@@ -337,7 +340,7 @@ input:focus-visible {
   border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 750;
-  background: var(--gk);
+  background: var(--gold);
   color: #10241a;
 }
 
@@ -372,32 +375,43 @@ input:focus-visible {
   text-align: center;
 }
 
-.bench-dot {
-  display: grid;
-  place-items: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  border: 2px solid #fff;
-  box-shadow: 0 0 0 1px var(--card-line);
+/* A small card per bench player, like FPL's bench: name on top, points in
+   the role color below. */
+.bench-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 4.6rem;
+  overflow: hidden;
+  border-radius: 6px;
+  border: 1px solid var(--card-line);
+  background: #fff;
+  text-align: center;
+}
+
+.bench-name {
+  padding: 0.2rem 0.3rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.72rem;
+  font-weight: 650;
+  color: #10241a;
+}
+
+.bench-points {
+  padding: 0.1rem 0;
+  border-top: 1px solid var(--card-line);
+  font-size: 0.85rem;
   font-weight: 800;
   font-stretch: 85%;
   color: #10241a;
 }
 
-.bench-dot.role-GK { background: var(--gk); }
-.bench-dot.role-DEF { background: var(--def); }
-.bench-dot.role-MID { background: var(--mid); }
-.bench-dot.role-FWD { background: var(--fwd); }
-
-.bench-name {
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 0.8rem;
-  font-weight: 600;
-}
+.bench-card.role-GK .bench-points { background: var(--gk); }
+.bench-card.role-DEF .bench-points { background: var(--def); }
+.bench-card.role-MID .bench-points { background: var(--mid); }
+.bench-card.role-FWD .bench-points { background: var(--fwd); }
 
 .bench-note {
   font-size: 0.7rem;
@@ -445,7 +459,7 @@ input:focus-visible {
 .key-captain.key-triple {
   width: 1.5rem;
   border-radius: 999px;
-  background: var(--gk);
+  background: var(--gold);
   color: var(--captain);
   border-color: var(--captain);
 }
@@ -455,7 +469,7 @@ input:focus-visible {
   height: 0.95rem;
   background: var(--captain);
   color: #fff;
-  border-color: var(--gk);
+  border-color: var(--gold);
 }
 
 .key-link {
@@ -477,6 +491,90 @@ input:focus-visible {
   margin: 0.6rem 0 0;
   font-size: 0.8rem;
   color: var(--muted);
+}
+
+/* Share button in the pitch's bottom-right corner (on the dark border beside
+   the touchline), and its menu, which opens upward. */
+.pitch-wrap {
+  position: relative;
+}
+
+.share {
+  position: absolute;
+  right: 0.35rem;
+  bottom: 0.35rem;
+}
+
+.share-button {
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  color: #fff;
+}
+
+.share-button:hover,
+.share-button[aria-expanded='true'] {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.share-button svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.share-menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 0.4rem);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  width: max-content;
+  max-width: 14rem;
+  padding: 0.6rem;
+  border: 1px solid var(--card-line);
+  border-radius: 10px;
+  background: var(--card);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.share-menu button {
+  white-space: nowrap;
+}
+
+.share-menu .secondary {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--card-line);
+}
+
+.share-status {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.share-status.error {
+  color: var(--error);
+}
+
+button.link {
+  padding: 0;
+  background: none;
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
 }
 
 /* Pitch SVG (units are metres) */
@@ -547,12 +645,12 @@ input:focus-visible {
 
 .armband rect {
   fill: var(--captain);
-  stroke: var(--gk);
+  stroke: var(--gold);
   stroke-width: 0.3;
 }
 
 .armband.armband-triple rect {
-  fill: var(--gk);
+  fill: var(--gold);
   stroke: var(--captain);
 }
 
@@ -589,4 +687,9 @@ input:focus-visible {
 
 .ghost .label {
   fill: var(--ghost);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: default;
 }

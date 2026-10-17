@@ -1,9 +1,13 @@
 // One gameweek graphic: team name, gameweek, score and chip, the pitch, the
 // bench and the legend.
-// Kept self-contained so it can be exported as an image later (task 15).
+// Kept self-contained: the image export (exportImage.ts) draws exactly this card.
+
+import { useRef } from 'react'
 
 import type { BenchPlayer, Plot, Role } from './api'
+import { exportFilename } from './exportImage'
 import Pitch from './Pitch'
+import ShareMenu from './ShareMenu'
 
 const ROLE_NAMES: Record<Role, string> = {
   GK: 'Goalkeeper',
@@ -44,7 +48,7 @@ function formatDate(iso: string) {
 // Gameweeks the arrows go to (null = disabled). Left out for a static card.
 export type GwNav = { prev: number | null; next: number | null; go: (gw: number) => void }
 
-// Marked so the image export (task 15) leaves the arrows out.
+// Marked so the image export leaves the arrows out.
 function GwArrow({ direction, nav }: { direction: 'prev' | 'next'; nav: GwNav }) {
   const gw = direction === 'prev' ? nav.prev : nav.next
   const label = direction === 'prev' ? 'Previous gameweek' : 'Next gameweek'
@@ -73,8 +77,10 @@ function Bench({ players }: { players: BenchPlayer[] }) {
       <ol>
         {players.map((p) => (
           <li key={p.fpl_id} title={`${p.name} (${p.role}, ${p.club})`}>
-            <span className={`bench-dot role-${p.role}`}>{p.points}</span>
-            <span className="bench-name">{p.web_name}</span>
+            <span className={`bench-card role-${p.role}`}>
+              <span className="bench-name">{p.web_name}</span>
+              <span className="bench-points">{p.points}</span>
+            </span>
             {p.subbed_off && <span className="bench-note">did not play</span>}
           </li>
         ))}
@@ -84,11 +90,12 @@ function Bench({ players }: { players: BenchPlayer[] }) {
 }
 
 export default function PitchCard({ plot, nav }: { plot: Plot; nav?: GwNav }) {
+  const card = useRef<HTMLElement>(null)
   const state = stateText(plot)
   const hasGhosts = plot.dots.some((d) => d.is_ghost)
   const hasLinks = plot.dots.some((d) => d.link_group !== null)
   return (
-    <article className="pitch-card">
+    <article className="pitch-card" ref={card}>
       <header className="card-head">
         <div className="card-team">
           <h2>{plot.team_name}</h2>
@@ -112,11 +119,18 @@ export default function PitchCard({ plot, nav }: { plot: Plot; nav?: GwNav }) {
         </div>
       </header>
 
-      <Pitch
-        dots={plot.dots}
-        chip={plot.chip}
-        title={`${plot.team_name}, gameweek ${plot.gw}: real average positions`}
-      />
+      <div className="pitch-wrap">
+        <Pitch
+          dots={plot.dots}
+          chip={plot.chip}
+          title={`${plot.team_name}, gameweek ${plot.gw}: real average positions`}
+        />
+        <ShareMenu
+          card={card}
+          filename={exportFilename(plot.team_id, plot.gw)}
+          title={`${plot.team_name}, GW${plot.gw}: Real Shape`}
+        />
+      </div>
 
       {plot.bench.length > 0 && <Bench players={plot.bench} />}
 
