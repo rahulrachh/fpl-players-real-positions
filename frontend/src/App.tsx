@@ -1,6 +1,7 @@
 // Team ID → the latest (or ?gw=) gameweek graphic. Team and gameweek are kept in
-// the URL: ?team=2020649&gw=6. Previous / next step through the team's
-// gameweeks (the plot API says which exist).
+// the URL: ?team=2020649&gw=6. Arrows beside the gameweek in the card header
+// (and the arrow keys) step through the team's gameweeks (the plot API says
+// which exist).
 
 import { type FormEvent, useEffect, useState } from 'react'
 
@@ -71,6 +72,19 @@ function App() {
   const loading = key !== null && current === null
   const failed = current !== null && 'error' in current
   const plot = fixture ?? (shown && shown.team_id === teamId && !failed ? shown : null)
+  const prevGw = plot && !fixture && !loading ? plot.prev_gw : null
+  const nextGw = plot && !fixture && !loading ? plot.next_gw : null
+
+  // Left / right arrow keys step gameweeks too (not while typing a team ID).
+  useEffect(() => {
+    function onKey(event: KeyboardEvent) {
+      if (event.target instanceof HTMLInputElement || event.altKey || event.ctrlKey || event.metaKey) return
+      if (event.key === 'ArrowLeft' && prevGw !== null) setGw(prevGw)
+      if (event.key === 'ArrowRight' && nextGw !== null) setGw(nextGw)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [prevGw, nextGw])
 
   useEffect(() => {
     if (import.meta.env.DEV && initial.fixture === 'edges') {
@@ -131,25 +145,6 @@ function App() {
       </form>
 
       {inputError && <p className="error">{inputError}</p>}
-      {plot && !fixture && (
-        <nav className="gw-nav" aria-label="Gameweek">
-          <button
-            type="button"
-            disabled={plot.prev_gw === null || loading}
-            onClick={() => setGw(plot.prev_gw)}
-          >
-            {plot.prev_gw === null ? 'Previous' : `GW${plot.prev_gw}`}
-          </button>
-          <span className="gw-nav-current">Gameweek {loading && gw !== null ? gw : plot.gw}</span>
-          <button
-            type="button"
-            disabled={plot.next_gw === null || loading}
-            onClick={() => setGw(plot.next_gw)}
-          >
-            {plot.next_gw === null ? 'Next' : `GW${plot.next_gw}`}
-          </button>
-        </nav>
-      )}
       {plot && (
         <div className="view-switch" role="group" aria-label="Depth view">
           {DEPTH_VIEWS.map((v) => (
@@ -172,7 +167,11 @@ function App() {
       {!plot && loading && <p className="muted">Loading…</p>}
       {plot && (
         <div className={loading && !fixture ? 'card-slot is-loading' : 'card-slot'} aria-busy={loading && !fixture}>
-          <PitchCard plot={plot} depth={depth} />
+          <PitchCard
+            plot={plot}
+            depth={depth}
+            nav={fixture ? undefined : { prev: prevGw, next: nextGw, go: setGw }}
+          />
         </div>
       )}
     </main>
