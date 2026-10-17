@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 
+import TeamList from './TeamList'
+
 type Health = {
   status: string
   database: { file: string; ok: boolean; read_only?: boolean; error?: string }
@@ -22,24 +24,21 @@ function App() {
   return (
     <main>
       <h1>FPL Real Shape</h1>
-      <h2>API health</h2>
-      {error && <p className="error">Backend unreachable: {error}</p>}
-      {!error && !health && <p>Checking…</p>}
-      {health && (
-        <dl>
-          <dt>Status</dt>
-          <dd>{health.status}</dd>
-          <dt>Database</dt>
-          <dd>
-            {health.database.file}{' '}
-            {health.database.ok
-              ? health.database.read_only
-                ? '(opened read-only)'
-                : '(NOT read-only)'
-              : `(error: ${health.database.error})`}
-          </dd>
-        </dl>
-      )}
+      <TeamList />
+      <footer className="muted">
+        API:{' '}
+        {error
+          ? `backend unreachable (${error})`
+          : health
+            ? `${health.status}, ${health.database.file}${
+                health.database.ok
+                  ? health.database.read_only
+                    ? ' (read-only)'
+                    : ' (NOT read-only)'
+                  : ` (error: ${health.database.error})`
+              }`
+            : 'checking…'}
+      </footer>
     </main>
   )
 }

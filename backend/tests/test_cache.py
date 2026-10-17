@@ -51,3 +51,13 @@ def test_evicts_when_full():
     cache.set("c", 3)
     assert cache.get("a") is None
     assert cache.get("b") == 2 and cache.get("c") == 3
+
+
+def test_per_entry_ttl_overrides_default():
+    clock = FakeClock()
+    cache = TTLCache(ttl_seconds=5, clock=clock)
+    cache.set("short", 1)
+    cache.set("long", 2, ttl_seconds=100)
+    clock.now = 50
+    assert cache.get("short") is None
+    assert cache.get("long") == 2

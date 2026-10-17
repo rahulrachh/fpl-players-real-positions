@@ -2,19 +2,54 @@
 
 import logging
 
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, Path, Request
+from fastapi.responses import JSONResponse
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
 from app.db.session import get_ro_session
+from app.fpl.client import FplError
+from app.fpl.team import (
+    GameweekBeforeTeamStarted,
+    GameweekNotStarted,
+    GameweekOutOfRange,
+    TeamError,
+    TeamGameweek,
+    TeamNotFound,
+    TeamService,
+    get_team_service,
+)
 
 settings = get_settings()
 logging.basicConfig(level=settings.log_level.upper())
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="FPL Real Shape Visualizer")
+
+# Team error → (HTTP status, machine-readable code for the website).
+_TEAM_ERRORS: dict[type[TeamError], tuple[int, str]] = {
+    TeamNotFound: (404, "team_not_found"),
+    GameweekOutOfRange: (404, "gameweek_out_of_range"),
+    GameweekBeforeTeamStarted: (404, "gameweek_before_team_started"),
+    GameweekNotStarted: (404, "gameweek_not_started"),
+}
+
+
+@app.exception_handler(TeamError)
+def _team_error(_request: Request, exc: TeamError) -> JSONResponse:
+    status, code = _TEAM_ERRORS.get(type(exc), (404, "not_found"))
+    return JSONResponse(status_code=status, content={"code": code, "detail": str(exc)})
+
+
+@app.exception_handler(FplError)
+def _fpl_error(_request: Request, exc: FplError) -> JSONResponse:
+    logger.warning("FPL request failed: %s: %s", type(exc).__name__, exc)
+    return JSONResponse(
+        status_code=503,
+        content={"code": "fpl_unavailable", "detail": "FPL is unavailable, try again shortly"},
+    )
 
 
 @app.get("/api/health")
@@ -34,3 +69,22 @@ def _connection_is_read_only(session: Session) -> bool:
     # sqlite3 exposes no direct "opened read-only" flag; the URI mode is the
     # source of truth, so confirm the engine was built with `mode=ro`.
     return "mode=ro" in str(session.get_bind().url)
+
+
+@app.get("/api/team/{team_id}/gameweek/{gw}")
+def team_gameweek(
+    team_id: int = Path(ge=1),
+    gw: int = Path(ge=1),
+    session: Session = Depends(get_ro_session),
+    service: TeamService = Depends(get_team_service),
+) -> TeamGameweek:
+    return service.load_team_gameweek(team_id, gw, session)
+
+
+@app.get("/api/gameweeks/latest")
+def latest_gameweeks(service: TeamService = Depends(get_team_service)) -> dict:
+    """Newest gameweek with public picks, and newest with every fixture finished."""
+    return {
+        "latest": service.latest_gameweek(),
+        "last_finished": service.last_finished_gameweek(),
+    }

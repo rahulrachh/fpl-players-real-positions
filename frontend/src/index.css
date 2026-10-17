@@ -1,6 +1,23 @@
 :root {
   font-family: system-ui, sans-serif;
   color-scheme: light dark;
+  --muted: #6b7280;
+  --line: #d1d5db;
+  --captain: #b45309;
+  --vice: #4b5563;
+  --sub-in: #15803d;
+  --sub-out: #b91c1c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --muted: #9ca3af;
+    --line: #374151;
+    --captain: #fbbf24;
+    --vice: #9ca3af;
+    --sub-in: #4ade80;
+    --sub-out: #f87171;
+  }
 }
 
 main {
@@ -19,4 +36,147 @@ dd {
 
 .error {
   color: #c62828;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+footer {
+  margin-top: 3rem;
+  font-size: 0.85rem;
+}
+
+.team-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.team-form input {
+  width: 10rem;
+  padding: 0.35rem 0.5rem;
+  font: inherit;
+}
+
+button {
+  font: inherit;
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: default;
+}
+
+.gw-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1.25rem 0;
+}
+
+.team-header h2 {
+  margin-bottom: 0;
+}
+
+.team-header > p {
+  margin-top: 0.25rem;
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin: 0.75rem 0;
+}
+
+.facts dt {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.facts dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.subs {
+  font-size: 0.9rem;
+}
+
+h3 {
+  margin: 1.5rem 0 0.25rem;
+}
+
+h4 {
+  margin: 0.75rem 0 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.picks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.picks li {
+  display: grid;
+  grid-template-columns: 2.75rem 1fr 3rem 9rem;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.role,
+.club {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.name {
+  font-weight: 500;
+}
+
+.badges {
+  display: flex;
+  gap: 0.35rem;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.05rem 0.4rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+}
+
+.badge-captain {
+  color: var(--captain);
+}
+
+.badge-vice {
+  color: var(--vice);
+}
+
+.badge-sub-in {
+  color: var(--sub-in);
+}
+
+.badge-sub-out {
+  color: var(--sub-out);
+}
+
+.mult {
+  font-size: 0.8rem;
+  color: var(--muted);
 }

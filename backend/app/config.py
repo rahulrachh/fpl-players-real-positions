@@ -28,6 +28,9 @@ class Settings(BaseSettings):
     fpl_api_base_url: str = "https://fantasy.premierleague.com/api"
     # TTL for the in-memory cache of live FPL calls.
     fpl_cache_ttl_seconds: float = Field(default=60.0, ge=0)
+    # TTL for a team's gameweek once FPL has checked its points (data_checked):
+    # that data never changes. Unfinished gameweeks use FPL_CACHE_TTL_SECONDS.
+    fpl_finished_cache_ttl_seconds: float = Field(default=86400.0, ge=0)
 
     # Positions source (Sofascore), used only by offline scripts.
     sofascore_api_base_url: str = "https://api.sofascore.com/api/v1"

@@ -38,11 +38,13 @@ class TTLCache(Generic[V]):
                 return default
             return value
 
-    def set(self, key: Hashable, value: V) -> None:
+    def set(self, key: Hashable, value: V, ttl_seconds: float | None = None) -> None:
+        """Store `value`; `ttl_seconds` overrides the cache's default TTL."""
+        ttl = self.ttl_seconds if ttl_seconds is None else ttl_seconds
         with self._lock:
             if len(self._data) >= self.max_entries and key not in self._data:
                 self._evict()
-            self._data[key] = (self._clock() + self.ttl_seconds, value)
+            self._data[key] = (self._clock() + ttl, value)
 
     def get_or_set(self, key: Hashable, factory: Callable[[], V]) -> V:
         """Return the cached value, or call `factory` and cache its result.
