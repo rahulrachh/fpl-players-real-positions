@@ -1,5 +1,6 @@
 // Team ID → the latest (or ?gw=) gameweek graphic. Team and gameweek are kept in
-// the URL: ?team=2020649&gw=6. Navigation between gameweeks comes in task 14.
+// the URL: ?team=2020649&gw=6. Previous / next step through the team's
+// gameweeks (the plot API says which exist).
 
 import { type FormEvent, useEffect, useState } from 'react'
 
@@ -57,13 +58,19 @@ function App() {
   const initial = readUrl()
   const [input, setInput] = useState(initial.team ? String(initial.team) : '')
   const [teamId, setTeamId] = useState<number | null>(initial.team)
-  const [gw] = useState<number | null>(initial.gw)
+  const [gw, setGw] = useState<number | null>(initial.gw)
   const [depth, setDepth] = useState<DepthMode>(initial.depth)
   const [result, setResult] = useState<Result | null>(null)
+  // The last graphic loaded for this team: stays on screen (dimmed) while the
+  // next gameweek loads, and gives the prev / next gameweeks.
+  const [shown, setShown] = useState<Plot | null>(null)
   const [inputError, setInputError] = useState<string | null>(null)
   const [fixture, setFixture] = useState<Plot | null>(null)
   const key = teamId !== null ? `${teamId}/${gw ?? 'latest'}` : null
   const current = result !== null && result.key === key ? result : null
+  const loading = key !== null && current === null
+  const failed = current !== null && 'error' in current
+  const plot = fixture ?? (shown && shown.team_id === teamId && !failed ? shown : null)
 
   useEffect(() => {
     if (import.meta.env.DEV && initial.fixture === 'edges') {
@@ -80,6 +87,7 @@ function App() {
         if (cancelled) return
         writeUrl(teamId, plot.gw)
         setResult({ key: requestKey, plot })
+        setShown(plot)
       })
       .catch((err: Error) => {
         if (cancelled) return
@@ -96,7 +104,11 @@ function App() {
     const id = Number(input.trim())
     const valid = Number.isInteger(id) && id > 0
     setInputError(valid ? null : 'A team ID is a positive number.')
-    if (valid) setTeamId(id)
+    if (valid && id !== teamId) {
+      setTeamId(id)
+      // A new team opens on its latest gameweek.
+      setGw(null)
+    }
   }
 
   return (
@@ -119,7 +131,26 @@ function App() {
       </form>
 
       {inputError && <p className="error">{inputError}</p>}
-      {(fixture || (current && 'plot' in current)) && (
+      {plot && !fixture && (
+        <nav className="gw-nav" aria-label="Gameweek">
+          <button
+            type="button"
+            disabled={plot.prev_gw === null || loading}
+            onClick={() => setGw(plot.prev_gw)}
+          >
+            {plot.prev_gw === null ? 'Previous' : `GW${plot.prev_gw}`}
+          </button>
+          <span className="gw-nav-current">Gameweek {loading && gw !== null ? gw : plot.gw}</span>
+          <button
+            type="button"
+            disabled={plot.next_gw === null || loading}
+            onClick={() => setGw(plot.next_gw)}
+          >
+            {plot.next_gw === null ? 'Next' : `GW${plot.next_gw}`}
+          </button>
+        </nav>
+      )}
+      {plot && (
         <div className="view-switch" role="group" aria-label="Depth view">
           {DEPTH_VIEWS.map((v) => (
             <button
@@ -137,10 +168,13 @@ function App() {
           ))}
         </div>
       )}
-      {fixture && <PitchCard plot={fixture} depth={depth} />}
-      {!fixture && key !== null && current === null && <p className="muted">Loading…</p>}
       {!fixture && current && 'error' in current && <p className="error">{current.error}</p>}
-      {!fixture && current && 'plot' in current && <PitchCard plot={current.plot} depth={depth} />}
+      {!plot && loading && <p className="muted">Loading…</p>}
+      {plot && (
+        <div className={loading && !fixture ? 'card-slot is-loading' : 'card-slot'} aria-busy={loading && !fixture}>
+          <PitchCard plot={plot} depth={depth} />
+        </div>
+      )}
     </main>
   )
 }

@@ -100,14 +100,19 @@ function Dot({ d }: { d: LaidDot }) {
       <text className="dot-letter" x={cx} y={cy + 0.75} fontSize={2.1} textAnchor="middle">
         {ROLE_LETTER[dot.role]}
       </text>
-      {dot.is_captain && (
-        <g className="armband">
-          <circle cx={cx + r * 0.85} cy={cy - r * 0.85} r={1.35} />
-          <text x={cx + r * 0.85} y={cy - r * 0.85 + 0.62} fontSize={1.75} textAnchor="middle">
-            C
-          </text>
-        </g>
-      )}
+    </g>
+  )
+}
+
+// Drawn after every dot so a neighbouring dot never covers it.
+function Armband({ d }: { d: LaidDot }) {
+  const { cx, cy, r } = d
+  return (
+    <g className="armband">
+      <circle cx={cx + r * 0.85} cy={cy - r * 0.85} r={1.35} />
+      <text x={cx + r * 0.85} y={cy - r * 0.85 + 0.62} fontSize={1.75} textAnchor="middle">
+        C
+      </text>
     </g>
   )
 }
@@ -168,6 +173,7 @@ export default function Pitch({
       {layout.dots.map((d) => (
         <Dot key={d.key} d={d} />
       ))}
+      {layout.dots.map((d) => d.dot.is_captain && <Armband key={`${d.key}-armband`} d={d} />)}
       {layout.dots.map((d) => (
         <Label key={`${d.key}-label`} d={d} />
       ))}
