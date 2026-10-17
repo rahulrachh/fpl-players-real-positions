@@ -1,0 +1,1161 @@
+{
+  "home": [
+    {
+      "player": {
+        "name": "Erling Haaland",
+        "firstName": "Erling",
+        "lastName": "Haaland",
+        "slug": "erling-haaland",
+        "shortName": "E. Haaland",
+        "position": "F",
+        "jerseyNumber": "9",
+        "userCount": 1077490,
+        "gender": "M",
+        "sofascoreId": "ghm-8ni",
+        "id": 839956,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "إيرلينغ هالاند",
+            "bn": "এরলিং হালান্ড",
+            "hi": "एर्लिंग हालैंड",
+            "ru": "Эрлинг Холанд"
+          },
+          "shortNameTranslation": {
+            "ar": "إ. هالاند",
+            "bn": "ই. হালান্ড",
+            "hi": "ई. हालैंड",
+            "ru": "Э. Холанд"
+          }
+        }
+      },
+      "averageX": 64.248571428571,
+      "averageY": 47.802857142857,
+      "pointsCount": 35
+    },
+    {
+      "player": {
+        "name": "Rúben Dias",
+        "slug": "ruben-dias",
+        "shortName": "R. Dias",
+        "position": "D",
+        "jerseyNumber": "3",
+        "userCount": 42329,
+        "gender": "M",
+        "sofascoreId": "kzy-ebj",
+        "id": 318941,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "روبن دياز",
+            "bn": "রুবেন ডায়াস",
+            "hi": "रुबेन डियास",
+            "ru": "Рубен Диаш"
+          },
+          "shortNameTranslation": {
+            "ar": "ر. دياز",
+            "bn": "আর. ডায়াস",
+            "hi": "आर. डियास",
+            "ru": "Р. Диаш"
+          }
+        }
+      },
+      "averageX": 38.472549019608,
+      "averageY": 44,
+      "pointsCount": 51
+    },
+    {
+      "player": {
+        "name": "Jérémy Doku",
+        "firstName": "Jeremy",
+        "lastName": "Doku",
+        "slug": "jeremy-doku",
+        "shortName": "J. Doku",
+        "position": "M",
+        "jerseyNumber": "11",
+        "userCount": 86340,
+        "gender": "M",
+        "sofascoreId": "n5t-a4h",
+        "id": 934386,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "جيريمي دوكو",
+            "bn": "জেরেমি ডকু",
+            "hi": "जेरेमी डोकू",
+            "ru": "Жереми Доку"
+          },
+          "shortNameTranslation": {
+            "ar": "ج. دوكو",
+            "bn": "জে. ডকু",
+            "hi": "जे. डोकू",
+            "ru": "Ж. Доку"
+          }
+        }
+      },
+      "averageX": 57.854545454545,
+      "averageY": 80.090909090909,
+      "pointsCount": 11
+    },
+    {
+      "player": {
+        "name": "Enzo Fernández",
+        "firstName": "",
+        "lastName": "",
+        "slug": "enzo-fernandez",
+        "shortName": "E. Fernández",
+        "position": "M",
+        "jerseyNumber": "17",
+        "userCount": 158608,
+        "gender": "M",
+        "sofascoreId": "8jj-2j9",
+        "id": 974505,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "إنزو فرنانديز",
+            "bn": "এনজো ফার্নান্ডেজ",
+            "hi": "एन्ज़ो फर्नांडीज़",
+            "ru": "Энцо Фернандес"
+          },
+          "shortNameTranslation": {
+            "ar": "إ. فرنانديز",
+            "bn": "ই. ফার্নান্ডেজ",
+            "hi": "ई. फर्नांडीज़",
+            "ru": "Э. Фернандес"
+          }
+        }
+      },
+      "averageX": 59.841975308642,
+      "averageY": 35.745679012346,
+      "pointsCount": 81
+    },
+    {
+      "player": {
+        "name": "Nico O'Reilly",
+        "firstName": "Nico",
+        "lastName": "O’Reilly",
+        "slug": "nico-o-reilly",
+        "shortName": "N. O’Reilly",
+        "position": "D",
+        "jerseyNumber": "33",
+        "userCount": 36712,
+        "gender": "M",
+        "sofascoreId": "iws-xkt",
+        "id": 1142703,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "نيكو أوريلي",
+            "bn": "নিকো ও'রেইলি",
+            "hi": "निको ओ'रेली",
+            "ru": "Нико О'Райли"
+          },
+          "shortNameTranslation": {
+            "ar": "ن. أوريلي",
+            "bn": "এন. ও'রেইলি",
+            "hi": "एन. ओ'रेली",
+            "ru": "Н. О'Райли"
+          }
+        }
+      },
+      "averageX": 67.552941176471,
+      "averageY": 25.017647058824,
+      "pointsCount": 17
+    },
+    {
+      "player": {
+        "name": "Gianluigi Donnarumma",
+        "slug": "gianluigi-donnarumma",
+        "shortName": "G. Donnarumma",
+        "position": "G",
+        "jerseyNumber": "1",
+        "userCount": 59927,
+        "gender": "M",
+        "sofascoreId": "ke2-kvj",
+        "id": 824509,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "جيانلويجي دوناروما",
+            "bn": "জিয়ানলুইগি ডোনারুম্মা",
+            "hi": "जियानलुइगी डोनारुम्मा",
+            "ru": "Джанлуиджи Доннарумма"
+          },
+          "shortNameTranslation": {
+            "ar": "ج. دوناروما",
+            "bn": "জি. ডোনারুম্মা",
+            "hi": "जी. डोनारुम्मा",
+            "ru": "Д. Доннарумма"
+          }
+        }
+      },
+      "averageX": 10.20625,
+      "averageY": 52.191666666667,
+      "pointsCount": 48
+    },
+    {
+      "player": {
+        "name": "Joško Gvardiol",
+        "firstName": "Josko",
+        "lastName": "Gvardiol",
+        "slug": "josko-gvardiol",
+        "shortName": "J. Gvardiol",
+        "position": "D",
+        "jerseyNumber": "24",
+        "userCount": 52608,
+        "gender": "M",
+        "sofascoreId": "rss-qn8",
+        "id": 964994,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "يوشكو غفارديول",
+            "bn": "জোসকো গোওয়ারদিওল",
+            "hi": "जोस्को ग्वार्डिओल",
+            "ru": "Йошко Гвардиол"
+          },
+          "shortNameTranslation": {
+            "ar": "ي. غفارديول",
+            "bn": "জে. গোওয়ারদিওল",
+            "hi": "जे. ग्वार्डिओल",
+            "ru": "Й. Гвардиол"
+          }
+        }
+      },
+      "averageX": 45.509523809524,
+      "averageY": 81.285714285714,
+      "pointsCount": 63
+    },
+    {
+      "player": {
+        "name": "Antoine Semenyo",
+        "slug": "antoine-semenyo",
+        "shortName": "A. Semenyo",
+        "position": "M",
+        "jerseyNumber": "42",
+        "userCount": 118992,
+        "gender": "M",
+        "sofascoreId": "n5t-a76",
+        "id": 934354,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "أنطوان سيمينيو",
+            "bn": "অ্যান্টোইন সেমেনিও",
+            "hi": "एंटोनी सेमेन्यो",
+            "ru": "Антуан Семеньо"
+          },
+          "shortNameTranslation": {
+            "ar": "أ. سيمينيو",
+            "bn": "এ. সেমেনিও",
+            "hi": "ए. सेमेन्यो",
+            "ru": "А. Семеньо"
+          }
+        }
+      },
+      "averageX": 60.391803278689,
+      "averageY": 61.798360655738,
+      "pointsCount": 61
+    },
+    {
+      "player": {
+        "name": "Iliman Ndiaye",
+        "slug": "iliman-ndiaye",
+        "shortName": "I. Ndiaye",
+        "position": "M",
+        "jerseyNumber": "7",
+        "userCount": 84839,
+        "gender": "M",
+        "sofascoreId": "zzm-cnd",
+        "id": 914309,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "إليمان نداي",
+            "bn": "ইলিমান এনদিয়ায়ে",
+            "hi": "इलीमन नदिये",
+            "ru": "Илиман Ндиайе"
+          },
+          "shortNameTranslation": {
+            "ar": "إ. نداي",
+            "bn": "আই. এনদিয়ায়ে",
+            "hi": "आई. नदिये",
+            "ru": "И. Ндиайе"
+          }
+        }
+      },
+      "averageX": 65.529508196721,
+      "averageY": 20.231147540984,
+      "pointsCount": 61
+    },
+    {
+      "player": {
+        "name": "Matheus Nunes",
+        "firstName": "Matheus",
+        "lastName": "Nunes",
+        "slug": "matheus-nunes",
+        "shortName": "M. Nunes",
+        "position": "D",
+        "jerseyNumber": "27",
+        "userCount": 23704,
+        "gender": "M",
+        "sofascoreId": "rsv-c7e",
+        "id": 945122,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "ماثيوس نونيز",
+            "bn": "ম্যাথিউস নুনেস",
+            "hi": "मैथियस नून्स",
+            "ru": "Матеус Нунес"
+          },
+          "shortNameTranslation": {
+            "ar": "م. نونيز",
+            "bn": "এম. নুনেস",
+            "hi": "एम. नून्स",
+            "ru": "М. Нунес"
+          }
+        }
+      },
+      "averageX": 40.869879518072,
+      "averageY": 19.922891566265,
+      "pointsCount": 83
+    },
+    {
+      "player": {
+        "name": "Marc Guéhi",
+        "firstName": "Marc",
+        "lastName": "Guehi",
+        "slug": "marc-guehi",
+        "shortName": "M. Guéhi",
+        "position": "D",
+        "jerseyNumber": "6",
+        "userCount": 33514,
+        "gender": "M",
+        "sofascoreId": "cht-bng",
+        "id": 877994,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "مارك غيهي",
+            "bn": "মার্ক গুয়েহি",
+            "hi": "मार्क गुएही",
+            "ru": "Марк Гехи"
+          },
+          "shortNameTranslation": {
+            "ar": "م. غيهي",
+            "bn": "এম. গুয়েহি",
+            "hi": "एम. गुएही",
+            "ru": "М. Гехи"
+          }
+        }
+      },
+      "averageX": 40.514473684211,
+      "averageY": 73.726315789474,
+      "pointsCount": 76
+    },
+    {
+      "player": {
+        "name": "Elliot Anderson",
+        "firstName": "",
+        "lastName": "",
+        "slug": "elliot-anderson",
+        "shortName": "E. Anderson",
+        "position": "M",
+        "jerseyNumber": "5",
+        "userCount": 37751,
+        "gender": "M",
+        "sofascoreId": "n5z-a3f",
+        "id": 994546,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "إليوت أندرسون",
+            "bn": "এলিয়ট অ্যান্ডারসন",
+            "hi": "इलियट एंडरसन",
+            "ru": "Эллиот Андерсон"
+          },
+          "shortNameTranslation": {
+            "ar": "إ. أندرسون",
+            "bn": "ই. অ্যান্ডারসন",
+            "hi": "ई. एंडरसन",
+            "ru": "Э. Андерсон"
+          }
+        }
+      },
+      "averageX": 42.773958333333,
+      "averageY": 51.764583333333,
+      "pointsCount": 96
+    },
+    {
+      "player": {
+        "name": "Rayan Cherki",
+        "firstName": "",
+        "lastName": "",
+        "slug": "cherki-rayan",
+        "shortName": "R. Cherki",
+        "position": "M",
+        "jerseyNumber": "10",
+        "userCount": 112084,
+        "gender": "M",
+        "sofascoreId": "5ff-uus",
+        "id": 979128,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "ريان شرقي",
+            "bn": "চেরকি, রায়ান",
+            "hi": "चेरकी, रायन",
+            "ru": "Раян Шерки"
+          },
+          "shortNameTranslation": {
+            "ar": "ر. شرقي",
+            "bn": "আর. চেরকি",
+            "hi": "आर. चेरकी",
+            "ru": "Р. Шерки"
+          }
+        }
+      },
+      "averageX": 61.866666666667,
+      "averageY": 50.093103448276,
+      "pointsCount": 87
+    }
+  ],
+  "away": [
+    {
+      "player": {
+        "name": "Wilson Isidor",
+        "firstName": "Wilson",
+        "lastName": "Isidor",
+        "slug": "wilson-isidor",
+        "shortName": "W. Isidor",
+        "position": "F",
+        "jerseyNumber": "18",
+        "userCount": 52996,
+        "gender": "M",
+        "sofascoreId": "h6x-d6c",
+        "id": 877980,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "ويلسون إيسيدور",
+            "bn": "উইলসন ইসিডোর",
+            "hi": "विल्सन इसिडोर",
+            "ru": "Уилсон Исидор"
+          },
+          "shortNameTranslation": {
+            "ar": "و. إيسيدور",
+            "bn": "ডব্লিউ. ইসিডোর",
+            "hi": "डब्लू. इसिडोर",
+            "ru": "У. Исидор"
+          }
+        }
+      },
+      "averageX": 65.44,
+      "averageY": 48,
+      "pointsCount": 10
+    },
+    {
+      "player": {
+        "name": "Brian Brobbey",
+        "firstName": "Brian",
+        "lastName": "Brobbey",
+        "slug": "brian-brobbey",
+        "shortName": "B. Brobbey",
+        "position": "F",
+        "jerseyNumber": "9",
+        "userCount": 28363,
+        "gender": "M",
+        "sofascoreId": "88q-8zw",
+        "id": 910048,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "بريان بروبي",
+            "bn": "ব্রবি, ব্রায়ান",
+            "hi": "ब्रॉब्बी, ब्रायन",
+            "ru": "Брайан Броббей"
+          },
+          "shortNameTranslation": {
+            "ar": "ب. بروبي",
+            "bn": "বি. ব্রায়ান",
+            "hi": "बी. ब्रॉब्बी",
+            "ru": "Б. Броббей"
+          }
+        }
+      },
+      "averageX": 67.483333333333,
+      "averageY": 46.928571428571,
+      "pointsCount": 42
+    },
+    {
+      "player": {
+        "name": "Noah Sadiki",
+        "slug": "noah-sadiki",
+        "shortName": "N. Sadiki",
+        "position": "M",
+        "jerseyNumber": "27",
+        "userCount": 16244,
+        "gender": "M",
+        "sofascoreId": "utp-45g",
+        "id": 1171539,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "نواه صاديقي",
+            "bn": "নূহ সাদিকি",
+            "hi": "नोआ सादिकी",
+            "ru": "Ноа Садики"
+          },
+          "shortNameTranslation": {
+            "ar": "ن. صاديقي",
+            "bn": "এন. সাদিকি",
+            "hi": "एन. सादिकी",
+            "ru": "Н. Садики"
+          }
+        }
+      },
+      "averageX": 50.538461538462,
+      "averageY": 66.035897435897,
+      "pointsCount": 39
+    },
+    {
+      "player": {
+        "name": "Malick Fofana",
+        "firstName": "Malick Fofana",
+        "lastName": "",
+        "slug": "malick-fofana",
+        "shortName": "M. Fofana",
+        "position": "M",
+        "jerseyNumber": "39",
+        "userCount": 7885,
+        "gender": "M",
+        "sofascoreId": "ekn-mn9",
+        "id": 1195784,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "ماليك فوفانا",
+            "bn": "মালিক ফোফানা",
+            "hi": "मलिक फ़ोफ़ाना",
+            "ru": "Малик Фофана"
+          },
+          "shortNameTranslation": {
+            "ar": "م. فوفانا",
+            "bn": "এম. ফোফানা",
+            "hi": "एम. फ़ोफ़ाना",
+            "ru": "М. Фофана"
+          }
+        }
+      },
+      "averageX": 59.022222222222,
+      "averageY": 82.133333333333,
+      "pointsCount": 18
+    },
+    {
+      "player": {
+        "name": "Thomas Meunier",
+        "firstName": "Thomas",
+        "lastName": "Meunier",
+        "slug": "thomas-meunier",
+        "shortName": "T. Meunier",
+        "position": "D",
+        "jerseyNumber": "12",
+        "userCount": 3351,
+        "gender": "M",
+        "sofascoreId": "vtb-8vs",
+        "id": 128587,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "توماس مونييه",
+            "bn": "টমাস মিউনিয়ার",
+            "hi": "थॉमस म्युनियर",
+            "ru": "Тома Мёнье"
+          },
+          "shortNameTranslation": {
+            "ar": "ت. مونييه",
+            "bn": "টি. মিউনিয়ার",
+            "hi": "टी. म्युनियर",
+            "ru": "Т. Мёнье"
+          }
+        }
+      },
+      "averageX": 49.625,
+      "averageY": 22.985,
+      "pointsCount": 40
+    },
+    {
+      "player": {
+        "name": "Trai Hume",
+        "firstName": "",
+        "lastName": "",
+        "slug": "hume-trai",
+        "shortName": "T. Hume",
+        "position": "D",
+        "jerseyNumber": "32",
+        "userCount": 1502,
+        "gender": "M",
+        "sofascoreId": "ce8-rj3",
+        "id": 989034,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "تراي هيوم",
+            "bn": "হিউম, ট্রাই",
+            "hi": "ह्यूम, ट्राई",
+            "ru": "Трай Хьюм"
+          },
+          "shortNameTranslation": {
+            "ar": "ت. هيوم",
+            "bn": "টি. হিউম",
+            "hi": "टी. ह्यूम",
+            "ru": "Т. Хьюм"
+          }
+        }
+      },
+      "averageX": 67.518181818182,
+      "averageY": 22.481818181818,
+      "pointsCount": 11
+    },
+    {
+      "player": {
+        "name": "Nilson Angulo",
+        "firstName": "Nilson Angulo",
+        "lastName": "",
+        "slug": "nilson-angulo",
+        "shortName": "N. Angulo",
+        "position": "M",
+        "jerseyNumber": "10",
+        "userCount": 7932,
+        "gender": "M",
+        "sofascoreId": "iwv-zh5",
+        "id": 1116571,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "نيلسون أنغولو",
+            "bn": "নিলসন অ্যাঙ্গুলো",
+            "hi": "निल्सन एंगुलो",
+            "ru": "Нилсон Ангуло"
+          },
+          "shortNameTranslation": {
+            "ar": "ن. أنغولو",
+            "bn": "এন. অ্যাঙ্গুলো",
+            "hi": "एन. एंगुलो",
+            "ru": "Н. Ангуло"
+          }
+        }
+      },
+      "averageX": 70.270967741935,
+      "averageY": 80.951612903226,
+      "pointsCount": 31
+    },
+    {
+      "player": {
+        "name": "Enzo Le Fée",
+        "slug": "enzo-le-fee",
+        "shortName": "E. Le Fée",
+        "position": "M",
+        "jerseyNumber": "28",
+        "userCount": 3613,
+        "gender": "M",
+        "sofascoreId": "wrm-j8d",
+        "id": 984014,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "إنزو لو في",
+            "bn": "এনজো দ্য ফেইরি",
+            "hi": "एन्ज़ो ले फी",
+            "ru": "Энцо Ле Фе"
+          },
+          "shortNameTranslation": {
+            "ar": "إ. لو في",
+            "bn": "ই. লে ফে",
+            "hi": "ई. ले",
+            "ru": "Э. Фе"
+          }
+        }
+      },
+      "averageX": 59.359574468085,
+      "averageY": 48.917021276596,
+      "pointsCount": 47
+    },
+    {
+      "player": {
+        "name": "Kevin Danso",
+        "firstName": "Kevin",
+        "lastName": "Danso",
+        "slug": "kevin-danso",
+        "shortName": "K. Danso",
+        "position": "D",
+        "jerseyNumber": "4",
+        "userCount": 4189,
+        "gender": "M",
+        "sofascoreId": "8ca-39w",
+        "id": 794953,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "كيفين دانسو",
+            "bn": "ডানসো, কেভিন",
+            "hi": "डैन्सो, केविन",
+            "ru": "Кевин Дансо"
+          },
+          "shortNameTranslation": {
+            "ar": "ك. دانسو",
+            "bn": "কে. ডানসো",
+            "hi": "के. डांसो",
+            "ru": "К. Дансо"
+          }
+        }
+      },
+      "averageX": 34.552747252747,
+      "averageY": 37.603296703297,
+      "pointsCount": 91
+    },
+    {
+      "player": {
+        "name": "Daniel Ballard",
+        "firstName": "Daniel",
+        "lastName": "Ballard",
+        "slug": "daniel-ballard",
+        "shortName": "D. Ballard",
+        "position": "D",
+        "jerseyNumber": "5",
+        "userCount": 3681,
+        "gender": "M",
+        "sofascoreId": "p99-65v",
+        "id": 958878,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "دانيال بالارد",
+            "bn": "ব্যালার্ড, ড্যানিয়েল",
+            "hi": "बैलार्ड, डैनियल",
+            "ru": "Даниэль Баллард"
+          },
+          "shortNameTranslation": {
+            "ar": "د. بالارد",
+            "bn": "ডি. ব্যালার্ড",
+            "hi": "डी. बैलार्ड",
+            "ru": "Д. Баллард"
+          }
+        }
+      },
+      "averageX": 38.039726027397,
+      "averageY": 61.68904109589,
+      "pointsCount": 73
+    },
+    {
+      "player": {
+        "name": "Granit Xhaka",
+        "firstName": "Granit",
+        "lastName": "Xhaka",
+        "slug": "granit-xhaka",
+        "shortName": "G. Xhaka",
+        "position": "M",
+        "jerseyNumber": "34",
+        "userCount": 18320,
+        "gender": "M",
+        "sofascoreId": "ksw-4tj",
+        "id": 117777,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "غرانيت شاكا",
+            "bn": "গ্রানিট জাকা",
+            "hi": "ग्रैनिट जहाका",
+            "ru": "Гранит Джака"
+          },
+          "shortNameTranslation": {
+            "ar": "غ. شاكا",
+            "bn": "জি. জাকা",
+            "hi": "जी. जहाका",
+            "ru": "Г. Джака"
+          }
+        }
+      },
+      "averageX": 45.968115942029,
+      "averageY": 52.095652173913,
+      "pointsCount": 69
+    },
+    {
+      "player": {
+        "name": "Dayann Methalie",
+        "slug": "dayann-methalie",
+        "shortName": "D. Methalie",
+        "position": "M",
+        "jerseyNumber": "6",
+        "userCount": 1048,
+        "gender": "M",
+        "sofascoreId": "u5t-cmv",
+        "id": 1894003,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "دايان ميثالي",
+            "ru": "Даянн Метаали"
+          },
+          "shortNameTranslation": {
+            "ar": "د. ميثالي",
+            "ru": "Д. Метаали"
+          }
+        }
+      },
+      "averageX": 44.104166666667,
+      "averageY": 81.569444444444,
+      "pointsCount": 72
+    },
+    {
+      "player": {
+        "name": "Nordi Mukiele",
+        "firstName": "Nordi",
+        "lastName": "Mukiele",
+        "slug": "nordi-mukiele",
+        "shortName": "N. Mukiele",
+        "position": "D",
+        "jerseyNumber": "20",
+        "userCount": 5020,
+        "gender": "M",
+        "sofascoreId": "wg3-a6k",
+        "id": 780014,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "نوردي موكيلي",
+            "bn": "নর্দি মুকিলে",
+            "hi": "नॉर्डी मुकीले",
+            "ru": "Норди Мукиеле"
+          },
+          "shortNameTranslation": {
+            "ar": "ن. موكيلي",
+            "bn": "এন. মুকিলে",
+            "hi": "एन. मुकीले",
+            "ru": "Н. Мукиеле"
+          }
+        }
+      },
+      "averageX": 50.047945205479,
+      "averageY": 18.184931506849,
+      "pointsCount": 73
+    },
+    {
+      "player": {
+        "name": "Robin Roefs",
+        "firstName": "Robin",
+        "lastName": "Roefs",
+        "slug": "robin-roefs",
+        "shortName": "R. Roefs",
+        "position": "G",
+        "jerseyNumber": "22",
+        "userCount": 2872,
+        "gender": "M",
+        "sofascoreId": "8jm-kjm",
+        "id": 1012928,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "روبن روفس",
+            "ru": "Робин Руфс"
+          },
+          "shortNameTranslation": {
+            "ar": "ر. روفس",
+            "ru": "Р. Руфс"
+          }
+        }
+      },
+      "averageX": 13.947368421053,
+      "averageY": 50.529824561404,
+      "pointsCount": 57
+    }
+  ],
+  "substitutions": [
+    {
+      "playerIn": {
+        "name": "Malick Fofana",
+        "firstName": "Malick Fofana",
+        "lastName": "",
+        "slug": "malick-fofana",
+        "shortName": "M. Fofana",
+        "position": "M",
+        "jerseyNumber": "39",
+        "userCount": 7885,
+        "gender": "M",
+        "sofascoreId": "ekn-mn9",
+        "id": 1195784,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "ماليك فوفانا",
+            "bn": "মালিক ফোফানা",
+            "hi": "मलिक फ़ोफ़ाना",
+            "ru": "Малик Фофана"
+          },
+          "shortNameTranslation": {
+            "ar": "م. فوفانا",
+            "bn": "এম. ফোফানা",
+            "hi": "एम. फ़ोफ़ाना",
+            "ru": "М. Фофана"
+          }
+        }
+      },
+      "playerOut": {
+        "name": "Nilson Angulo",
+        "firstName": "Nilson Angulo",
+        "lastName": "",
+        "slug": "nilson-angulo",
+        "shortName": "N. Angulo",
+        "position": "M",
+        "jerseyNumber": "10",
+        "userCount": 7932,
+        "gender": "M",
+        "sofascoreId": "iwv-zh5",
+        "id": 1116571,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "نيلسون أنغولو",
+            "bn": "নিলসন অ্যাঙ্গুলো",
+            "hi": "निल्सन एंगुलो",
+            "ru": "Нилсон Ангуло"
+          },
+          "shortNameTranslation": {
+            "ar": "ن. أنغولو",
+            "bn": "এন. অ্যাঙ্গুলো",
+            "hi": "एन. एंगुलो",
+            "ru": "Н. Ангуло"
+          }
+        }
+      },
+      "id": 126865771,
+      "time": 60,
+      "injury": false,
+      "isHome": false,
+      "incidentClass": "regular",
+      "incidentType": "substitution",
+      "reversedPeriodTime": 31
+    },
+    {
+      "playerIn": {
+        "name": "Wilson Isidor",
+        "firstName": "Wilson",
+        "lastName": "Isidor",
+        "slug": "wilson-isidor",
+        "shortName": "W. Isidor",
+        "position": "F",
+        "jerseyNumber": "18",
+        "userCount": 52996,
+        "gender": "M",
+        "sofascoreId": "h6x-d6c",
+        "id": 877980,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "ويلسون إيسيدور",
+            "bn": "উইলসন ইসিডোর",
+            "hi": "विल्सन इसिडोर",
+            "ru": "Уилсон Исидор"
+          },
+          "shortNameTranslation": {
+            "ar": "و. إيسيدور",
+            "bn": "ডব্লিউ. ইসিডোর",
+            "hi": "डब्लू. इसिडोर",
+            "ru": "У. Исидор"
+          }
+        }
+      },
+      "playerOut": {
+        "name": "Noah Sadiki",
+        "slug": "noah-sadiki",
+        "shortName": "N. Sadiki",
+        "position": "M",
+        "jerseyNumber": "27",
+        "userCount": 16244,
+        "gender": "M",
+        "sofascoreId": "utp-45g",
+        "id": 1171539,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "نواه صاديقي",
+            "bn": "নূহ সাদিকি",
+            "hi": "नोआ सादिकी",
+            "ru": "Ноа Садики"
+          },
+          "shortNameTranslation": {
+            "ar": "ن. صاديقي",
+            "bn": "এন. সাদিকি",
+            "hi": "एन. सादिकी",
+            "ru": "Н. Садики"
+          }
+        }
+      },
+      "id": 126865888,
+      "time": 68,
+      "injury": false,
+      "isHome": false,
+      "incidentClass": "regular",
+      "incidentType": "substitution",
+      "reversedPeriodTime": 23
+    },
+    {
+      "playerIn": {
+        "name": "Jérémy Doku",
+        "firstName": "Jeremy",
+        "lastName": "Doku",
+        "slug": "jeremy-doku",
+        "shortName": "J. Doku",
+        "position": "M",
+        "jerseyNumber": "11",
+        "userCount": 86340,
+        "gender": "M",
+        "sofascoreId": "n5t-a4h",
+        "id": 934386,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "جيريمي دوكو",
+            "bn": "জেরেমি ডকু",
+            "hi": "जेरेमी डोकू",
+            "ru": "Жереми Доку"
+          },
+          "shortNameTranslation": {
+            "ar": "ج. دوكو",
+            "bn": "জে. ডকু",
+            "hi": "जे. डोकू",
+            "ru": "Ж. Доку"
+          }
+        }
+      },
+      "playerOut": {
+        "name": "Iliman Ndiaye",
+        "slug": "iliman-ndiaye",
+        "shortName": "I. Ndiaye",
+        "position": "M",
+        "jerseyNumber": "7",
+        "userCount": 84839,
+        "gender": "M",
+        "sofascoreId": "zzm-cnd",
+        "id": 914309,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "إليمان نداي",
+            "bn": "ইলিমান এনদিয়ায়ে",
+            "hi": "इलीमन नदिये",
+            "ru": "Илиман Ндиайе"
+          },
+          "shortNameTranslation": {
+            "ar": "إ. نداي",
+            "bn": "আই. এনদিয়ায়ে",
+            "hi": "आई. नदिये",
+            "ru": "И. Ндиайе"
+          }
+        }
+      },
+      "id": 126866009,
+      "time": 75,
+      "injury": false,
+      "isHome": true,
+      "incidentClass": "regular",
+      "incidentType": "substitution",
+      "reversedPeriodTime": 16
+    },
+    {
+      "playerIn": {
+        "name": "Trai Hume",
+        "firstName": "",
+        "lastName": "",
+        "slug": "hume-trai",
+        "shortName": "T. Hume",
+        "position": "D",
+        "jerseyNumber": "32",
+        "userCount": 1502,
+        "gender": "M",
+        "sofascoreId": "ce8-rj3",
+        "id": 989034,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "تراي هيوم",
+            "bn": "হিউম, ট্রাই",
+            "hi": "ह्यूम, ट्राई",
+            "ru": "Трай Хьюм"
+          },
+          "shortNameTranslation": {
+            "ar": "ت. هيوم",
+            "bn": "টি. হিউম",
+            "hi": "टी. ह्यूम",
+            "ru": "Т. Хьюм"
+          }
+        }
+      },
+      "playerOut": {
+        "name": "Thomas Meunier",
+        "firstName": "Thomas",
+        "lastName": "Meunier",
+        "slug": "thomas-meunier",
+        "shortName": "T. Meunier",
+        "position": "D",
+        "jerseyNumber": "12",
+        "userCount": 3351,
+        "gender": "M",
+        "sofascoreId": "vtb-8vs",
+        "id": 128587,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "توماس مونييه",
+            "bn": "টমাস মিউনিয়ার",
+            "hi": "थॉमस म्युनियर",
+            "ru": "Тома Мёнье"
+          },
+          "shortNameTranslation": {
+            "ar": "ت. مونييه",
+            "bn": "টি. মিউনিয়ার",
+            "hi": "टी. म्युनियर",
+            "ru": "Т. Мёнье"
+          }
+        }
+      },
+      "id": 126866069,
+      "time": 79,
+      "injury": false,
+      "isHome": false,
+      "incidentClass": "regular",
+      "incidentType": "substitution",
+      "reversedPeriodTime": 12
+    },
+    {
+      "playerIn": {
+        "name": "Nico O'Reilly",
+        "firstName": "Nico",
+        "lastName": "O’Reilly",
+        "slug": "nico-o-reilly",
+        "shortName": "N. O’Reilly",
+        "position": "D",
+        "jerseyNumber": "33",
+        "userCount": 36712,
+        "gender": "M",
+        "sofascoreId": "iws-xkt",
+        "id": 1142703,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "نيكو أوريلي",
+            "bn": "নিকো ও'রেইলি",
+            "hi": "निको ओ'रेली",
+            "ru": "Нико О'Райли"
+          },
+          "shortNameTranslation": {
+            "ar": "ن. أوريلي",
+            "bn": "এন. ও'রেইলি",
+            "hi": "एन. ओ'रेली",
+            "ru": "Н. О'Райли"
+          }
+        }
+      },
+      "playerOut": {
+        "name": "Rayan Cherki",
+        "firstName": "",
+        "lastName": "",
+        "slug": "cherki-rayan",
+        "shortName": "R. Cherki",
+        "position": "M",
+        "jerseyNumber": "10",
+        "userCount": 112084,
+        "gender": "M",
+        "sofascoreId": "5ff-uus",
+        "id": 979128,
+        "fieldTranslations": {
+          "nameTranslation": {
+            "ar": "ريان شرقي",
+            "bn": "চেরকি, রায়ান",
+            "hi": "चेरकी, रायन",
+            "ru": "Раян Шерки"
+          },
+          "shortNameTranslation": {
+            "ar": "ر. شرقي",
+            "bn": "আর. চেরকি",
+            "hi": "आर. चेरकी",
+            "ru": "Р. Шерки"
+          }
+        }
+      },
+      "id": 126866179,
+      "time": 85,
+      "injury": false,
+      "isHome": true,
+      "incidentClass": "regular",
+      "incidentType": "substitution",
+      "reversedPeriodTime": 6
+    }
+  ]
+}
