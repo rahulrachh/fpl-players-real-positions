@@ -21,6 +21,7 @@ from app.fpl.team import (
     TeamService,
     get_team_service,
 )
+from app.logic.plot import Plot, build_plot
 
 settings = get_settings()
 logging.basicConfig(level=settings.log_level.upper())
@@ -79,6 +80,39 @@ def team_gameweek(
     service: TeamService = Depends(get_team_service),
 ) -> TeamGameweek:
     return service.load_team_gameweek(team_id, gw, session)
+
+
+# Declared before `/plot/{gw}` so "latest" is not parsed as a gameweek.
+@app.get("/api/team/{team_id}/plot/latest")
+def team_plot_latest(
+    team_id: int = Path(ge=1),
+    session: Session = Depends(get_ro_session),
+    service: TeamService = Depends(get_team_service),
+) -> Plot:
+    """The newest gameweek whose deadline has passed; the one before it if FPL
+    is not serving that gameweek's picks yet (just after the deadline)."""
+    latest = service.latest_gameweek()
+    if latest is None:
+        raise GameweekNotStarted("the season has not started")
+    try:
+        team = service.load_team_gameweek(team_id, latest, session)
+    except GameweekNotStarted:
+        if latest == 1:
+            raise
+        latest -= 1
+        team = service.load_team_gameweek(team_id, latest, session)
+    return build_plot(team, session, latest)
+
+
+@app.get("/api/team/{team_id}/plot/{gw}")
+def team_plot(
+    team_id: int = Path(ge=1),
+    gw: int = Path(ge=1),
+    session: Session = Depends(get_ro_session),
+    service: TeamService = Depends(get_team_service),
+) -> Plot:
+    team = service.load_team_gameweek(team_id, gw, session)
+    return build_plot(team, session, service.latest_gameweek())
 
 
 @app.get("/api/gameweeks/latest")

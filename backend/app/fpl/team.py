@@ -123,6 +123,8 @@ class TeamGameweek(_Model):
     team_name: str
     manager_name: str
     gameweek: int
+    # The team's first gameweek (no picks before it).
+    started_event: int
     status: GameweekStatus
     # FPL has checked the points: the gameweek's data is final.
     data_checked: bool
@@ -244,6 +246,7 @@ class TeamService:
             team_name=entry.name,
             manager_name=f"{entry.player_first_name} {entry.player_last_name}",
             gameweek=gw,
+            started_event=entry.started_event,
             status=status,
             data_checked=event.data_checked,
             deadline=event.deadline_time,

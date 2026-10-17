@@ -1,11 +1,12 @@
 """Thin read-only queries that feed `app/logic/positions.py` plain data."""
 
 from collections.abc import Iterable
+from datetime import datetime
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.db.models import Gameweek, PlayerIdMap, PlayerMatchPosition
+from app.db.models import Gameweek, PlayerIdMap, PlayerMatchPosition, SyncRun
 from app.logic.positions import MatchPosition
 
 
@@ -55,3 +56,8 @@ def load_positions_synced(session: Session, gw: int) -> bool:
     """Whether every match of `gw` has its positions in the database."""
     synced = session.scalar(select(Gameweek.positions_synced).where(Gameweek.id == gw))
     return bool(synced)
+
+
+def load_data_as_of(session: Session) -> datetime | None:
+    """When the latest finished sync ended: the site's "data as of"."""
+    return session.scalar(select(func.max(SyncRun.finished_at)))

@@ -89,6 +89,7 @@ def make_team(
         team_name="Team",
         manager_name="Manager",
         gameweek=GW,
+        started_event=1,
         status=status,
         data_checked=status is GameweekStatus.FINISHED,
         deadline=datetime(2026, 9, 26, 10, 0, tzinfo=UTC),
