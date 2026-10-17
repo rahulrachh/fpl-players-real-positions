@@ -1,6 +1,6 @@
 # 16 — Deploy-readiness + Vercel deployment 🛑 👤
 
-**Status:** todo
+**Status:** in progress (repo ready; waiting for the owner's `vercel login` to make the preview deployment)
 **Gate:** 👤 Needs the owner's Vercel account linked (`vercel login` / `vercel link`). 🛑 Deploying is outward-facing: prepare everything, then set `awaiting-approval` and STOP **before the production deploy**. Deploy only after the owner approves.
 **Depends on:** all previous tasks.
 
@@ -13,8 +13,8 @@ A fresh clone runs locally from `docs/setup.md` alone, and the MVP is live on Ve
 - `docs/setup.md`: what it is, prerequisites, local setup, env vars, run commands, the release routine (`docs/release.md`: sync, check, commit DB, deploy), regenerating mapping + editing overrides, known limitations (unofficial sources; data only as fresh as the last deploy).
 
 ## Done when
-- [ ] Fresh clone in a temp directory runs locally following only `docs/setup.md`; gaps fixed (noted).
-- [ ] No secrets or absolute local paths in the repo (grep check in Notes).
+- [x] Fresh clone in a temp directory runs locally following only `docs/setup.md`; gaps fixed (noted).
+- [x] No secrets or absolute local paths in the repo (grep check in Notes).
 - [ ] Preview deployment works end to end (owner's team renders); then `awaiting-approval`, stopped.
 - [ ] After owner approval: production deployed and the owner's team renders on the live URL.
 - [ ] One full release cycle tested: run sync locally, commit, redeploy, live site shows the new "data as of" time.
@@ -24,3 +24,9 @@ A fresh clone runs locally from `docs/setup.md` alone, and the MVP is live on Ve
 - [ ] Update the root `README.md`: add this task under **Tasks completed** with a short summary of the work done, and set **Next task** to the next task and its file path (for a 🛑 task: "waiting for owner approval on task NN").
 
 ## Notes
+- **Vercel layout (2026-10-17):** classic static build + one Python function. `vercel.json`: `framework: null`, install / build in `frontend/`, output `frontend/dist`, rewrite `/api/(.*)` → `/api/index`, and `functions["api/index.py"].includeFiles = backend/{app/**,data/fpl.db}` (excluding `app/positions`, `app/sync`, tests, `.venv`). `api/index.py` adds `backend/` to `sys.path`, defaults `DATABASE_IMMUTABLE=true` (Vercel's filesystem is read-only and nothing writes the file) and imports `app.main:app`. No env vars need setting in the Vercel dashboard. `.vercelignore` keeps `.venv`, `node_modules`, docs, spikes, tasks and tests out of the upload.
+- **Python deps:** root `requirements.txt` exported from `uv.lock` with runtime packages only (`uv export --no-default-groups --no-hashes --no-emit-project`). Root `.python-version` = 3.12 (Vercel's Python; also what the local `.venv` already used, uv picks it up from `backend/`).
+- **Tests:** `backend/tests/test_deploy.py`: the entrypoint, loaded as Vercel does from the repo root, serves `/api/health` read-only with `immutable=1` and without loading the Sofascore adapter; `requirements.txt` matches `uv.lock`, covers every direct dependency and leaves out `curl-cffi` / `rapidfuzz` / pytest. 226 tests pass.
+- **Fresh clone (2026-10-17):** `git clone` into the scratchpad, then only the `docs/setup.md` steps: `uv sync` (226 tests pass), `npm ci`, `npm run build`, `npm run lint` clean; backend + Vite dev server: `/api/health` ok and read-only, owner's team 2020649 `plot/latest` = GW6, locked, 11 dots, positions as of 2026-10-17 05:21 UTC. Gaps fixed in the docs: setup.md was a stub (no release routine, mapping, env, deploy or limitations); Vite listens on `localhost`, not `127.0.0.1` (docs use `localhost`); the card's label is "Positions as of", not "data as of".
+- **Grep check (2026-10-17), on tracked files excluding lock files:** `git grep -nIiE "[A-Z]:[\/](Users|Program)|/home/|/Users/|rahulrachh"` → no hits. `git grep -nIiE "(api[_-]?key|secret|token|password|passwd|bearer|sk-[a-z0-9]{10})"` → only `.gitignore`'s "secrets" comment, Alembic's "token" comments, name-matching `tokens()` / `token_set_ratio` and task text. `.env` is git-ignored; nothing in the app needs a secret.
+- **Deploy blocked on owner:** the Vercel CLI (64.5.0) is installed but logged out, and the Vercel MCP connector is not linked to an account ("User not found"). Next: owner runs `vercel login`, then `vercel link` + `vercel deploy` (preview), check, `awaiting-approval`.
