@@ -19,9 +19,12 @@ A pass only accepts a player with exactly one candidate. Two FPL players
 claiming one Sofascore player in the same pass is a clash: neither gets a
 row, both are reported for a manual fix (task 09 overrides).
 
-`player_id_map` is rebuilt on every run, except rows with `is_override`,
-which are never touched (their players and Sofascore IDs are left out of
-matching). Rows that come out the same keep their `matched_at`.
+Overrides (`overrides.py`, `backend/data/player_overrides.csv`) are applied
+first and always win: their FPL players and Sofascore IDs are left out of
+matching, and a "force no match" override leaves the player without a row.
+
+`player_id_map` is rebuilt on every run, override rows included (the file is
+their only source). Rows that come out the same keep their `matched_at`.
 """
 
 from collections import Counter, defaultdict
@@ -35,8 +38,9 @@ from sqlalchemy.orm import Session
 
 from app.db.models import FplClub, FplPlayer, PlayerIdMap, SofascorePlayer
 from app.mapping.names import contains_run, initial_and_surname, normalize, order_free, tokens
+from app.mapping.overrides import Override, load_overrides
 
-CONFIDENCE = {"exact": 1.0, "short_name": 0.95, "surname_initial": 0.9}
+CONFIDENCE = {"override": 1.0, "exact": 1.0, "short_name": 0.95, "surname_initial": 0.9}
 # Fuzzy: token_set_ratio (0-100) must reach the threshold and beat the
 # second-best candidate by the margin. Confidence = ratio / 100 * scale.
 FUZZY_THRESHOLD = 85
@@ -94,12 +98,15 @@ class Match:
 
 @dataclass
 class MappingResult:
-    matches: list[Match] = field(default_factory=list)
+    matches: list[Match] = field(default_factory=list)  # auto-matches only
     # FPL ID -> why it has no row (only players the run tried to match).
     unmatched: dict[int, str] = field(default_factory=dict)
     # (Sofascore ID, FPL IDs claiming it), for a manual fix.
     clashes: list[tuple[int, list[int]]] = field(default_factory=list)
-    overrides_kept: int = 0
+    # Overrides written as rows / forcing no row / not applicable (with why).
+    overrides_applied: list[Override] = field(default_factory=list)
+    forced_no_match: list[Override] = field(default_factory=list)
+    overrides_skipped: list[tuple[Override, str]] = field(default_factory=list)
     added: int = 0
     changed: int = 0
     removed: int = 0
@@ -109,14 +116,15 @@ class MappingResult:
         return Counter(m.method for m in self.matches)
 
 
-def run_player_mapping(session: Session, now: datetime | None = None) -> MappingResult:
-    """Match every FPL player without an override and rebuild the
-    non-override rows of `player_id_map`. Flushes, caller commits."""
+def run_player_mapping(
+    session: Session, now: datetime | None = None, overrides: list[Override] | None = None
+) -> MappingResult:
+    """Apply the overrides (default: the override file), match every other
+    FPL player and rebuild `player_id_map`. Flushes, caller commits."""
     result = MappingResult()
-    overrides = session.scalars(select(PlayerIdMap).where(PlayerIdMap.is_override)).all()
-    result.overrides_kept = len(overrides)
-    overridden_fpl = {o.fpl_id for o in overrides}
-    taken_sofa = {o.sofascore_id for o in overrides}
+    if overrides is None:
+        overrides = load_overrides()
+    overridden_fpl, taken_sofa = _apply_overrides(session, overrides, result)
 
     team_by_club = dict(session.execute(select(FplClub.id, FplClub.sofascore_team_id)).all())
     fpl_players = [
@@ -174,6 +182,34 @@ def run_player_mapping(session: Session, now: datetime | None = None) -> Mapping
 
     _write(session, result, now or _utcnow())
     return result
+
+
+def _apply_overrides(
+    session: Session, overrides: list[Override], result: MappingResult
+) -> tuple[set[int], set[int]]:
+    """Sort the overrides into applied / forced no match / skipped. Returns the
+    FPL IDs kept out of auto-matching and the Sofascore IDs taken."""
+    fpl_ids = set(session.scalars(select(FplPlayer.id)))
+    sofa_ids = set(session.scalars(select(SofascorePlayer.id)))
+    overridden_fpl: set[int] = set()
+    taken_sofa: set[int] = set()
+    for o in overrides:
+        if o.fpl_id not in fpl_ids:
+            result.overrides_skipped.append((o, "FPL player not in the database"))
+            continue
+        overridden_fpl.add(o.fpl_id)
+        if o.sofascore_id is None:
+            result.forced_no_match.append(o)
+            result.unmatched[o.fpl_id] = "override: forced no match"
+        elif o.sofascore_id not in sofa_ids:
+            # Not auto-matched either: the file says who he is.
+            why = f"Sofascore {o.sofascore_id} not in the database yet"
+            result.overrides_skipped.append((o, why))
+            result.unmatched[o.fpl_id] = f"override: {why}"
+        else:
+            result.overrides_applied.append(o)
+            taken_sofa.add(o.sofascore_id)
+    return overridden_fpl, taken_sofa
 
 
 # --- strategies ------------------------------------------------------------
@@ -238,11 +274,10 @@ _STRATEGIES: list[tuple[str, Callable[[_Fpl, list[_Sofa]], _Candidates]]] = [
 
 
 def _write(session: Session, result: MappingResult, now: datetime) -> None:
-    existing = {
-        row.fpl_id: row
-        for row in session.scalars(select(PlayerIdMap).where(PlayerIdMap.is_override.is_(False)))
-    }
+    existing = {row.fpl_id: row for row in session.scalars(select(PlayerIdMap))}
     wanted = {m.fpl_id: m for m in result.matches}
+    for o in result.overrides_applied:
+        wanted[o.fpl_id] = Match(o.fpl_id, o.sofascore_id, "override", CONFIDENCE["override"])
     # Delete first, so a Sofascore ID moving between players never trips the
     # UNIQUE mid-flush.
     for fpl_id, row in existing.items():
@@ -273,7 +308,7 @@ def _write(session: Session, result: MappingResult, now: datetime) -> None:
                 sofascore_id=match.sofascore_id,
                 match_method=match.method,
                 match_confidence=match.confidence,
-                is_override=False,
+                is_override=match.method == "override",
                 matched_at=now,
             )
         )

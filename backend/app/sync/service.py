@@ -351,6 +351,8 @@ def _map_players(session: Session, summary: SyncSummary) -> None:
             f"player mapping clash: Sofascore {sofa_id} claimed by FPL "
             f"{', '.join(map(str, fpl_ids))}, none mapped"
         )
+    for o, why in summary.mapping.overrides_skipped:
+        summary.warn(f"player override skipped: FPL {o.fpl_id}: {why}")
     summary.unmapped_players = _count_unmapped(session)
 
 

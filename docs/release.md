@@ -22,11 +22,12 @@ From `backend/`:
    - *Blocked by the positions source*: Sofascore answered 403. Stop, wait a few hours, then re-run. Do not loop it.
    - *Sofascore round N != FPL GW M*: a rescheduled match. Expected; the FPL gameweek is used.
    - *Club XXX has no Sofascore team ID*: a promoted club is missing from `backend/app/mapping/clubs.py`. Add it, then re-run.
-   - *Player mapping clash* or a drop in active coverage: open `docs/mapping-coverage.md` and fix the listed players (override file, task 09). `uv run python -m app.mapping run` re-runs only the mapping, offline.
+   - *Player mapping clash* or a drop in active coverage: open `docs/mapping-coverage.md` and fix the listed players with a row in `backend/data/player_overrides.csv` (format at the top of the report). `uv run python -m app.mapping run` re-runs only the mapping, offline.
+   - *Player override skipped*: the override names an FPL player that no longer exists, or a Sofascore player not stored yet. Fix or delete the row.
 3. **Check the site locally**: `uv run uvicorn app.main:app --reload` and `npm run dev` in `frontend/`, then load a team for the new gameweek.
 4. **Commit the database**
    ```sh
-   git add backend/data/fpl.db docs/mapping-coverage.md
+   git add backend/data/fpl.db backend/data/player_overrides.csv docs/mapping-coverage.md
    git commit -m "Data: sync after GW<n>"
    ```
 5. **Deploy**: `git push` (if the Vercel project deploys from git) or `vercel deploy --prod`. Set up in task 16.
