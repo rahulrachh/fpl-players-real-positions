@@ -30,7 +30,8 @@ From `backend/`:
    git add backend/data/fpl.db backend/data/player_overrides.csv docs/mapping-coverage.md
    git commit -m "Data: sync after GW<n>"
    ```
-5. **Deploy**: `git push` (if the Vercel project deploys from git) or `vercel deploy --prod`. Set up in task 16.
+5. **Deploy**: from the repo root, `vercel deploy --prod` (or `git push` if the Vercel project is connected to the git repository). First-time setup: `docs/setup.md`, Deploying.
+6. **Check the live site**: load a team; the card's "Positions as of" date shows this sync's time.
 
 ## What a run does
 See the docstring of `backend/app/sync/service.py`. In short:

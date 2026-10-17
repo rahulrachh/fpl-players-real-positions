@@ -1,0 +1,12 @@
+# Not needed to build or run the deployment (vercel.json bundles the rest).
+.env
+.env.*
+**/node_modules
+**/.venv
+**/__pycache__
+**/.pytest_cache
+frontend/dist
+backend/tests
+spikes
+docs
+tasks
