@@ -113,11 +113,24 @@ input:focus-visible {
   color: var(--muted);
 }
 
+.gw-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.gw-nav-current {
+  font-size: 1.1rem;
+  font-weight: 800;
+  font-stretch: 90%;
+}
+
 .gw-arrow {
   display: grid;
   place-items: center;
-  width: 1.9rem;
-  height: 1.9rem;
+  width: 2.5rem;
+  height: 2.5rem;
   padding: 0;
   border-radius: 50%;
   border: 1px solid var(--card-line);
@@ -126,8 +139,8 @@ input:focus-visible {
 }
 
 .gw-arrow svg {
-  width: 1.05rem;
-  height: 1.05rem;
+  width: 1.3rem;
+  height: 1.3rem;
   fill: none;
   stroke: currentColor;
   stroke-width: 2.5;

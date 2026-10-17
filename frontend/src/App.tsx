@@ -1,7 +1,6 @@
 // Team ID → the latest (or ?gw=) gameweek graphic. Team and gameweek are kept in
-// the URL: ?team=2020649&gw=6. Arrows beside the gameweek in the card header
-// (and the arrow keys) step through the team's gameweeks (the plot API says
-// which exist).
+// the URL: ?team=2020649&gw=6. The arrows under the team ID box (and the arrow
+// keys) step through the team's gameweeks (the plot API says which exist).
 
 import { type FormEvent, useEffect, useState } from 'react'
 
@@ -145,6 +144,13 @@ function App() {
       </form>
 
       {inputError && <p className="error">{inputError}</p>}
+      {plot && !fixture && (
+        <nav className="gw-nav" aria-label="Gameweek">
+          <GwArrow direction="prev" gw={prevGw} onGo={setGw} />
+          <span className="gw-nav-current">Gameweek {loading && gw !== null ? gw : plot.gw}</span>
+          <GwArrow direction="next" gw={nextGw} onGo={setGw} />
+        </nav>
+      )}
       {plot && (
         <div className="view-switch" role="group" aria-label="Depth view">
           {DEPTH_VIEWS.map((v) => (
@@ -167,14 +173,36 @@ function App() {
       {!plot && loading && <p className="muted">Loading…</p>}
       {plot && (
         <div className={loading && !fixture ? 'card-slot is-loading' : 'card-slot'} aria-busy={loading && !fixture}>
-          <PitchCard
-            plot={plot}
-            depth={depth}
-            nav={fixture ? undefined : { prev: prevGw, next: nextGw, go: setGw }}
-          />
+          <PitchCard plot={plot} depth={depth} />
         </div>
       )}
     </main>
+  )
+}
+
+function GwArrow({
+  direction,
+  gw,
+  onGo,
+}: {
+  direction: 'prev' | 'next'
+  gw: number | null
+  onGo: (gw: number) => void
+}) {
+  const label = direction === 'prev' ? 'Previous gameweek' : 'Next gameweek'
+  return (
+    <button
+      type="button"
+      className="gw-arrow"
+      disabled={gw === null}
+      onClick={() => gw !== null && onGo(gw)}
+      aria-label={gw === null ? label : `${label} (GW${gw})`}
+      title={gw === null ? label : `GW${gw}`}
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d={direction === 'prev' ? 'M15 5 8 12l7 7' : 'M9 5l7 7-7 7'} />
+      </svg>
+    </button>
   )
 }
 

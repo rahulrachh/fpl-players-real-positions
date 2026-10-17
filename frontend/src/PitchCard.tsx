@@ -27,29 +27,7 @@ function formatDate(iso: string) {
   return new Date(`${iso}Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
-// Gameweeks the arrows go to (null = disabled). Left out for a static card.
-export type GwNav = { prev: number | null; next: number | null; go: (gw: number) => void }
-
-function GwArrow({ direction, nav }: { direction: 'prev' | 'next'; nav: GwNav }) {
-  const gw = direction === 'prev' ? nav.prev : nav.next
-  const label = direction === 'prev' ? 'Previous gameweek' : 'Next gameweek'
-  return (
-    <button
-      type="button"
-      className="gw-arrow"
-      disabled={gw === null}
-      onClick={() => gw !== null && nav.go(gw)}
-      aria-label={gw === null ? label : `${label} (GW${gw})`}
-      title={gw === null ? label : `GW${gw}`}
-    >
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d={direction === 'prev' ? 'M15 5 8 12l7 7' : 'M9 5l7 7-7 7'} />
-      </svg>
-    </button>
-  )
-}
-
-export default function PitchCard({ plot, depth = 'all', nav }: { plot: Plot; depth?: DepthMode; nav?: GwNav }) {
+export default function PitchCard({ plot, depth = 'all' }: { plot: Plot; depth?: DepthMode }) {
   const state = STATE_TEXT[plot.state]
   const hasGhosts = plot.dots.some((d) => d.is_ghost)
   const hasLinks = plot.dots.some((d) => d.link_group !== null)
@@ -62,9 +40,7 @@ export default function PitchCard({ plot, depth = 'all', nav }: { plot: Plot; de
         </div>
         <div className="card-gw">
           <div className="gw-line">
-            {nav && <GwArrow direction="prev" nav={nav} />}
             <span className="gw-label">GW{plot.gw}</span>
-            {nav && <GwArrow direction="next" nav={nav} />}
             <span className={`state state-${plot.state}`}>{state.badge}</span>
           </div>
           <p className="score">
