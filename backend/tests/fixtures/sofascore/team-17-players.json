@@ -1,0 +1,690 @@
+{
+ "players": [
+  {
+   "player": {
+    "name": "Erling Haaland",
+    "firstName": "Erling",
+    "lastName": "Haaland",
+    "slug": "erling-haaland",
+    "shortName": "E. Haaland",
+    "position": "F",
+    "jerseyNumber": "9",
+    "height": 195,
+    "dateOfBirth": "2000-07-21T00:00:00+00:00",
+    "preferredFoot": "Left",
+    "userCount": 1077490,
+    "deceased": false,
+    "gender": "M",
+    "sofascoreId": "ghm-8ni",
+    "id": 839956,
+    "underage": false,
+    "shirtNumber": 9,
+    "dateOfBirthTimestamp": 964137600,
+    "contractUntilTimestamp": 2035238400,
+    "proposedMarketValue": 240000000,
+    "team": {
+     "id": 17,
+     "name": "Manchester City"
+    }
+   }
+  },
+  {
+   "player": {
+    "name": "Enzo Fernández",
+    "firstName": "",
+    "lastName": "",
+    "slug": "enzo-fernandez",
+    "shortName": "E. Fernández",
+    "position": "M",
+    "jerseyNumber": "17",
+    "height": 177,
+    "dateOfBirth": "2001-01-17T00:00:00+00:00",
+    "preferredFoot": "Right",
+    "userCount": 158608,
+    "deceased": false,
+    "gender": "M",
+    "sofascoreId": "8jj-2j9",
+    "id": 974505,
+    "underage": false,
+    "shirtNumber": 17,
+    "dateOfBirthTimestamp": 979689600,
+    "contractUntilTimestamp": 1940544000,
+    "proposedMarketValue": 116000000,
+    "team": {
+     "id": 17,
+     "name": "Manchester City"
+    }
+   }
+  },
+  {
+   "player": {
+    "name": "Phil Foden",
+    "firstName": "Phil",
+    "lastName": "Foden",
+    "slug": "phil-foden",
+    "shortName": "P. Foden",
+    "position": "M",
+    "weight": 70,
+    "jerseyNumber": "47",
+    "height": 171,
+    "dateOfBirth": "2000-05-28T00:00:00+00:00",
+    "preferredFoot": "Left",
+    "userCount": 135559,
+    "deceased": false,
+    "gender": "M",
+    "sofascoreId": "c62-qug",
+    "id": 859765,
+    "underage": false,
+    "shirtNumber": 47,
+    "dateOfBirthTimestamp": 959472000,
+    "contractUntilTimestamp": 1909008000,
+    "proposedMarketValue": 62000000,
+    "team": {
+     "id": 17,
+     "name": "Manchester City"
+    }
+   }
+  },
+  {
+   "player": {
+    "name": "Antoine Semenyo",
+    "slug": "antoine-semenyo",
+    "shortName": "A. Semenyo",
+    "position": "M",
+    "jerseyNumber": "42",
+    "height": 185,
+    "dateOfBirth": "2000-01-07T00:00:00+00:00",
+    "preferredFoot": "Right",
+    "userCount": 118992,
+    "deceased": false,
+    "gender": "M",
+    "sofascoreId": "n5t-a76",
+    "id": 934354,
+    "underage": false,
+    "shirtNumber": 42,
+    "dateOfBirthTimestamp": 947203200,
+    "contractUntilTimestamp": 1940544000,
+    "proposedMarketValue": 85000000,
+    "team": {
+     "id": 17,
+     "name": "Manchester City"
+    }
+   }
+  },
+  {
+   "player": {
+    "name": "Rayan Cherki",
+    "firstName": "",
+    "lastName": "",
+    "slug": "cherki-rayan",
+    "shortName": "R. Cherki",
+    "position": "M",
+    "jerseyNumber": "10",
+    "height": 176,
+    "dateOfBirth": "2003-08-17T00:00:00+00:00",
+    "preferredFoot": "Both",
+    "userCount": 112084,
+    "deceased": false,
+    "gender": "M",
+    "sofascoreId": "5ff-uus",
+    "id": 979128,
+    "underage": false,
+    "shirtNumber": 10,
+    "dateOfBirthTimestamp": 1061078400,
+    "contractUntilTimestamp": 1909008000,
+    "proposedMarketValue": 120000000,
+    "team": {
+     "id": 17,
+     "name": "Manchester City"
+    }
+   }
+  },
+  {
+   "player": {
+    "name": "Jérémy Doku",
+    "firstName": "Jeremy",
+    "lastName": "Doku",
+    "slug": "jeremy-doku",
+    "shortName": "J. Doku",
+    "position": "M",
+    "jerseyNumber": "11",
+    "height": 173,
+    "dateOfBirth": "2002-05-27T00:00:00+00:00",
+    "preferredFoot": "Right",
+    "userCount": 86340,
+    "deceased": false,
+    "gender": "M",
+    "sofascoreId": "n5t-a4h",
+    "id": 934386,
+    "underage": false,
+    "shirtNumber": 11,
+    "dateOfBirthTimestamp": 1022457600,
+    "contractUntilTimestamp": 1940544000,
+    "proposedMarketValue": 70000000,
+    "team": {
+     "id": 17,
+     "name": "Manchester City"
+    }
+   }
+  },
+  {
+   "player": {
+    "name": "Iliman Ndiaye",
+    "slug": "iliman-ndiaye",
+    "shortName": "I. Ndiaye",
+    "position": "M",
+    "jerseyNumber": "7",
+    "height": 180,
+    "dateOfBirth": "2000-03-06T00:00:00+00:00",
+    "preferredFoot": "Right",
+    "userCount": 84839,
+    "deceased": false,
+    "gender": "M",
+    "sofascoreId": "zzm-cnd",
+    "id": 914309,
+    "underage": false,
+    "shirtNumber": 7,
+    "dateOfBirthTimestamp": 952300800,
+    "contractUntilTimestamp": 1940544000,
+    "proposedMarketValue": 63000000,
+    "team": {
+     "id": 17,
+     "name": "Manchester City"
+    }
+   }
+  },
+  {
+   "player": {
+    "name": "Ayyoub Bouaddi",
+    "firstName": "Ayyoub Bouaddi",
+    "slug": "bouaddi-ayyoub",
+    "shortName": "A. Bouaddi",
+    "position": "M",
+    "jerseyNumber": "32",
+    "height": 185,
+    "dateOfBirth": "2007-10-02T00:00:00+00:00",
+    "preferredFoot": "Right",
+    "userCount": 73795,
+    "deceased": false,
+    "gender": "M",
+    "sofascoreId": "g87-zpt",
+    "id": 1564180,
+    "underage": false,
+    "shirtNumber": 32,
+    "dateOfBirthTimestamp": 1191283200,
+    "contractUntilTimestamp": 1940544000,
+    "proposedMarketValue": 98000000,
+    "team": {
+     "id": 17,
+     "name": "Manchester City"
+    }
+   }
+  },
+  {
+   "player": {
+    "name": "Elliot Anderson",
+    "firstName": "",
+    "lastName": "",
+    "slug": "elliot-anderson",
+    "shortName": "E. Anderson",
+    "position": "M",
+    "jerseyNumber": "5",
+    "height": 179,
+    "dateOfBirth": "2002-11-06T00:00:00+00:00",
+    "preferredFoot": "Right",
+    "userCount": 37751,
+    "deceased": false,
+    "gender": "M",
+    "sofascoreId": "n5z-a3f",
+    "id": 994546,
+    "underage": false,
+    "shirtNumber": 5,
+    "dateOfBirthTimestamp": 1036540800,
+    "contractUntilTimestamp": 1940544000,
+    "proposedMarketValue": 109000000,
+    "team": {
+     "id": 17,
+     "name": "Manchester City"
+    }
+   }
+  },
+  {
+   "player": {
+    "name": "Mateo Kovačić",
+    "slug": "mateo-kovacic",
+    "shortName": "M. Kovačić",
+    "position": "M",
+    "jerseyNumber": "8",
+    "height": 178,
+    "dateOfBirth": "1994-05-06T00:00:00+00:00",
+    "preferredFoot": "Right",
+    "userCount": 33633,
+    "deceased": false,
+    "gender": "M",
+    "sofascoreId": "f9r-6qb",
+    "id": 136710,
+    "underage": false,
+    "shirtNumber": 8,
+    "dateOfBirthTimestamp": 768182400,
+    "contractUntilTimestamp": 1814313600,
+    "proposedMarketValue": 9700000,
+    "team": {
+     "id": 17,
+     "name": "Manchester City"
+    }
+   }
+  },
+  {
+   "player": {
+    "name": "Allan",
+    "firstName": "Allan",
+    "slug": "allan",
+    "shortName": "Allan",
+    "position": "M",
+    "weight": 70,
+    "jerseyNumber": "37",
+    "height": 175,
+    "dateOfBirth": "2004-04-19T00:00:00+00:00",
+    "preferredFoot": "Left",
+    "userCount": 24840,
+    "deceased": false,
+    "gender": "M",
+    "sofascoreId": "kmk-afx",
+    "id": 1835889,
+    "underage": false,
+    "shirtNumber": 37,
+    "dateOfBirthTimestamp": 1082332800,
+    "contractUntilTimestamp": 1940544000,
+    "proposedMarketValue": 32000000,
+    "team": {
+     "id": 17,
+     "name": "Manchester City"
+    }
+   }
+  },
+  {
+   "player": {
+    "name": "Ryan McAidoo",
+    "slug": "ryan-mcaidoo",
+    "shortName": "R. McAidoo",
+    "position": "M",
+    "jerseyNumber": "7",
+    "height": 174,
+    "dateOfBirth": "2008-06-24T00:00:00+00:00",
+    "preferredFoot": "Left",
+    "userCount": 7310,
+    "deceased": false,
+    "gender": "M",
+    "sofascoreId": "6g6-mre",
+    "id": 1826151,
+    "underage": false,
+    "shirtNumber": 7,
+    "dateOfBirthTimestamp": 1214265600,
+    "proposedMarketValue": 8199999,
+    "team": {
+     "id": 17,
+     "name": "Manchester City"
+    }
+   }
+  },
+  {
+   "player": {
+    "name": "Abdukodir Khusanov",
+    "slug": "abdukodir-khusanov",
+    "shortName": "A. Khusanov",
+    "position": "D",
+    "jerseyNumber": "45",
+    "height": 186,
+    "dateOfBirth": "2004-02-29T00:00:00+00:00",
+    "preferredFoot": "Right",
+    "userCount": 110706,
+    "deceased": false,
+    "gender": "M",
+    "sofascoreId": "km5-vce",
+    "id": 1194333,
+    "underage": false,
+    "shirtNumber": 45,
+    "dateOfBirthTimestamp": 1078012800,
+    "contractUntilTimestamp": 1940544000,
+    "proposedMarketValue": 47000000,
+    "team": {
+     "id": 17,
+     "name": "Manchester City"
+    }
+   }
+  },
+  {
+   "player": {
+    "name": "Joško Gvardiol",
+    "firstName": "Josko",
+    "lastName": "Gvardiol",
+    "slug": "josko-gvardiol",
+    "shortName": "J. Gvardiol",
+    "position": "D",
+    "jerseyNumber": "24",
+    "height": 186,
+    "dateOfBirth": "2002-01-23T00:00:00+00:00",
+    "preferredFoot": "Left",
+    "userCount": 52608,
+    "deceased": false,
+    "gender": "M",
+    "sofascoreId": "rss-qn8",
+    "id": 964994,
+    "underage": false,
+    "shirtNumber": 24,
+    "dateOfBirthTimestamp": 1011744000,
+    "contractUntilTimestamp": 1940544000,
+    "proposedMarketValue": 69000000,
+    "team": {
+     "id": 17,
+     "name": "Manchester City"
+    }
+   }
+  },
+  {
+   "player": {
+    "name": "Rayan Aït-Nouri",
+    "firstName": "Rayan",
+    "lastName": "Ait Nouri",
+    "slug": "rayan-ait-nouri",
+    "shortName": "R. Aït-Nouri",
+    "position": "D",
+    "weight": 70,
+    "jerseyNumber": "21",
+    "height": 179,
+    "dateOfBirth": "2001-06-06T00:00:00+00:00",
+    "preferredFoot": "Left",
+    "userCount": 52015,
+    "deceased": false,
+    "gender": "M",
+    "sofascoreId": "wrj-xmn",
+    "id": 931278,
+    "underage": false,
+    "shirtNumber": 21,
+    "dateOfBirthTimestamp": 991785600,
+    "contractUntilTimestamp": 1909008000,
+    "proposedMarketValue": 34000000,
+    "team": {
+     "id": 17,
+     "name": "Manchester City"
+    }
+   }
+  },
+  {
+   "player": {
+    "name": "Rúben Dias",
+    "slug": "ruben-dias",
+    "shortName": "R. Dias",
+    "position": "D",
+    "weight": 70,
+    "jerseyNumber": "3",
+    "height": 188,
+    "dateOfBirth": "1997-05-14T00:00:00+00:00",
+    "preferredFoot": "Right",
+    "userCount": 42329,
+    "deceased": false,
+    "gender": "M",
+    "sofascoreId": "kzy-ebj",
+    "id": 318941,
+    "underage": false,
+    "shirtNumber": 3,
+    "dateOfBirthTimestamp": 863568000,
+    "contractUntilTimestamp": 1877472000,
+    "proposedMarketValue": 55000000,
+    "team": {
+     "id": 17,
+     "name": "Manchester City"
+    }
+   }
+  },
+  {
+   "player": {
+    "name": "Nico O'Reilly",
+    "firstName": "Nico",
+    "lastName": "O’Reilly",
+    "slug": "nico-o-reilly",
+    "shortName": "N. O’Reilly",
+    "position": "D",
+    "jerseyNumber": "33",
+    "height": 193,
+    "dateOfBirth": "2005-03-21T00:00:00+00:00",
+    "preferredFoot": "Left",
+    "userCount": 36712,
+    "deceased": false,
+    "gender": "M",
+    "sofascoreId": "iws-xkt",
+    "id": 1142703,
+    "underage": false,
+    "shirtNumber": 33,
+    "dateOfBirthTimestamp": 1111363200,
+    "contractUntilTimestamp": 1909008000,
+    "proposedMarketValue": 76000000,
+    "team": {
+     "id": 17,
+     "name": "Manchester City"
+    }
+   }
+  },
+  {
+   "player": {
+    "name": "Marc Guéhi",
+    "firstName": "Marc",
+    "lastName": "Guehi",
+    "slug": "marc-guehi",
+    "shortName": "M. Guéhi",
+    "position": "D",
+    "jerseyNumber": "6",
+    "height": 182,
+    "dateOfBirth": "2000-07-13T00:00:00+00:00",
+    "preferredFoot": "Right",
+    "userCount": 33514,
+    "deceased": false,
+    "gender": "M",
+    "sofascoreId": "cht-bng",
+    "id": 877994,
+    "underage": false,
+    "shirtNumber": 6,
+    "dateOfBirthTimestamp": 963446400,
+    "contractUntilTimestamp": 1940544000,
+    "proposedMarketValue": 71000000,
+    "team": {
+     "id": 17,
+     "name": "Manchester City"
+    }
+   }
+  },
+  {
+   "player": {
+    "name": "Matheus Nunes",
+    "firstName": "Matheus",
+    "lastName": "Nunes",
+    "slug": "matheus-nunes",
+    "shortName": "M. Nunes",
+    "position": "D",
+    "weight": 75,
+    "jerseyNumber": "27",
+    "height": 183,
+    "dateOfBirth": "1998-08-27T00:00:00+00:00",
+    "preferredFoot": "Right",
+    "userCount": 23704,
+    "deceased": false,
+    "gender": "M",
+    "sofascoreId": "rsv-c7e",
+    "id": 945122,
+    "underage": false,
+    "shirtNumber": 27,
+    "dateOfBirthTimestamp": 904176000,
+    "contractUntilTimestamp": 1845936000,
+    "proposedMarketValue": 43000000,
+    "team": {
+     "id": 17,
+     "name": "Manchester City"
+    }
+   }
+  },
+  {
+   "player": {
+    "name": "Rico Lewis",
+    "firstName": "Rico Lewis",
+    "lastName": "",
+    "slug": "rico-lewis",
+    "shortName": "R. Lewis",
+    "position": "D",
+    "jerseyNumber": "82",
+    "height": 170,
+    "dateOfBirth": "2004-11-21T00:00:00+00:00",
+    "preferredFoot": "Right",
+    "userCount": 18214,
+    "deceased": false,
+    "gender": "M",
+    "sofascoreId": "iws-r6a",
+    "id": 1136731,
+    "underage": false,
+    "shirtNumber": 82,
+    "dateOfBirthTimestamp": 1100995200,
+    "contractUntilTimestamp": 1909008000,
+    "proposedMarketValue": 23000000,
+    "team": {
+     "id": 17,
+     "name": "Manchester City"
+    }
+   }
+  },
+  {
+   "player": {
+    "name": "Vitor Reis",
+    "slug": "reis-vitor",
+    "shortName": "V. Reis",
+    "position": "D",
+    "weight": 77,
+    "jerseyNumber": "22",
+    "height": 186,
+    "dateOfBirth": "2006-01-12T00:00:00+00:00",
+    "preferredFoot": "Right",
+    "userCount": 15913,
+    "deceased": false,
+    "gender": "M",
+    "sofascoreId": "g8b-yfh",
+    "id": 1485300,
+    "underage": false,
+    "shirtNumber": 22,
+    "dateOfBirthTimestamp": 1137024000,
+    "contractUntilTimestamp": 1877472000,
+    "proposedMarketValue": 31000000,
+    "team": {
+     "id": 17,
+     "name": "Manchester City"
+    }
+   }
+  },
+  {
+   "player": {
+    "name": "Josh Wilson-Esbrand",
+    "slug": "josh-wilson-esbrand",
+    "shortName": "J. Wilson-Esbrand",
+    "position": "D",
+    "jerseyNumber": "97",
+    "height": 176,
+    "dateOfBirth": "2002-12-26T00:00:00+00:00",
+    "preferredFoot": "Left",
+    "userCount": 4001,
+    "deceased": false,
+    "gender": "M",
+    "sofascoreId": "iwj-mvi",
+    "id": 1017915,
+    "underage": false,
+    "shirtNumber": 97,
+    "dateOfBirthTimestamp": 1040860800,
+    "contractUntilTimestamp": 1814313600,
+    "proposedMarketValue": 970000,
+    "team": {
+     "id": 17,
+     "name": "Manchester City"
+    }
+   }
+  },
+  {
+   "player": {
+    "name": "Gianluigi Donnarumma",
+    "slug": "gianluigi-donnarumma",
+    "shortName": "G. Donnarumma",
+    "position": "G",
+    "weight": 90,
+    "jerseyNumber": "1",
+    "height": 196,
+    "dateOfBirth": "1999-02-25T00:00:00+00:00",
+    "preferredFoot": "Right",
+    "userCount": 59927,
+    "deceased": false,
+    "gender": "M",
+    "sofascoreId": "ke2-kvj",
+    "id": 824509,
+    "underage": false,
+    "shirtNumber": 1,
+    "dateOfBirthTimestamp": 919900800,
+    "contractUntilTimestamp": 1909008000,
+    "proposedMarketValue": 46000000,
+    "team": {
+     "id": 17,
+     "name": "Manchester City"
+    }
+   }
+  },
+  {
+   "player": {
+    "name": "Gerónimo Rulli",
+    "slug": "geronimo-rulli",
+    "shortName": "G. Rulli",
+    "position": "G",
+    "weight": 80,
+    "jerseyNumber": "28",
+    "height": 189,
+    "dateOfBirth": "1992-05-20T00:00:00+00:00",
+    "preferredFoot": "Right",
+    "userCount": 19287,
+    "deceased": false,
+    "gender": "M",
+    "sofascoreId": "hwv-duc",
+    "id": 128383,
+    "underage": false,
+    "shirtNumber": 28,
+    "dateOfBirthTimestamp": 706320000,
+    "contractUntilTimestamp": 1845936000,
+    "proposedMarketValue": 4800000,
+    "team": {
+     "id": 17,
+     "name": "Manchester City"
+    }
+   }
+  },
+  {
+   "player": {
+    "name": "Marcus Bettinelli",
+    "firstName": "Marcus",
+    "lastName": "Bettinelli",
+    "slug": "marcus-bettinelli",
+    "shortName": "M. Bettinelli",
+    "position": "G",
+    "weight": 82,
+    "jerseyNumber": "13",
+    "height": 194,
+    "dateOfBirth": "1992-05-24T00:00:00+00:00",
+    "preferredFoot": "Right",
+    "userCount": 8879,
+    "deceased": false,
+    "gender": "M",
+    "sofascoreId": "8n9-f5w",
+    "id": 257993,
+    "underage": false,
+    "shirtNumber": 13,
+    "dateOfBirthTimestamp": 706665600,
+    "contractUntilTimestamp": 1814313600,
+    "proposedMarketValue": 320000,
+    "team": {
+     "id": 17,
+     "name": "Manchester City"
+    }
+   }
+  }
+ ]
+}

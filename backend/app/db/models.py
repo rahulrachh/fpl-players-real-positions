@@ -5,8 +5,9 @@ Conventions:
 - Datetimes are stored as naive UTC.
 - Primary keys are the source's own IDs (FPL or Sofascore), except
   `sync_runs`.
-- Positions are on Sofascore's normalized 0-100 frame: x 0 = own goal,
-  100 = opponent's goal; y high = left side (attacking team's view).
+- Positions are in the positions adapter's frame (`app/positions/base.py`):
+  team attacking upward, x 0 = left touchline → 100 = right touchline,
+  y 0 = own goal → 100 = opponent's goal.
 """
 
 from datetime import datetime

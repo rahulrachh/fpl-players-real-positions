@@ -102,6 +102,8 @@ Script: `python spikes/sofascore/fetch_team_matches.py <teamId> [N]`. Sofascore 
 - **Fallback source:** FotMob has similar unofficial match data and could be tested if Sofascore blocks us.
 
 ## Not covered (open questions for later tasks)
+> Task 06 answered the first two: squad lists come from `/team/{id}/players`, and `events/last/1` is the next (older) page. See `docs/positions-source.md`.
+
 - **Squad lists** (players who have not played yet) for ID matching: no endpoint tested. Needed for task 08.
 - Pagination of `events/last/{page}`.
 - Red cards and their effect on minutes.

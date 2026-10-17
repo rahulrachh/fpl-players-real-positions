@@ -16,12 +16,15 @@
 - Constraints and indexes are named (`pk_`, `fk_`, `uq_`, `ck_`, `ix_` naming convention in `app/db/base.py`) so later SQLite batch migrations can find them.
 
 ## Coordinate convention
-`player_match_positions.avg_x` / `avg_y` are stored exactly as Sofascore returns them (see `docs/spikes/positions-source.md`). Sofascore already normalizes both teams, so no home/away flipping happens on write.
+`player_match_positions.avg_x` / `avg_y` are stored exactly as the positions adapter returns them (`backend/app/positions/base.py`, task 06). The adapter normalizes every source into one frame, so nothing downstream knows about the source's axes or home/away.
 
-- **x**: 0 = own goal, 100 = opponent's goal. Every team attacks toward x = 100.
-- **y**: high = **left** side, low = right side, from the attacking team's view (a left-back sits at y ≈ 83).
+Pitch seen from behind the player's own goal, his team **attacking upward**:
+- **x**: 0 = left touchline, 100 = right touchline (his left / right). A left-back sits at x ≈ 17.
+- **y**: 0 = own goal line, 100 = opponent's goal line. A goalkeeper sits at y ≈ 10, a striker at y ≈ 55-70.
 - Both are in 0-100 (`CHECK` enforced).
-- To draw a pitch attacking upward with the left side on the left: screen x from `100 - y`, screen y from `x`.
+- To draw a pitch attacking upward: screen x = `x`, screen y = `y` measured from the bottom.
+
+Sofascore's own axes are different (its `averageX` is depth, `averageY` high = left); the adapter converts with x = 100 - `averageY`, y = `averageX`. See `docs/positions-source.md`.
 
 ## Tables
 

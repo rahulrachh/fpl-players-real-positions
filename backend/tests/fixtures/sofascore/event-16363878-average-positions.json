@@ -1,0 +1,792 @@
+{
+ "home": [
+  {
+   "player": {
+    "name": "Rio Ngumoha",
+    "firstName": "Rio Ngumoha",
+    "slug": "rio-ngumoha",
+    "shortName": "R. Ngumoha",
+    "position": "F",
+    "jerseyNumber": "73",
+    "gender": "M",
+    "sofascoreId": "wmr-3xp",
+    "id": 1881902
+   },
+   "averageX": 56,
+   "averageY": 95.9,
+   "pointsCount": 1
+  },
+  {
+   "player": {
+    "name": "Lewis Koumas",
+    "slug": "lewis-koumas",
+    "shortName": "L. Koumas",
+    "position": "F",
+    "jerseyNumber": "67",
+    "gender": "M",
+    "sofascoreId": "6gt-egf",
+    "id": 1403111
+   },
+   "averageX": 60.122222222222,
+   "averageY": 44.588888888889,
+   "pointsCount": 27
+  },
+  {
+   "player": {
+    "name": "Alisson",
+    "firstName": "Alisson Ramses",
+    "lastName": "Alisson",
+    "slug": "alisson",
+    "shortName": "Alisson",
+    "position": "G",
+    "jerseyNumber": "1",
+    "gender": "M",
+    "sofascoreId": "bh2-kiq",
+    "id": 243609
+   },
+   "averageX": 9.4486486486487,
+   "averageY": 51.935135135135,
+   "pointsCount": 37
+  },
+  {
+   "player": {
+    "name": "Jeremie Frimpong",
+    "slug": "jeremie-frimpong",
+    "shortName": "J. Frimpong",
+    "position": "D",
+    "jerseyNumber": "30",
+    "gender": "M",
+    "sofascoreId": "b77-rub",
+    "id": 970361
+   },
+   "averageX": 28.533333333333,
+   "averageY": 21.35,
+   "pointsCount": 6
+  },
+  {
+   "player": {
+    "name": "Trey Nyoni",
+    "slug": "nyoni-trey",
+    "shortName": "T. Nyoni",
+    "position": "M",
+    "jerseyNumber": "42",
+    "gender": "M",
+    "sofascoreId": "b7r-jve",
+    "id": 1445945
+   },
+   "averageX": 50.327272727273,
+   "averageY": 49.518181818182,
+   "pointsCount": 11
+  },
+  {
+   "player": {
+    "name": "Víctor Muñoz",
+    "slug": "victor-munoz",
+    "shortName": "V. Muñoz",
+    "position": "M",
+    "jerseyNumber": "23",
+    "gender": "M",
+    "sofascoreId": "cem-tkr",
+    "id": 1145642
+   },
+   "averageX": 56.969230769231,
+   "averageY": 23.192307692308,
+   "pointsCount": 52
+  },
+  {
+   "player": {
+    "name": "Miloš Kerkez",
+    "firstName": "Milos",
+    "lastName": "Kerkez",
+    "slug": "milos-kerkez",
+    "shortName": "M. Kerkez",
+    "position": "D",
+    "jerseyNumber": "6",
+    "gender": "M",
+    "sofascoreId": "kmu-gwg",
+    "id": 1097425
+   },
+   "averageX": 37.031746031746,
+   "averageY": 83.061904761905,
+   "pointsCount": 63
+  },
+  {
+   "player": {
+    "name": "Federico Chiesa",
+    "firstName": "Federico",
+    "lastName": "Chiesa",
+    "slug": "federico-chiesa",
+    "shortName": "F. Chiesa",
+    "position": "F",
+    "jerseyNumber": "14",
+    "gender": "M",
+    "sofascoreId": "c6u-pzg",
+    "id": 845386
+   },
+   "averageX": 5.6,
+   "averageY": 4.6,
+   "pointsCount": 1
+  },
+  {
+   "player": {
+    "name": "Joe Gomez",
+    "firstName": "Joe",
+    "lastName": "Gomez",
+    "slug": "joe-gomez",
+    "shortName": "J. Gomez",
+    "position": "D",
+    "jerseyNumber": "2",
+    "gender": "M",
+    "sofascoreId": "in4-6ie",
+    "id": 318927
+   },
+   "averageX": 38.9,
+   "averageY": 28.925,
+   "pointsCount": 4
+  },
+  {
+   "player": {
+    "name": "Jérémy Jacquet",
+    "firstName": "",
+    "lastName": "",
+    "slug": "jeremy-jacquet",
+    "shortName": "J. Jacquet",
+    "position": "D",
+    "jerseyNumber": "5",
+    "gender": "M",
+    "sofascoreId": "b7r-jc4",
+    "id": 1445625
+   },
+   "averageX": 30.73023255814,
+   "averageY": 32.786046511628,
+   "pointsCount": 43
+  },
+  {
+   "player": {
+    "name": "Florian Wirtz",
+    "slug": "florian-wirtz",
+    "shortName": "F. Wirtz",
+    "position": "M",
+    "jerseyNumber": "7",
+    "gender": "M",
+    "sofascoreId": "tdb-7jy",
+    "id": 1019322
+   },
+   "averageX": 63.301785714286,
+   "averageY": 59.216071428571,
+   "pointsCount": 56
+  },
+  {
+   "player": {
+    "name": "Ryan Gravenberch",
+    "firstName": "Ryan",
+    "lastName": "Gravenberch",
+    "slug": "ryan-gravenberch",
+    "shortName": "R. Gravenberch",
+    "position": "M",
+    "jerseyNumber": "38",
+    "gender": "M",
+    "sofascoreId": "ggn-qvi",
+    "id": 904897
+   },
+   "averageX": 61.416666666667,
+   "averageY": 35.14375,
+   "pointsCount": 48
+  },
+  {
+   "player": {
+    "name": "Ronald Araújo",
+    "firstName": "Ronald",
+    "lastName": "Araujo",
+    "slug": "ronald-araujo",
+    "shortName": "R. Araújo",
+    "position": "D",
+    "jerseyNumber": "33",
+    "gender": "M",
+    "sofascoreId": "8jk-j4c",
+    "id": 925097
+   },
+   "averageX": 45.616666666667,
+   "averageY": 13.289583333333,
+   "pointsCount": 48
+  },
+  {
+   "player": {
+    "name": "Virgil van Dijk",
+    "firstName": "Virgil",
+    "lastName": "van Dijk",
+    "slug": "virgil-van-dijk",
+    "shortName": "V. van Dijk",
+    "position": "D",
+    "jerseyNumber": "4",
+    "gender": "M",
+    "sofascoreId": "b24-3rq",
+    "id": 151545
+   },
+   "averageX": 39.366197183099,
+   "averageY": 65.407042253521,
+   "pointsCount": 71
+  },
+  {
+   "player": {
+    "name": "Alexis Mac Allister",
+    "slug": "alexis-mac-allister",
+    "shortName": "A. Mac Allister",
+    "position": "M",
+    "jerseyNumber": "10",
+    "gender": "M",
+    "sofascoreId": "hhi-bnc",
+    "id": 895324
+   },
+   "averageX": 48.406578947368,
+   "averageY": 56.25,
+   "pointsCount": 76
+  },
+  {
+   "player": {
+    "name": "Bradley Barcola",
+    "slug": "barcola-bradley",
+    "shortName": "B. Barcola",
+    "position": "F",
+    "jerseyNumber": "29",
+    "gender": "M",
+    "sofascoreId": "5fb-ghv",
+    "id": 996952
+   },
+   "averageX": 56.92641509434,
+   "averageY": 75.339622641509,
+   "pointsCount": 53
+  }
+ ],
+ "away": [
+  {
+   "player": {
+    "name": "Iliman Ndiaye",
+    "slug": "iliman-ndiaye",
+    "shortName": "I. Ndiaye",
+    "position": "M",
+    "jerseyNumber": "7",
+    "gender": "M",
+    "sofascoreId": "zzm-cnd",
+    "id": 914309
+   },
+   "averageX": 61.944444444444,
+   "averageY": 18.216666666667,
+   "pointsCount": 36
+  },
+  {
+   "player": {
+    "name": "Erling Haaland",
+    "firstName": "Erling",
+    "lastName": "Haaland",
+    "slug": "erling-haaland",
+    "shortName": "E. Haaland",
+    "position": "F",
+    "jerseyNumber": "9",
+    "gender": "M",
+    "sofascoreId": "ghm-8ni",
+    "id": 839956
+   },
+   "averageX": 53.596666666667,
+   "averageY": 54.3,
+   "pointsCount": 30
+  },
+  {
+   "player": {
+    "name": "Joško Gvardiol",
+    "firstName": "Josko",
+    "lastName": "Gvardiol",
+    "slug": "josko-gvardiol",
+    "shortName": "J. Gvardiol",
+    "position": "D",
+    "jerseyNumber": "24",
+    "gender": "M",
+    "sofascoreId": "rss-qn8",
+    "id": 964994
+   },
+   "averageX": 54.573684210526,
+   "averageY": 83.321052631579,
+   "pointsCount": 19
+  },
+  {
+   "player": {
+    "name": "Ayyoub Bouaddi",
+    "firstName": "Ayyoub Bouaddi",
+    "slug": "bouaddi-ayyoub",
+    "shortName": "A. Bouaddi",
+    "position": "M",
+    "jerseyNumber": "32",
+    "gender": "M",
+    "sofascoreId": "g87-zpt",
+    "id": 1564180
+   },
+   "averageX": 53.17619047619,
+   "averageY": 64.442857142857,
+   "pointsCount": 21
+  },
+  {
+   "player": {
+    "name": "Allan",
+    "firstName": "Allan",
+    "slug": "allan",
+    "shortName": "Allan",
+    "position": "M",
+    "jerseyNumber": "37",
+    "gender": "M",
+    "sofascoreId": "kmk-afx",
+    "id": 1835889
+   },
+   "averageX": 62.3,
+   "averageY": 7.2833333333333,
+   "pointsCount": 6
+  },
+  {
+   "player": {
+    "name": "Elliot Anderson",
+    "firstName": "",
+    "lastName": "",
+    "slug": "elliot-anderson",
+    "shortName": "E. Anderson",
+    "position": "M",
+    "jerseyNumber": "5",
+    "gender": "M",
+    "sofascoreId": "n5z-a3f",
+    "id": 994546
+   },
+   "averageX": 45.495,
+   "averageY": 46.080833333333,
+   "pointsCount": 120
+  },
+  {
+   "player": {
+    "name": "Rúben Dias",
+    "slug": "ruben-dias",
+    "shortName": "R. Dias",
+    "position": "D",
+    "jerseyNumber": "3",
+    "gender": "M",
+    "sofascoreId": "kzy-ebj",
+    "id": 318941
+   },
+   "averageX": 34.112048192771,
+   "averageY": 30.433734939759,
+   "pointsCount": 83
+  },
+  {
+   "player": {
+    "name": "Antoine Semenyo",
+    "slug": "antoine-semenyo",
+    "shortName": "A. Semenyo",
+    "position": "M",
+    "jerseyNumber": "42",
+    "gender": "M",
+    "sofascoreId": "n5t-a76",
+    "id": 934354
+   },
+   "averageX": 64.404,
+   "averageY": 71.332,
+   "pointsCount": 50
+  },
+  {
+   "player": {
+    "name": "Gianluigi Donnarumma",
+    "slug": "gianluigi-donnarumma",
+    "shortName": "G. Donnarumma",
+    "position": "G",
+    "jerseyNumber": "1",
+    "gender": "M",
+    "sofascoreId": "ke2-kvj",
+    "id": 824509
+   },
+   "averageX": 9.7444444444444,
+   "averageY": 49.380952380952,
+   "pointsCount": 63
+  },
+  {
+   "player": {
+    "name": "Enzo Fernández",
+    "firstName": "",
+    "lastName": "",
+    "slug": "enzo-fernandez",
+    "shortName": "E. Fernández",
+    "position": "M",
+    "jerseyNumber": "17",
+    "gender": "M",
+    "sofascoreId": "8jj-2j9",
+    "id": 974505
+   },
+   "averageX": 53.329807692308,
+   "averageY": 60.955769230769,
+   "pointsCount": 104
+  },
+  {
+   "player": {
+    "name": "Nico O'Reilly",
+    "firstName": "Nico",
+    "lastName": "O’Reilly",
+    "slug": "nico-o-reilly",
+    "shortName": "N. O’Reilly",
+    "position": "D",
+    "jerseyNumber": "33",
+    "gender": "M",
+    "sofascoreId": "iws-xkt",
+    "id": 1142703
+   },
+   "averageX": 40.328846153846,
+   "averageY": 83.348076923077,
+   "pointsCount": 52
+  },
+  {
+   "player": {
+    "name": "Jérémy Doku",
+    "firstName": "Jeremy",
+    "lastName": "Doku",
+    "slug": "jeremy-doku",
+    "shortName": "J. Doku",
+    "position": "M",
+    "jerseyNumber": "11",
+    "gender": "M",
+    "sofascoreId": "n5t-a4h",
+    "id": 934386
+   },
+   "averageX": 71.002325581395,
+   "averageY": 82.748837209302,
+   "pointsCount": 43
+  },
+  {
+   "player": {
+    "name": "Marc Guéhi",
+    "firstName": "Marc",
+    "lastName": "Guehi",
+    "slug": "marc-guehi",
+    "shortName": "M. Guéhi",
+    "position": "D",
+    "jerseyNumber": "6",
+    "gender": "M",
+    "sofascoreId": "cht-bng",
+    "id": 877994
+   },
+   "averageX": 32.328888888889,
+   "averageY": 68.584444444444,
+   "pointsCount": 90
+  },
+  {
+   "player": {
+    "name": "Matheus Nunes",
+    "firstName": "Matheus",
+    "lastName": "Nunes",
+    "slug": "matheus-nunes",
+    "shortName": "M. Nunes",
+    "position": "D",
+    "jerseyNumber": "27",
+    "gender": "M",
+    "sofascoreId": "rsv-c7e",
+    "id": 945122
+   },
+   "averageX": 46.054,
+   "averageY": 12.092,
+   "pointsCount": 50
+  },
+  {
+   "player": {
+    "name": "Rayan Cherki",
+    "firstName": "",
+    "lastName": "",
+    "slug": "cherki-rayan",
+    "shortName": "R. Cherki",
+    "position": "M",
+    "jerseyNumber": "10",
+    "gender": "M",
+    "sofascoreId": "5ff-uus",
+    "id": 979128
+   },
+   "averageX": 61.582795698925,
+   "averageY": 51.266666666667,
+   "pointsCount": 93
+  }
+ ],
+ "substitutions": [
+  {
+   "playerIn": {
+    "name": "Jérémy Doku",
+    "firstName": "Jeremy",
+    "lastName": "Doku",
+    "slug": "jeremy-doku",
+    "shortName": "J. Doku",
+    "position": "M",
+    "jerseyNumber": "11",
+    "gender": "M",
+    "sofascoreId": "n5t-a4h",
+    "id": 934386
+   },
+   "playerOut": {
+    "name": "Iliman Ndiaye",
+    "slug": "iliman-ndiaye",
+    "shortName": "I. Ndiaye",
+    "position": "M",
+    "jerseyNumber": "7",
+    "gender": "M",
+    "sofascoreId": "zzm-cnd",
+    "id": 914309
+   },
+   "id": 127074651,
+   "time": 56,
+   "injury": false,
+   "isHome": false,
+   "incidentClass": "regular",
+   "incidentType": "substitution",
+   "reversedPeriodTime": 35
+  },
+  {
+   "playerIn": {
+    "name": "Trey Nyoni",
+    "slug": "nyoni-trey",
+    "shortName": "T. Nyoni",
+    "position": "M",
+    "jerseyNumber": "42",
+    "gender": "M",
+    "sofascoreId": "b7r-jve",
+    "id": 1445945
+   },
+   "playerOut": {
+    "name": "Florian Wirtz",
+    "slug": "florian-wirtz",
+    "shortName": "F. Wirtz",
+    "position": "M",
+    "jerseyNumber": "7",
+    "gender": "M",
+    "sofascoreId": "tdb-7jy",
+    "id": 1019322
+   },
+   "id": 127074759,
+   "time": 66,
+   "injury": false,
+   "isHome": true,
+   "incidentClass": "regular",
+   "incidentType": "substitution",
+   "reversedPeriodTime": 25
+  },
+  {
+   "playerIn": {
+    "name": "Joško Gvardiol",
+    "firstName": "Josko",
+    "lastName": "Gvardiol",
+    "slug": "josko-gvardiol",
+    "shortName": "J. Gvardiol",
+    "position": "D",
+    "jerseyNumber": "24",
+    "gender": "M",
+    "sofascoreId": "rss-qn8",
+    "id": 964994
+   },
+   "playerOut": {
+    "name": "Nico O'Reilly",
+    "firstName": "Nico",
+    "lastName": "O’Reilly",
+    "slug": "nico-o-reilly",
+    "shortName": "N. O’Reilly",
+    "position": "D",
+    "jerseyNumber": "33",
+    "gender": "M",
+    "sofascoreId": "iws-xkt",
+    "id": 1142703
+   },
+   "id": 127074760,
+   "time": 66,
+   "injury": false,
+   "isHome": false,
+   "incidentClass": "regular",
+   "incidentType": "substitution",
+   "reversedPeriodTime": 25
+  },
+  {
+   "playerIn": {
+    "name": "Jeremie Frimpong",
+    "slug": "jeremie-frimpong",
+    "shortName": "J. Frimpong",
+    "position": "D",
+    "jerseyNumber": "30",
+    "gender": "M",
+    "sofascoreId": "b77-rub",
+    "id": 970361
+   },
+   "playerOut": {
+    "name": "Ronald Araújo",
+    "firstName": "Ronald",
+    "lastName": "Araujo",
+    "slug": "ronald-araujo",
+    "shortName": "R. Araújo",
+    "position": "D",
+    "jerseyNumber": "33",
+    "gender": "M",
+    "sofascoreId": "8jk-j4c",
+    "id": 925097
+   },
+   "id": 127074870,
+   "time": 75,
+   "injury": false,
+   "isHome": true,
+   "incidentClass": "regular",
+   "incidentType": "substitution",
+   "reversedPeriodTime": 16
+  },
+  {
+   "playerIn": {
+    "name": "Rio Ngumoha",
+    "firstName": "Rio Ngumoha",
+    "slug": "rio-ngumoha",
+    "shortName": "R. Ngumoha",
+    "position": "F",
+    "jerseyNumber": "73",
+    "gender": "M",
+    "sofascoreId": "wmr-3xp",
+    "id": 1881902
+   },
+   "playerOut": {
+    "name": "Lewis Koumas",
+    "slug": "lewis-koumas",
+    "shortName": "L. Koumas",
+    "position": "F",
+    "jerseyNumber": "67",
+    "gender": "M",
+    "sofascoreId": "6gt-egf",
+    "id": 1403111
+   },
+   "id": 127074871,
+   "time": 75,
+   "injury": false,
+   "isHome": true,
+   "incidentClass": "regular",
+   "incidentType": "substitution",
+   "reversedPeriodTime": 16
+  },
+  {
+   "playerIn": {
+    "name": "Ayyoub Bouaddi",
+    "firstName": "Ayyoub Bouaddi",
+    "slug": "bouaddi-ayyoub",
+    "shortName": "A. Bouaddi",
+    "position": "M",
+    "jerseyNumber": "32",
+    "gender": "M",
+    "sofascoreId": "g87-zpt",
+    "id": 1564180
+   },
+   "playerOut": {
+    "name": "Enzo Fernández",
+    "firstName": "",
+    "lastName": "",
+    "slug": "enzo-fernandez",
+    "shortName": "E. Fernández",
+    "position": "M",
+    "jerseyNumber": "17",
+    "gender": "M",
+    "sofascoreId": "8jj-2j9",
+    "id": 974505
+   },
+   "id": 127074914,
+   "time": 80,
+   "injury": false,
+   "isHome": false,
+   "incidentClass": "regular",
+   "incidentType": "substitution",
+   "reversedPeriodTime": 11
+  },
+  {
+   "playerIn": {
+    "name": "Allan",
+    "firstName": "Allan",
+    "slug": "allan",
+    "shortName": "Allan",
+    "position": "M",
+    "jerseyNumber": "37",
+    "gender": "M",
+    "sofascoreId": "kmk-afx",
+    "id": 1835889
+   },
+   "playerOut": {
+    "name": "Erling Haaland",
+    "firstName": "Erling",
+    "lastName": "Haaland",
+    "slug": "erling-haaland",
+    "shortName": "E. Haaland",
+    "position": "F",
+    "jerseyNumber": "9",
+    "gender": "M",
+    "sofascoreId": "ghm-8ni",
+    "id": 839956
+   },
+   "id": 127074913,
+   "time": 80,
+   "injury": false,
+   "isHome": false,
+   "incidentClass": "regular",
+   "incidentType": "substitution",
+   "reversedPeriodTime": 11
+  },
+  {
+   "playerIn": {
+    "name": "Joe Gomez",
+    "firstName": "Joe",
+    "lastName": "Gomez",
+    "slug": "joe-gomez",
+    "shortName": "J. Gomez",
+    "position": "D",
+    "jerseyNumber": "2",
+    "gender": "M",
+    "sofascoreId": "in4-6ie",
+    "id": 318927
+   },
+   "playerOut": {
+    "name": "Jérémy Jacquet",
+    "firstName": "",
+    "lastName": "",
+    "slug": "jeremy-jacquet",
+    "shortName": "J. Jacquet",
+    "position": "D",
+    "jerseyNumber": "5",
+    "gender": "M",
+    "sofascoreId": "b7r-jc4",
+    "id": 1445625
+   },
+   "id": 127075060,
+   "time": 88,
+   "injury": false,
+   "isHome": true,
+   "incidentClass": "regular",
+   "incidentType": "substitution",
+   "reversedPeriodTime": 3
+  },
+  {
+   "playerIn": {
+    "name": "Federico Chiesa",
+    "firstName": "Federico",
+    "lastName": "Chiesa",
+    "slug": "federico-chiesa",
+    "shortName": "F. Chiesa",
+    "position": "F",
+    "jerseyNumber": "14",
+    "gender": "M",
+    "sofascoreId": "c6u-pzg",
+    "id": 845386
+   },
+   "playerOut": {
+    "name": "Bradley Barcola",
+    "slug": "barcola-bradley",
+    "shortName": "B. Barcola",
+    "position": "F",
+    "jerseyNumber": "29",
+    "gender": "M",
+    "sofascoreId": "5fb-ghv",
+    "id": 996952
+   },
+   "id": 127075061,
+   "time": 88,
+   "injury": false,
+   "isHome": true,
+   "incidentClass": "regular",
+   "incidentType": "substitution",
+   "reversedPeriodTime": 3
+  }
+ ]
+}

@@ -25,6 +25,8 @@ The web app opens the database **read-only** (`mode=ro` plus `PRAGMA query_only`
 
 New migration: `uv run alembic revision --autogenerate -m "<message>"`.
 
+Positions source check (live Sofascore requests, offline use only): `uv run python -m app.positions round 6`. See `docs/positions-source.md`.
+
 ## Frontend
 ```sh
 cd frontend

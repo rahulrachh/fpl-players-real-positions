@@ -13,7 +13,9 @@ from app.db.engine import get_read_write_engine
 config = context.config
 
 if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
+    # Keep loggers created before the migration (app.*) working when Alembic
+    # runs in-process, e.g. from the tests or an offline script.
+    fileConfig(config.config_file_name, disable_existing_loggers=False)
 
 target_metadata = Base.metadata
 
