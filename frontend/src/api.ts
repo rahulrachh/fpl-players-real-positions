@@ -86,6 +86,10 @@ export type PlotDot = {
   from_gw: number | null
   link_group: number | null
   replaces: number | null
+  // Percentile (0-100) of y among every outfield player-match / those of the
+  // same FPL role. null for a goalkeeper or ghost.
+  depth_pct_all: number | null
+  depth_pct_role: number | null
 }
 
 export type Plot = {

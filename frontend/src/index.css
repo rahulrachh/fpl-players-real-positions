@@ -339,20 +339,6 @@ input:focus-visible {
   stroke-width: 0.25;
 }
 
-.reference line {
-  stroke: #fff;
-  stroke-width: 0.2;
-  stroke-dasharray: 0.9 0.9;
-  opacity: 0.45;
-}
-
-.reference text {
-  fill: #fff;
-  opacity: 0.6;
-  font-weight: 600;
-  font-stretch: 80%;
-}
-
 .link {
   stroke: #fff;
   stroke-width: 0.45;

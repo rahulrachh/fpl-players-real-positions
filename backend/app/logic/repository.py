@@ -6,7 +6,8 @@ from datetime import datetime
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.db.models import Gameweek, PlayerIdMap, PlayerMatchPosition, SyncRun
+from app.db.models import FplPlayer, Gameweek, PlayerIdMap, PlayerMatchPosition, SyncRun
+from app.logic.depth import DepthPools
 from app.logic.positions import MatchPosition
 
 
@@ -50,6 +51,18 @@ def load_match_positions(
             )
         )
     return result
+
+
+def load_depth_pools(session: Session, min_minutes: int) -> DepthPools:
+    """Depth of every stored match of a mapped player who played at least
+    `min_minutes`, grouped by his FPL role (~1,300 rows for six gameweeks)."""
+    rows = session.execute(
+        select(FplPlayer.role, PlayerMatchPosition.avg_y)
+        .join(PlayerIdMap, PlayerIdMap.sofascore_id == PlayerMatchPosition.sofascore_player_id)
+        .join(FplPlayer, FplPlayer.id == PlayerIdMap.fpl_id)
+        .where(PlayerMatchPosition.minutes >= min_minutes)
+    )
+    return DepthPools.from_rows((role, y) for role, y in rows)
 
 
 def load_positions_synced(session: Session, gw: int) -> bool:

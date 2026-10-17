@@ -12,10 +12,12 @@ from pydantic import BaseModel, ConfigDict
 from sqlalchemy.orm import Session
 
 from app.fpl.team import TeamGameweek
+from app.logic.depth import POOL_MIN_MINUTES, rank_depth
 from app.logic.gameweek import GameweekState, build_dots, team_state
 from app.logic.positions import GhostReason
 from app.logic.repository import (
     load_data_as_of,
+    load_depth_pools,
     load_match_positions,
     load_positions_synced,
     load_sofascore_ids,
@@ -48,6 +50,10 @@ class PlotDot(_Model):
     link_group: int | None
     # Locked only: FPL ID of the picked starter this auto-sub replaced.
     replaces: int | None
+    # Percentile (0-100) of y among every outfield player-match / those of
+    # the same FPL role (`app/logic/depth.py`). None for a goalkeeper or ghost.
+    depth_pct_all: float | None
+    depth_pct_role: float | None
 
 
 class Plot(_Model):
@@ -90,10 +96,13 @@ def build_plot(team: TeamGameweek, session: Session, latest_gw: int | None) -> P
     sofascore_ids = load_sofascore_ids(session, [p.player.id for p in team.picks])
     rows = load_match_positions(session, sofascore_ids.values())
     players = {p.player.id: p.player for p in team.picks}
+    pools = load_depth_pools(session, POOL_MIN_MINUTES)
 
     dots = []
     for dot in build_dots(team, state, sofascore_ids, rows):
         player = players[dot.fpl_id]
+        y = _round(dot.y)
+        pct_all, pct_role = rank_depth(pools, dot.role, y)
         dots.append(
             PlotDot(
                 fpl_id=dot.fpl_id,
@@ -103,13 +112,15 @@ def build_plot(team: TeamGameweek, session: Session, latest_gw: int | None) -> P
                 club=player.club.short_name,
                 slot=dot.slot,
                 x=_round(dot.x),
-                y=_round(dot.y),
+                y=y,
                 is_captain=dot.is_captain,
                 is_ghost=dot.is_ghost,
                 ghost_reason=dot.ghost_reason,
                 from_gw=dot.from_gw,
                 link_group=dot.link_group,
                 replaces=dot.replaces,
+                depth_pct_all=pct_all,
+                depth_pct_role=pct_role,
             )
         )
 

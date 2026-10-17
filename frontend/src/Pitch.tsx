@@ -12,9 +12,6 @@ import {
   NAME_SIZE,
   PITCH_L,
   ROLE_LETTER,
-  REFERENCE_LABEL,
-  ROLE_MEDIAN_DEPTH,
-  toSvg,
   PITCH_W,
   SUB_SIZE,
   VIEW_H,
@@ -128,28 +125,10 @@ function Ghost({ d }: { d: LaidDot }) {
   )
 }
 
-function ReferenceLines() {
-  return (
-    <g className="reference">
-      {(Object.entries(ROLE_MEDIAN_DEPTH) as [string, number][]).map(([role, depth]) => {
-        const [, y] = toSvg(0, depth)
-        return (
-          <g key={role}>
-            <line x1={L} y1={y} x2={L + PITCH_W} y2={y} />
-            <text x={L + REFERENCE_LABEL.dx} y={y + REFERENCE_LABEL.dy} fontSize={REFERENCE_LABEL.size}>
-              {`typical ${role}`}
-            </text>
-          </g>
-        )
-      })}
-    </g>
-  )
-}
-
 export default function Pitch({
   dots,
   title,
-  depth = 'true',
+  depth = 'all',
 }: {
   dots: PlotDot[]
   title: string
@@ -170,7 +149,6 @@ export default function Pitch({
         />
       ))}
       <Markings />
-      {depth === 'true' && <ReferenceLines />}
       {layout.links.map(([a, b]) => (
         <line key={`${a.key}-link`} className="link" x1={a.cx} y1={a.cy} x2={b.cx} y2={b.cy} />
       ))}

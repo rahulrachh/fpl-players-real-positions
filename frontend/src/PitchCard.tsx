@@ -6,9 +6,8 @@ import Pitch from './Pitch'
 import { type DepthMode, ROLE_LETTER } from './pitchLayout'
 
 const DEPTH_NOTE: Record<DepthMode, string> = {
-  true: 'Dashed lines: typical EPL depth by role.',
-  stretch: 'Depth stretched for readability.',
-  league: 'Height = how advanced compared with all EPL outfield players.',
+  all: 'Height: how far forward compared with every Premier League outfield player.',
+  role: 'Height: how far forward compared with players in the same FPL position.',
 }
 
 const ROLE_NAMES: Record<Role, string> = {
@@ -28,7 +27,7 @@ function formatDate(iso: string) {
   return new Date(`${iso}Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
-export default function PitchCard({ plot, depth = 'true' }: { plot: Plot; depth?: DepthMode }) {
+export default function PitchCard({ plot, depth = 'all' }: { plot: Plot; depth?: DepthMode }) {
   const state = STATE_TEXT[plot.state]
   const hasGhosts = plot.dots.some((d) => d.is_ghost)
   const hasLinks = plot.dots.some((d) => d.link_group !== null)

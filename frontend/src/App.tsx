@@ -30,8 +30,7 @@ function readUrl() {
     team: num('team'),
     gw: num('gw'),
     fixture: params.get('fixture'),
-    // Prototype switch while the owner picks a depth display (task 13).
-    depth: (depth === 'stretch' || depth === 'league' ? depth : 'true') as DepthMode,
+    depth: (depth === 'role' ? 'role' : 'all') as DepthMode,
   }
 }
 
@@ -43,14 +42,13 @@ function writeUrl(team: number, gw: number) {
 }
 
 const DEPTH_VIEWS: { mode: DepthMode; label: string; hint: string }[] = [
-  { mode: 'true', label: 'True scale', hint: 'Positions as measured, with typical depth by role' },
-  { mode: 'stretch', label: 'Stretched', hint: 'Depth stretched so the outfield spreads over the pitch' },
-  { mode: 'league', label: 'League-relative', hint: 'Height = how advanced compared with all EPL outfield players' },
+  { mode: 'all', label: 'All outfield players', hint: 'Height: how far forward compared with every outfield player' },
+  { mode: 'role', label: 'Same position', hint: 'Height: how far forward compared with players in the same FPL position' },
 ]
 
 function writeDepth(depth: DepthMode) {
   const url = new URL(window.location.href)
-  if (depth === 'true') url.searchParams.delete('depth')
+  if (depth === 'all') url.searchParams.delete('depth')
   else url.searchParams.set('depth', depth)
   window.history.replaceState(null, '', url)
 }
