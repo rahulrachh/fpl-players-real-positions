@@ -1,9 +1,7 @@
 // Turns plot dots (0-100 frame, attacking upward) into SVG coordinates in metres,
 // keeps stacked dots readable and picks a label spot for each one.
 
-import type { PlotDot, Role } from './api'
-
-export const ROLE_LETTER: Record<Role, string> = { GK: 'G', DEF: 'D', MID: 'M', FWD: 'F' }
+import type { PlotDot } from './api'
 
 export const PITCH_W = 68
 export const PITCH_L = 105
@@ -19,9 +17,21 @@ export const SUB_SIZE = 1.9
 const GHOST_R = 2.1
 const GHOST_GAP = 9
 
-// Two dots closer than this are pushed apart, by at most MAX_NUDGE each, so
-// players in the same spot stay visible. Positions move by under 2% of the pitch.
-const MIN_GAP = DOT_R * 1.7
+// Circle area grows with the player's points, from the team's lowest score to
+// its highest this gameweek; 0 and below all count as 0. If everyone scored
+// the same, every circle is the middle size.
+const R_SMALL = DOT_R * 0.75
+const R_BIG = DOT_R * 1.6
+
+export function pointsRadius(points: number, lowest: number, highest: number): number {
+  const t = highest > lowest ? (Math.max(points, 0) - lowest) / (highest - lowest) : 0.5
+  return Math.sqrt(R_SMALL ** 2 + t * (R_BIG ** 2 - R_SMALL ** 2))
+}
+
+// Two dots overlapping by more than this share of their radii are pushed
+// apart, by at most MAX_NUDGE each, so players in the same spot stay visible.
+// Positions move by under 2% of the pitch.
+const MIN_GAP_SHARE = 0.85
 const MAX_NUDGE = DOT_R * 0.9
 
 export type Box = { x0: number; y0: number; x1: number; y1: number }
@@ -67,6 +77,7 @@ export function toSvg(x: number, y: number): [number, number] {
 export function subLabel(dot: PlotDot): string | null {
   if (dot.from_gw !== null) return `from GW${dot.from_gw}`
   if (dot.replaces !== null) return 'auto-sub'
+  if (dot.from_bench) return 'bench'
   return null
 }
 
@@ -102,14 +113,15 @@ function separate(dots: LaidDot[]) {
         let dx = b.cx - a.cx
         let dy = b.cy - a.cy
         let dist = Math.hypot(dx, dy)
-        if (dist >= MIN_GAP) continue
+        const minGap = (a.r + b.r) * MIN_GAP_SHARE
+        if (dist >= minGap) continue
         if (dist < 1e-6) {
           // Same spot: split sideways.
           dx = 1
           dy = 0
           dist = 1
         }
-        const push = (MIN_GAP - dist) / 2
+        const push = (minGap - dist) / 2
         a.cx -= (dx / dist) * push
         a.cy -= (dy / dist) * push
         b.cx += (dx / dist) * push
@@ -132,9 +144,11 @@ function separate(dots: LaidDot[]) {
 
 // A dot with another dot this close is "crowded": its label moves out of the
 // cluster on a leader line, so it is clear which dot a name belongs to.
-const CROWD_DIST = DOT_R * 4.2
+const CROWD_SHARE = 2.1
 const LABEL_GAP = 1.1
-const CALLOUT_DISTANCES = [DOT_R + 4, DOT_R + 7, DOT_R + 10.5]
+const CALLOUT_EXTRA = [4, 7, 10.5]
+
+const isNear = (a: LaidDot, b: LaidDot) => Math.hypot(a.cx - b.cx, a.cy - b.cy) < (a.r + b.r) * CROWD_SHARE
 
 const area = (a: Box, b: Box) =>
   Math.max(0, Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0)) *
@@ -173,7 +187,7 @@ function placeLabels(dots: LaidDot[]) {
   const lines: Segment[] = []
   const inside = (b: Box) => b.x0 >= 0 && b.x1 <= VIEW_W && b.y0 >= 0 && b.y1 <= VIEW_H
   const crowded = new Set(
-    dots.filter((d) => dots.some((o) => o !== d && Math.hypot(o.cx - d.cx, o.cy - d.cy) < CROWD_DIST)),
+    dots.filter((d) => dots.some((o) => o !== d && isNear(d, o))),
   )
   // Lone dots first (they only need the space next to them), each group top first.
   const order = [...dots].sort((a, b) => Number(crowded.has(a)) - Number(crowded.has(b)) || a.cy - b.cy)
@@ -190,12 +204,13 @@ function placeLabels(dots: LaidDot[]) {
       }
     } else {
       // Away from the neighbours first, sweeping round to the other side.
-      const near = dots.filter((o) => o !== d && Math.hypot(o.cx - d.cx, o.cy - d.cy) < CROWD_DIST)
+      const near = dots.filter((o) => o !== d && isNear(d, o))
       const mx = near.reduce((s, o) => s + o.cx, 0) / near.length
       const my = near.reduce((s, o) => s + o.cy, 0) / near.length
       const away = Math.hypot(d.cx - mx, d.cy - my) < 1e-6 ? Math.PI / 2 : Math.atan2(d.cy - my, d.cx - mx)
       const angles = Array.from({ length: 16 }, (_, i) => away + (Math.ceil(i / 2) * (i % 2 ? 1 : -1) * Math.PI) / 8)
-      for (const dist of CALLOUT_DISTANCES) {
+      for (const extra of CALLOUT_EXTRA) {
+        const dist = d.r + extra
         for (const a of angles) {
           const px = d.cx + Math.cos(a) * dist
           const py = d.cy + Math.sin(a) * dist
@@ -236,6 +251,9 @@ function placeLabels(dots: LaidDot[]) {
 export function layoutDots(dots: PlotDot[]): Layout {
   const onPitch: LaidDot[] = []
   const ghosts: LaidDot[] = []
+  const scores = dots.filter((d) => !d.is_ghost).map((d) => Math.max(d.points, 0))
+  const lowest = Math.min(...scores)
+  const highest = Math.max(...scores)
   dots.forEach((dot, i) => {
     const key = `${dot.fpl_id}-${i}`
     if (dot.is_ghost || dot.x === null || dot.y === null) {
@@ -254,7 +272,16 @@ export function layoutDots(dots: PlotDot[]): Layout {
       return
     }
     const [cx, cy] = toSvg(dot.x, displayDepth(dot, dot.y))
-    onPitch.push({ dot, key, cx, cy, r: DOT_R, label: { x: cx, y: cy, anchor: 'middle' }, sub: subLabel(dot), leader: null })
+    onPitch.push({
+      dot,
+      key,
+      cx,
+      cy,
+      r: pointsRadius(dot.points, lowest, highest),
+      label: { x: cx, y: cy, anchor: 'middle' },
+      sub: subLabel(dot),
+      leader: null,
+    })
   })
 
   separate(onPitch)

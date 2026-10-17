@@ -288,6 +288,85 @@ input:focus-visible {
   color: var(--muted);
 }
 
+.chip {
+  margin-top: 0.3rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 750;
+  background: var(--gk);
+  color: #10241a;
+}
+
+/* Bench row under the pitch. */
+.bench {
+  margin-top: 0.7rem;
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid var(--card-line);
+}
+
+.bench h3 {
+  margin: 0 0 0.45rem;
+  font-size: 0.9rem;
+  font-weight: 750;
+}
+
+.bench h3 span {
+  margin-left: 0.35rem;
+  font-weight: 450;
+  color: var(--muted);
+}
+
+.bench ol {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bench li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  min-width: 0;
+  text-align: center;
+}
+
+.bench-dot {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px var(--card-line);
+  font-weight: 800;
+  font-stretch: 85%;
+  color: #10241a;
+}
+
+.bench-dot.role-GK { background: var(--gk); }
+.bench-dot.role-DEF { background: var(--def); }
+.bench-dot.role-MID { background: var(--mid); }
+.bench-dot.role-FWD { background: var(--fwd); }
+
+.bench-name {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.bench-note {
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
 .card-foot {
   margin-top: 0.75rem;
 }
@@ -325,6 +404,14 @@ input:focus-visible {
 .key.role-DEF { background: var(--def); }
 .key.role-MID { background: var(--mid); }
 .key.role-FWD { background: var(--fwd); }
+
+.key-captain.key-triple {
+  width: 1.5rem;
+  border-radius: 999px;
+  background: var(--gk);
+  color: var(--captain);
+  border-color: var(--captain);
+}
 
 .key-captain {
   width: 0.95rem;
@@ -414,16 +501,26 @@ input:focus-visible {
 .role-MID .dot-body { fill: var(--mid); }
 .role-FWD .dot-body { fill: var(--fwd); }
 
-.dot-letter {
+.dot-points {
   font-weight: 800;
+  font-stretch: 85%;
   fill: #10241a;
   pointer-events: none;
 }
 
-.armband circle {
+.armband rect {
   fill: var(--captain);
   stroke: var(--gk);
   stroke-width: 0.3;
+}
+
+.armband.armband-triple rect {
+  fill: var(--gk);
+  stroke: var(--captain);
+}
+
+.armband.armband-triple text {
+  fill: var(--captain);
 }
 
 .armband text {

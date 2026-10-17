@@ -1,15 +1,23 @@
-// One gameweek graphic: team name, gameweek, the pitch and its legend.
+// One gameweek graphic: team name, gameweek, score and chip, the pitch, the
+// bench and the legend.
 // Kept self-contained so it can be exported as an image later (task 15).
 
-import type { Plot, Role } from './api'
+import type { BenchPlayer, Plot, Role } from './api'
 import Pitch from './Pitch'
-import { ROLE_LETTER } from './pitchLayout'
 
 const ROLE_NAMES: Record<Role, string> = {
   GK: 'Goalkeeper',
   DEF: 'Defender',
   MID: 'Midfielder',
   FWD: 'Forward',
+}
+
+const CHIP_NAMES: Record<string, string> = {
+  bboost: 'Bench Boost',
+  '3xc': 'Triple Captain',
+  freehit: 'Free Hit',
+  wildcard: 'Wildcard',
+  manager: 'Assistant Manager',
 }
 
 const STATE_TEXT: Record<Plot['state'], { badge: string; note: string }> = {
@@ -46,6 +54,25 @@ function GwArrow({ direction, nav }: { direction: 'prev' | 'next'; nav: GwNav })
   )
 }
 
+function Bench({ players, boosted }: { players: BenchPlayer[]; boosted: boolean }) {
+  return (
+    <section className="bench" aria-label="Bench">
+      <h3>
+        Bench <span>{boosted ? 'Bench Boost: these points counted' : 'points did not count'}</span>
+      </h3>
+      <ol>
+        {players.map((p) => (
+          <li key={p.fpl_id} title={`${p.name} (${p.role}, ${p.club})`}>
+            <span className={`bench-dot role-${p.role}`}>{p.points}</span>
+            <span className="bench-name">{p.web_name}</span>
+            {p.subbed_off && <span className="bench-note">did not play</span>}
+          </li>
+        ))}
+      </ol>
+    </section>
+  )
+}
+
 export default function PitchCard({ plot, nav }: { plot: Plot; nav?: GwNav }) {
   const state = STATE_TEXT[plot.state]
   const hasGhosts = plot.dots.some((d) => d.is_ghost)
@@ -71,25 +98,38 @@ export default function PitchCard({ plot, nav }: { plot: Plot; nav?: GwNav }) {
             <span className="score-unit">pts</span>
           </p>
           {plot.transfers_cost > 0 && <p className="hit">−{plot.transfers_cost} transfer hit</p>}
+          {plot.chip && <span className={`chip chip-${plot.chip}`}>{CHIP_NAMES[plot.chip] ?? plot.chip}</span>}
         </div>
       </header>
 
       <Pitch
         dots={plot.dots}
+        chip={plot.chip}
         title={`${plot.team_name}, gameweek ${plot.gw}: real average positions`}
       />
+
+      {plot.bench.length > 0 && <Bench players={plot.bench} boosted={plot.chip === 'bboost'} />}
 
       <footer className="card-foot">
         <ul className="legend">
           {(Object.keys(ROLE_NAMES) as Role[]).map((role) => (
             <li key={role}>
-              <span className={`key role-${role}`}>{ROLE_LETTER[role]}</span>
+              <span className={`key role-${role}`} />
               {ROLE_NAMES[role]}
             </li>
           ))}
           <li>
-            <span className="key key-captain">C</span>
-            Captain
+            {plot.chip === '3xc' ? (
+              <>
+                <span className="key key-captain key-triple">TC</span>
+                Triple captain
+              </>
+            ) : (
+              <>
+                <span className="key key-captain">C</span>
+                Captain
+              </>
+            )}
           </li>
           {hasLinks && (
             <li>
@@ -105,7 +145,9 @@ export default function PitchCard({ plot, nav }: { plot: Plot; nav?: GwNav }) {
           )}
         </ul>
         <p className="card-note">
-          {state.note} Attacking upward. Height: how far forward compared with every Premier League outfield player.
+          {state.note} Attacking upward. Height: how far forward compared with every Premier League outfield
+          player. Circles show each player's own points; bigger circle, more points within this team this
+          gameweek.
           {plot.data_as_of && ` Positions as of ${formatDate(plot.data_as_of)}.`}
         </p>
       </footer>

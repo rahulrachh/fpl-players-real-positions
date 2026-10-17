@@ -37,4 +37,4 @@ npm run dev        # http://localhost:5173, proxies /api to API_PROXY_TARGET (de
 npm run build      # type-check + production build into frontend/dist
 npm run lint
 ```
-Start the backend first, then open `http://localhost:5173/?team=<FPL team ID>` (optionally `&gw=<n>`). Dev only: `?fixture=edges` shows a sample graphic with every edge case (ghosts, double gameweek, "from GW", auto-sub).
+Start the backend first, then open `http://localhost:5173/?team=<FPL team ID>` (optionally `&gw=<n>`). Dev only: `?fixture=edges` shows a sample graphic with the edge cases (ghosts, double gameweek, "from GW", auto-sub, Triple Captain, negative and double-digit scores, a starter who did not play) and `?fixture=bboost` a Bench Boost week (15 dots).

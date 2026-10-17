@@ -48,6 +48,7 @@ class FakeFpl:
             "/api/bootstrap-static/": load("bootstrap-static.json"),
             "/api/entry/1234/": load("entry.json"),
             "/api/entry/1234/event/6/picks/": load("picks-gw6.json"),
+            "/api/event/6/live/": load("live-gw6.json"),
             "/api/entry/5678/": load("entry-not-started.json"),
         }
         self.requests: list[str] = []
@@ -200,7 +201,7 @@ def test_chip_and_bench_boost_multipliers(fake, service, session):
 def test_repeat_request_makes_no_fpl_call(fake, service, session):
     first = service.load_team_gameweek(1234, 6, session)
     calls = len(fake.requests)
-    assert calls == 3  # bootstrap, entry, picks
+    assert calls == 4  # bootstrap, entry, picks, live (player points)
     assert service.load_team_gameweek(1234, 6, session) is first
     assert len(fake.requests) == calls
 

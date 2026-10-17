@@ -12,6 +12,7 @@ from app.db.models import Gameweek
 from app.fpl.team import AutoSub, Club, GameweekStatus, Player, TeamGameweek, TeamPick
 from app.logic.gameweek import (
     GameweekState,
+    bench_picks,
     build_dots,
     combine_matches,
     gameweek_state,
@@ -56,6 +57,7 @@ def make_team(
     captain=1,
     vice=2,
     effective_captain=None,
+    chip=None,
 ) -> TeamGameweek:
     """FPL IDs 1-15 picked in positions 1-15; `subs` = (out, in) auto-subs,
     applied the way FPL shows them (positions swapped)."""
@@ -74,6 +76,7 @@ def make_team(
             is_captain=i == captain,
             is_vice_captain=i == vice,
             auto_sub="out" if i in outs else "in" if i in ins else None,
+            points=i,
             player=Player(
                 id=i,
                 web_name=f"P{i}",
@@ -93,7 +96,7 @@ def make_team(
         status=status,
         data_checked=status is GameweekStatus.FINISHED,
         deadline=datetime(2026, 9, 26, 10, 0, tzinfo=UTC),
-        chip=None,
+        chip=chip,
         bank=0,
         squad_value=1000,
         points=50,
@@ -270,6 +273,23 @@ def test_bench_not_plotted():
     for state in GameweekState:
         dots = build(make_team(), state, everyone_played())
         assert {d.fpl_id for d in dots} == set(range(1, 12))
+
+
+def test_bench_boost_plots_all_fifteen():
+    for state in GameweekState:
+        dots = build(make_team(chip="bboost"), state, everyone_played())
+        assert [(d.fpl_id, d.slot) for d in dots] == [(i, i) for i in range(1, 16)]
+
+
+def test_bench_order():
+    # Locked: after FPL's auto-subs, so starter 5 (did not play) is on the
+    # bench where 13 sat; preview: the bench as picked.
+    team = make_team(subs=[(5, 13)])
+    locked = bench_picks(team, GameweekState.LOCKED)
+    assert [p.player.id for p in locked] == [12, 5, 14, 15]
+    assert locked[1].auto_sub == "out"
+    preview = bench_picks(team, GameweekState.PREVIEW)
+    assert [p.player.id for p in preview] == [12, 13, 14, 15]
 
 
 # --- Double gameweek -----------------------------------------------------------

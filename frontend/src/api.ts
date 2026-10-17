@@ -89,6 +89,22 @@ export type PlotDot = {
   // Percentile (0-100) of y among every outfield player-match, drawn as the
   // dot's height. null for a goalkeeper or ghost.
   depth_pct: number | null
+  // The player's own FPL points for the gameweek (live while in progress),
+  // before the captain multiplier.
+  points: number
+  // A bench player drawn because of Bench Boost.
+  from_bench: boolean
+}
+
+export type BenchPlayer = {
+  fpl_id: number
+  name: string
+  web_name: string
+  role: Role
+  club: string
+  points: number
+  // Locked only: a picked starter FPL auto-subbed off (did not play).
+  subbed_off: boolean
 }
 
 export type Plot = {
@@ -97,6 +113,8 @@ export type Plot = {
   manager_name: string
   gw: number
   state: 'preview' | 'locked'
+  // bboost / 3xc / freehit / wildcard / manager; null = no chip.
+  chip: string | null
   // Gameweek score before transfer hits (live while in progress), and the hit.
   points: number
   transfers_cost: number
@@ -104,6 +122,7 @@ export type Plot = {
   next_gw: number | null
   data_as_of: string | null
   dots: PlotDot[]
+  bench: BenchPlayer[]
 }
 
 export const fetchPlot = (teamId: number, gw: number | 'latest') =>

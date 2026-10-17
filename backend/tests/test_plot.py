@@ -128,6 +128,17 @@ def test_locked_gameweek(api):
     assert not gabriel["is_ghost"]
     captain = [d for d in body["dots"] if d["is_captain"]]
     assert len(captain) == 1
+    assert body["chip"] is None
+
+    # Each player's own points from event/6/live (fixture: player 1 scored 3,
+    # players missing from it 0); no Bench Boost, so no bench dots.
+    assert dots[1]["points"] == 3
+    assert dots[4]["points"] == 0
+    assert not any(d["from_bench"] for d in body["dots"])
+    # Bench after auto-subs: 368 (subbed off) sits where 304 was.
+    bench = body["bench"]
+    assert [b["fpl_id"] for b in bench] == [58, 368, 290, 31]
+    assert [b["subbed_off"] for b in bench] == [False, True, False, False]
 
     # Depth rank: outfield dots only. Every stored match is at y 15 (GW5) or
     # 16 (GW6), so a GW6 dot at 16 is above half the pool (ties count half).

@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 
 from app.fpl.team import TeamGameweek
 from app.logic.depth import POOL_MIN_MINUTES, rank_depth
-from app.logic.gameweek import GameweekState, build_dots, team_state
+from app.logic.gameweek import GameweekState, bench_picks, build_dots, team_state
 from app.logic.positions import GhostReason
 from app.logic.repository import (
     load_data_as_of,
@@ -54,6 +54,22 @@ class PlotDot(_Model):
     # (`app/logic/depth.py`); the pitch draws it as the dot's height. None for
     # a goalkeeper or a ghost.
     depth_pct: float | None
+    # The player's own FPL points for the gameweek (live while in progress),
+    # before the captain multiplier.
+    points: int
+    # A bench player drawn because of Bench Boost (slot 12-15).
+    from_bench: bool
+
+
+class BenchPlayer(_Model):
+    fpl_id: int
+    name: str
+    web_name: str
+    role: str
+    club: str
+    points: int
+    # Locked only: a picked starter FPL auto-subbed off (did not play).
+    subbed_off: bool
 
 
 class Plot(_Model):
@@ -62,6 +78,8 @@ class Plot(_Model):
     manager_name: str
     gw: int
     state: GameweekState
+    # bboost / 3xc / freehit / wildcard / manager; None = no chip.
+    chip: str | None
     # The team's gameweek score before hits, and the hit (FPL `entry_history`).
     points: int
     transfers_cost: int
@@ -71,6 +89,8 @@ class Plot(_Model):
     # End of the latest finished sync; None if the database was never synced.
     data_as_of: datetime | None
     dots: list[PlotDot]
+    # In bench order (see `app/logic/gameweek.py`).
+    bench: list[BenchPlayer]
 
 
 # Decimals kept in x / y: a hundredth of the pitch is ~1 m.
@@ -95,7 +115,8 @@ def build_plot(team: TeamGameweek, session: Session, latest_gw: int | None) -> P
     state = team_state(team, load_positions_synced(session, team.gameweek))
     sofascore_ids = load_sofascore_ids(session, [p.player.id for p in team.picks])
     rows = load_match_positions(session, sofascore_ids.values())
-    players = {p.player.id: p.player for p in team.picks}
+    picks = {p.player.id: p for p in team.picks}
+    players = {fpl_id: p.player for fpl_id, p in picks.items()}
     pool = load_depth_pool(session, POOL_MIN_MINUTES)
 
     dots = []
@@ -119,8 +140,22 @@ def build_plot(team: TeamGameweek, session: Session, latest_gw: int | None) -> P
                 link_group=dot.link_group,
                 replaces=dot.replaces,
                 depth_pct=rank_depth(pool, dot.role, y),
+                points=picks[dot.fpl_id].points,
+                from_bench=dot.slot > 11,
             )
         )
+    bench = [
+        BenchPlayer(
+            fpl_id=p.player.id,
+            name=f"{p.player.first_name} {p.player.second_name}",
+            web_name=p.player.web_name,
+            role=p.role,
+            club=p.player.club.short_name,
+            points=p.points,
+            subbed_off=state is GameweekState.LOCKED and p.auto_sub == "out",
+        )
+        for p in bench_picks(team, state)
+    ]
 
     prev_gw, next_gw = neighbour_gameweeks(team.gameweek, team.started_event, latest_gw)
     return Plot(
@@ -129,10 +164,12 @@ def build_plot(team: TeamGameweek, session: Session, latest_gw: int | None) -> P
         manager_name=team.manager_name,
         gw=team.gameweek,
         state=state,
+        chip=team.chip,
         points=team.points,
         transfers_cost=team.transfers_cost,
         prev_gw=prev_gw,
         next_gw=next_gw,
         data_as_of=load_data_as_of(session),
         dots=dots,
+        bench=bench,
     )

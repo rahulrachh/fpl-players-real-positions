@@ -174,6 +174,9 @@ class Picks(_Model):
 
 class LiveStats(_Model):
     minutes: int
+    # The player's FPL points for the gameweek so far (before any captain
+    # multiplier).
+    total_points: int
 
 
 class LiveElement(_Model):

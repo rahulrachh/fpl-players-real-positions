@@ -25,7 +25,13 @@ Captain
 -------
 The armband goes to the picked captain in preview, and in locked to the
 player whose points FPL multiplied (the vice when the captain did not play;
-that captain is on the bench, so not drawn). Bench players are never dots.
+that captain is on the bench, so not drawn).
+
+Bench
+-----
+Bench players are not dots, except under Bench Boost: all 15 score, so the
+four bench players are drawn too, with slots 12-15 (FPL makes no auto-subs
+under Bench Boost). The plot lists the bench separately either way.
 """
 
 from collections.abc import Mapping, Sequence
@@ -112,8 +118,14 @@ def team_state(team: TeamGameweek, positions_synced: bool) -> GameweekState:
     return gameweek_state(team.status is GameweekStatus.FINISHED, positions_synced)
 
 
+BENCH_BOOST = "bboost"
+
+
 def plotted_picks(team: TeamGameweek, state: GameweekState) -> list[tuple[int, TeamPick]]:
-    """(slot, pick) for the XI drawn in this state, in slot order."""
+    """(slot, pick) for the players drawn in this state, in slot order: the
+    XI, plus the bench (slots 12-15) under Bench Boost."""
+    if team.chip == BENCH_BOOST:
+        return [(p.position, p) for p in team.picks]
     if state is GameweekState.LOCKED:
         return [(p.position, p) for p in team.picks if p.starter]
     # Preview: undo FPL's auto-subs; a subbed-out starter gets the slot of the
@@ -127,6 +139,23 @@ def plotted_picks(team: TeamGameweek, state: GameweekState) -> list[tuple[int, T
         slot = position_of[sub_in_for[p.player.id]] if p.auto_sub == "out" else p.position
         picked.append((slot, p))
     return sorted(picked, key=lambda sp: sp[0])
+
+
+def bench_picks(team: TeamGameweek, state: GameweekState) -> list[TeamPick]:
+    """The four bench players in bench order: after FPL's auto-subs when
+    locked (a starter who did not play is among them), as picked in preview."""
+    if state is GameweekState.LOCKED or team.chip == BENCH_BOOST:
+        return [p for p in team.picks if not p.starter]
+    # Preview: a bench player FPL subbed in sat where the starter he replaced
+    # now sits.
+    position_of = {p.player.id: p.position for p in team.picks}
+    replaced = {s.player_in: s.player_out for s in team.automatic_subs}
+    bench = [
+        (position_of[replaced[p.player.id]] if p.auto_sub == "in" else p.position, p)
+        for p in team.picks
+        if not p.picked_starter
+    ]
+    return [p for _, p in sorted(bench, key=lambda bp: bp[0])]
 
 
 def build_dots(

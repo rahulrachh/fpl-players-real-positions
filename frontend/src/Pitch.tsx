@@ -1,4 +1,5 @@
-// The pitch graphic: real average positions of a team's XI, attacking upward.
+// The pitch graphic: where a team's XI played, attacking upward; each circle
+// shows the player's points and is sized by them.
 // Drawn in metres (68 x 105 pitch) so markings are to scale.
 
 import { useMemo } from 'react'
@@ -10,7 +11,6 @@ import {
   MARGIN,
   NAME_SIZE,
   PITCH_L,
-  ROLE_LETTER,
   PITCH_W,
   SUB_SIZE,
   VIEW_H,
@@ -92,25 +92,30 @@ function Label({ d }: { d: LaidDot }) {
 
 function Dot({ d }: { d: LaidDot }) {
   const { dot, cx, cy, r } = d
+  // Two characters (10+, or a minus) need a smaller size to fit the circle.
+  const size = String(dot.points).length > 1 ? r * 0.9 : r * 1.05
   return (
     <g className={`dot role-${dot.role}`}>
-      <title>{`${dot.name} (${dot.role}, ${dot.club})${dot.is_captain ? ', captain' : ''}`}</title>
+      <title>{`${dot.name} (${dot.role}, ${dot.club}): ${dot.points} pts${dot.is_captain ? ', captain' : ''}`}</title>
       <circle className="dot-body" cx={cx} cy={cy} r={r} />
-      <text className="dot-letter" x={cx} y={cy + 0.75} fontSize={2.1} textAnchor="middle">
-        {ROLE_LETTER[dot.role]}
+      <text className="dot-points" x={cx} y={cy + size * 0.36} fontSize={size} textAnchor="middle">
+        {dot.points}
       </text>
     </g>
   )
 }
 
-// Drawn after every dot so a neighbouring dot never covers it.
-function Armband({ d }: { d: LaidDot }) {
-  const { cx, cy, r } = d
+// Drawn after every dot so a neighbouring dot never covers it. Triple
+// Captain gets a wider gold "TC" tag instead of the "C".
+function Armband({ d, triple }: { d: LaidDot; triple: boolean }) {
+  const x = d.cx + d.r * 0.8
+  const y = d.cy - d.r * 0.8
+  const width = triple ? 4 : 2.7
   return (
-    <g className="armband">
-      <circle cx={cx + r * 0.85} cy={cy - r * 0.85} r={1.35} />
-      <text x={cx + r * 0.85} y={cy - r * 0.85 + 0.62} fontSize={1.75} textAnchor="middle">
-        C
+    <g className={triple ? 'armband armband-triple' : 'armband'}>
+      <rect x={x - width / 2} y={y - 1.35} width={width} height={2.7} rx={1.35} />
+      <text x={x} y={y + 0.62} fontSize={1.75} textAnchor="middle">
+        {triple ? 'TC' : 'C'}
       </text>
     </g>
   )
@@ -129,7 +134,7 @@ function Ghost({ d }: { d: LaidDot }) {
   )
 }
 
-export default function Pitch({ dots, title }: { dots: PlotDot[]; title: string }) {
+export default function Pitch({ dots, title, chip }: { dots: PlotDot[]; title: string; chip: string | null }) {
   const layout = useMemo(() => layoutDots(dots), [dots])
   return (
     <svg className="pitch" viewBox={`0 0 ${VIEW_W} ${VIEW_H}`} role="img" aria-label={title}>
@@ -161,10 +166,15 @@ export default function Pitch({ dots, title }: { dots: PlotDot[]; title: string 
             />
           ),
       )}
-      {layout.dots.map((d) => (
-        <Dot key={d.key} d={d} />
-      ))}
-      {layout.dots.map((d) => d.dot.is_captain && <Armband key={`${d.key}-armband`} d={d} />)}
+      {/* Biggest first, so a small circle is never hidden under a big one. */}
+      {[...layout.dots]
+        .sort((a, b) => b.r - a.r)
+        .map((d) => (
+          <Dot key={d.key} d={d} />
+        ))}
+      {layout.dots.map(
+        (d) => d.dot.is_captain && <Armband key={`${d.key}-armband`} d={d} triple={chip === '3xc'} />,
+      )}
       {layout.dots.map((d) => (
         <Label key={`${d.key}-label`} d={d} />
       ))}

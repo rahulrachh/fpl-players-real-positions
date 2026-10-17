@@ -5,6 +5,13 @@
 > - **Claude roast is moved to v1.** No live Claude API calls from the site; the plan is pre-generated roasts per shape bucket, shipped with each deployment. See `tasks/v1-backlog/roast.md`.
 > - **Data is refreshed offline.** The owner runs a sync script locally that updates a SQLite file; the file is committed and shipped with each deployment, and the site opens it read-only. New data goes live only on deploy. No online worker, no hosted database.
 > - **The MVP is deployed to Vercel** (free Hobby plan). Task breakdown: `tasks/README.md`.
+>
+> **Gameweek graphic decisions (2026-10-17, owner, during task 13), these override the text below:**
+> - **Depth is league-relative.** Real average positions all bunch up between ~30 and ~75 of the pitch, so a dot's height is the percentile of its depth among every Premier League outfield player-match (60+ minutes), defenders, midfielders and forwards together. Left-right stays real. Goalkeepers keep their real position.
+> - **Points on the graphic.** The header shows the team's gameweek score (and any transfer hit). Each circle shows the player's own points for the gameweek (live while it is in progress; the captain's own score, not doubled). Circle **area** scales between the team's lowest and highest score that gameweek, so the best player that week always has the biggest circle; 0 and negative scores all get the smallest size; if everyone scored the same, all circles are the middle size.
+> - **Chips are shown.** A chip played that gameweek (Bench Boost, Triple Captain, Free Hit, Wildcard, Assistant Manager) is shown next to the score, since it affects it. **Triple Captain** gets its own marker: a gold "TC" tag on the captain instead of the "C".
+> - **The bench is shown in Gameweek mode.** The 4 bench players sit in a row under the pitch with their points, in bench order (after auto-subs when locked, so a starter who did not play is listed there). Under **Bench Boost** all 15 count, so the 4 bench players are also plotted on the pitch, labelled "bench".
+> - **Gameweek navigation** is "< GW6 >" arrows centred in the card header between the team name and the points, plus the left / right arrow keys.
 
 ## What it is
 
@@ -37,7 +44,7 @@ Defaults chosen during scoping are marked **(default)**. The owner can override 
 - **Double gameweek:** show one dot (the average of both matches) if he played roughly the same position both times, or **two linked dots** if he played on opposite flanks.
   - **(default)** "Opposite flanks" means the two positions are on different sides of the pitch's center line, each beyond a configurable margin from center. Everything else counts as "roughly similar." Tune the margin after seeing real data.
 - **(default)** The captain gets an armband marker.
-- **(default)** Bench players are not plotted.
+- **(default)** Bench players are not plotted. *(Changed 2026-10-17: the bench is listed under the pitch, and plotted under Bench Boost. See the decisions at the top.)*
 - **(default)** A starter with no match and no auto-sub replacement appears as a greyed-out ghost on the sideline.
 
 ---

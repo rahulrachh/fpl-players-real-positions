@@ -67,8 +67,10 @@ function App() {
   }, [prevGw, nextGw])
 
   useEffect(() => {
-    if (import.meta.env.DEV && initial.fixture === 'edges') {
-      import('./fixtures/edgeCases').then((m) => setFixture(m.edgeCases))
+    if (import.meta.env.DEV && (initial.fixture === 'edges' || initial.fixture === 'bboost')) {
+      import('./fixtures/edgeCases').then((m) =>
+        setFixture(initial.fixture === 'bboost' ? m.benchBoost : m.edgeCases),
+      )
     }
   }, [initial.fixture])
 

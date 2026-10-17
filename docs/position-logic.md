@@ -40,7 +40,7 @@ On the committed DB (data GW1-6), all 436 active players get a placement for GW6
 | No match | Ghost (`no_match` / `no_mapping`) | Ghost, even if he played earlier: a starter with no match and no auto-sub replacement |
 | Armband | Picked captain | The player FPL multiplied (`effective_captain_id`): the vice when the captain did not play, since that captain is benched |
 
-Bench players are never drawn.
+Bench players are not drawn, except under Bench Boost: all 15 score, so the four bench players are drawn too (slots 12-15). The plot lists the bench separately either way (`bench_picks`).
 
 ### Double gameweek
 All usable rows with the target `gw` count, including a rescheduled match FPL moved into the gameweek (task 07 takes `gw` from FPL fixtures). `combine_matches(matches, margin)`:

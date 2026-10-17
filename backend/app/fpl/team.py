@@ -110,6 +110,9 @@ class TeamPick(_Model):
     # FPL's automatic substitution: "out" = picked starter who did not play,
     # "in" = bench player who replaced them. None until FPL applies auto-subs.
     auto_sub: Literal["in", "out"] | None
+    # The player's own FPL points for the gameweek (live while it is in
+    # progress), before the captain multiplier.
+    points: int
     player: Player
 
 
@@ -218,6 +221,7 @@ class TeamService:
             raise GameweekNotStarted(f"no picks for team {team_id} in gameweek {gw} yet") from None
 
         players = _players(session, bootstrap, [p.element for p in picks.picks])
+        points = {e.id: e.stats.total_points for e in self.client.event_live(gw).elements}
         subs_in = {s.element_in for s in picks.automatic_subs}
         subs_out = {s.element_out for s in picks.automatic_subs}
         team_picks = []
@@ -241,6 +245,7 @@ class TeamService:
                     else "out"
                     if pick.element in subs_out
                     else None,
+                    points=points.get(pick.element, 0),
                     player=players[pick.element],
                 )
             )

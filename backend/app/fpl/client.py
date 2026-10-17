@@ -94,7 +94,7 @@ class FplClient:
         return self._get_model(f"/entry/{entry_id}/event/{event}/picks/", Picks)
 
     def event_live(self, event: int) -> EventLive:
-        """Per-player stats (minutes) for a gameweek. Empty before it starts."""
+        """Per-player stats (minutes, points) for a gameweek. Empty before it starts."""
         return self._get_model(f"/event/{event}/live/", EventLive)
 
     def event_status(self) -> EventStatus:
