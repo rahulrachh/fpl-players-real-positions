@@ -47,6 +47,51 @@ export type Layout = {
   links: [LaidDot, LaidDot][]
 }
 
+// --- Depth display modes (prototype, owner to pick one) ---------------------
+// true: as measured. stretch: one fixed piecewise-linear stretch of the
+// outfield range. league: outfield depth as a percentile of every EPL outfield
+// player-match (60+ min, GW1-6).
+export type DepthMode = 'true' | 'stretch' | 'league'
+
+// League medians of average depth by role (60+ min, GW1-6), for reference lines.
+export const ROLE_MEDIAN_DEPTH = { DEF: 40.9, MID: 54.8, FWD: 62.3 }
+
+// Outfield average depth at the 0th, 5th, ..., 100th percentile.
+const LEAGUE_QUANTILES = [
+  23.0, 32.0, 35.0, 37.4, 40.0, 41.6, 43.7, 45.4, 46.7, 48.7, 50.3, 51.6, 53.3, 54.9, 56.8, 58.7,
+  60.5, 62.4, 64.2, 67.1, 79.7,
+]
+
+// Keeper zone unchanged, outfield range ~30-75 spread over 24-90.
+const STRETCH: [number, number][] = [
+  [0, 0],
+  [15, 15],
+  [30, 24],
+  [75, 90],
+  [100, 100],
+]
+
+function interpolate(points: [number, number][], v: number) {
+  for (let i = 1; i < points.length; i++) {
+    const [x0, y0] = points[i - 1]
+    const [x1, y1] = points[i]
+    if (v <= x1) return y0 + ((Math.max(v, x0) - x0) / (x1 - x0)) * (y1 - y0)
+  }
+  return points[points.length - 1][1]
+}
+
+export function displayDepth(y: number, role: Role, mode: DepthMode): number {
+  if (mode === 'stretch') return interpolate(STRETCH, y)
+  if (mode === 'league' && role !== 'GK') {
+    const percentile = interpolate(
+      LEAGUE_QUANTILES.map((q, i) => [q, i / 20] as [number, number]),
+      y,
+    )
+    return 20 + percentile * 70
+  }
+  return y
+}
+
 export function toSvg(x: number, y: number): [number, number] {
   return [MARGIN.left + (x / 100) * PITCH_W, MARGIN.top + ((100 - y) / 100) * PITCH_L]
 }
@@ -155,8 +200,25 @@ function labelAt(d: LaidDot, angle: number, px: number, py: number): LaidDot['la
   return { x: px, y: sin > 0 ? py + NAME_SIZE * 0.8 : py - h + NAME_SIZE * 0.8, anchor: 'middle' }
 }
 
-function placeLabels(dots: LaidDot[]) {
-  const placed: Box[] = []
+// Where Pitch draws the "typical DEF / MID / FWD" text in the true-scale view.
+export const REFERENCE_LABEL = { dx: 0.8, dy: -0.6, size: 1.7 }
+
+export function referenceLabelBoxes(): Box[] {
+  return Object.entries(ROLE_MEDIAN_DEPTH).map(([role, depth]) => {
+    const [, y] = toSvg(0, depth)
+    const x0 = MARGIN.left + REFERENCE_LABEL.dx
+    const base = y + REFERENCE_LABEL.dy
+    return {
+      x0,
+      y0: base - REFERENCE_LABEL.size,
+      x1: x0 + textWidth(`typical ${role}`, REFERENCE_LABEL.size),
+      y1: base + 0.3,
+    }
+  })
+}
+
+function placeLabels(dots: LaidDot[], obstacles: Box[]) {
+  const placed: Box[] = [...obstacles]
   const lines: Segment[] = []
   const inside = (b: Box) => b.x0 >= 0 && b.x1 <= VIEW_W && b.y0 >= 0 && b.y1 <= VIEW_H
   const crowded = new Set(
@@ -220,7 +282,7 @@ function placeLabels(dots: LaidDot[]) {
   }
 }
 
-export function layoutDots(dots: PlotDot[]): Layout {
+export function layoutDots(dots: PlotDot[], depth: DepthMode = 'true'): Layout {
   const onPitch: LaidDot[] = []
   const ghosts: LaidDot[] = []
   dots.forEach((dot, i) => {
@@ -240,12 +302,12 @@ export function layoutDots(dots: PlotDot[]): Layout {
       })
       return
     }
-    const [cx, cy] = toSvg(dot.x, dot.y)
+    const [cx, cy] = toSvg(dot.x, displayDepth(dot.y, dot.role, depth))
     onPitch.push({ dot, key, cx, cy, r: DOT_R, label: { x: cx, y: cy, anchor: 'middle' }, sub: subLabel(dot), leader: null })
   })
 
   separate(onPitch)
-  placeLabels(onPitch)
+  placeLabels(onPitch, depth === 'true' ? referenceLabelBoxes() : [])
 
   const links: [LaidDot, LaidDot][] = []
   const byGroup = new Map<number, LaidDot[]>()

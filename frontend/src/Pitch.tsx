@@ -5,12 +5,16 @@ import { useMemo } from 'react'
 
 import type { PlotDot } from './api'
 import {
+  type DepthMode,
   type LaidDot,
   layoutDots,
   MARGIN,
   NAME_SIZE,
   PITCH_L,
   ROLE_LETTER,
+  REFERENCE_LABEL,
+  ROLE_MEDIAN_DEPTH,
+  toSvg,
   PITCH_W,
   SUB_SIZE,
   VIEW_H,
@@ -124,8 +128,34 @@ function Ghost({ d }: { d: LaidDot }) {
   )
 }
 
-export default function Pitch({ dots, title }: { dots: PlotDot[]; title: string }) {
-  const layout = useMemo(() => layoutDots(dots), [dots])
+function ReferenceLines() {
+  return (
+    <g className="reference">
+      {(Object.entries(ROLE_MEDIAN_DEPTH) as [string, number][]).map(([role, depth]) => {
+        const [, y] = toSvg(0, depth)
+        return (
+          <g key={role}>
+            <line x1={L} y1={y} x2={L + PITCH_W} y2={y} />
+            <text x={L + REFERENCE_LABEL.dx} y={y + REFERENCE_LABEL.dy} fontSize={REFERENCE_LABEL.size}>
+              {`typical ${role}`}
+            </text>
+          </g>
+        )
+      })}
+    </g>
+  )
+}
+
+export default function Pitch({
+  dots,
+  title,
+  depth = 'true',
+}: {
+  dots: PlotDot[]
+  title: string
+  depth?: DepthMode
+}) {
+  const layout = useMemo(() => layoutDots(dots, depth), [dots, depth])
   return (
     <svg className="pitch" viewBox={`0 0 ${VIEW_W} ${VIEW_H}`} role="img" aria-label={title}>
       <rect className="pitch-surround" x={0} y={0} width={VIEW_W} height={VIEW_H} rx={2} />
@@ -140,6 +170,7 @@ export default function Pitch({ dots, title }: { dots: PlotDot[]; title: string 
         />
       ))}
       <Markings />
+      {depth === 'true' && <ReferenceLines />}
       {layout.links.map(([a, b]) => (
         <line key={`${a.key}-link`} className="link" x1={a.cx} y1={a.cy} x2={b.cx} y2={b.cy} />
       ))}

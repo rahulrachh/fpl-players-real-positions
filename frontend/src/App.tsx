@@ -5,6 +5,7 @@ import { type FormEvent, useEffect, useState } from 'react'
 
 import { ApiError, fetchPlot, type Plot } from './api'
 import PitchCard from './PitchCard'
+import type { DepthMode } from './pitchLayout'
 
 const ERROR_MESSAGES: Record<string, string> = {
   team_not_found: 'No FPL team has this ID.',
@@ -24,7 +25,14 @@ function readUrl() {
     const value = Number(params.get(key))
     return Number.isInteger(value) && value > 0 ? value : null
   }
-  return { team: num('team'), gw: num('gw'), fixture: params.get('fixture') }
+  const depth = params.get('depth')
+  return {
+    team: num('team'),
+    gw: num('gw'),
+    fixture: params.get('fixture'),
+    // Prototype switch while the owner picks a depth display (task 13).
+    depth: (depth === 'stretch' || depth === 'league' ? depth : 'true') as DepthMode,
+  }
 }
 
 function writeUrl(team: number, gw: number) {
@@ -34,11 +42,25 @@ function writeUrl(team: number, gw: number) {
   window.history.replaceState(null, '', url)
 }
 
+const DEPTH_VIEWS: { mode: DepthMode; label: string; hint: string }[] = [
+  { mode: 'true', label: 'True scale', hint: 'Positions as measured, with typical depth by role' },
+  { mode: 'stretch', label: 'Stretched', hint: 'Depth stretched so the outfield spreads over the pitch' },
+  { mode: 'league', label: 'League-relative', hint: 'Height = how advanced compared with all EPL outfield players' },
+]
+
+function writeDepth(depth: DepthMode) {
+  const url = new URL(window.location.href)
+  if (depth === 'true') url.searchParams.delete('depth')
+  else url.searchParams.set('depth', depth)
+  window.history.replaceState(null, '', url)
+}
+
 function App() {
   const initial = readUrl()
   const [input, setInput] = useState(initial.team ? String(initial.team) : '')
   const [teamId, setTeamId] = useState<number | null>(initial.team)
   const [gw] = useState<number | null>(initial.gw)
+  const [depth, setDepth] = useState<DepthMode>(initial.depth)
   const [result, setResult] = useState<Result | null>(null)
   const [inputError, setInputError] = useState<string | null>(null)
   const [fixture, setFixture] = useState<Plot | null>(null)
@@ -99,10 +121,28 @@ function App() {
       </form>
 
       {inputError && <p className="error">{inputError}</p>}
-      {fixture && <PitchCard plot={fixture} />}
+      {(fixture || (current && 'plot' in current)) && (
+        <div className="view-switch" role="group" aria-label="Depth view">
+          {DEPTH_VIEWS.map((v) => (
+            <button
+              key={v.mode}
+              type="button"
+              title={v.hint}
+              aria-pressed={depth === v.mode}
+              onClick={() => {
+                setDepth(v.mode)
+                writeDepth(v.mode)
+              }}
+            >
+              {v.label}
+            </button>
+          ))}
+        </div>
+      )}
+      {fixture && <PitchCard plot={fixture} depth={depth} />}
       {!fixture && key !== null && current === null && <p className="muted">Loading…</p>}
       {!fixture && current && 'error' in current && <p className="error">{current.error}</p>}
-      {!fixture && current && 'plot' in current && <PitchCard plot={current.plot} />}
+      {!fixture && current && 'plot' in current && <PitchCard plot={current.plot} depth={depth} />}
     </main>
   )
 }

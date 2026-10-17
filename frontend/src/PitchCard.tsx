@@ -3,7 +3,13 @@
 
 import type { Plot, Role } from './api'
 import Pitch from './Pitch'
-import { ROLE_LETTER } from './pitchLayout'
+import { type DepthMode, ROLE_LETTER } from './pitchLayout'
+
+const DEPTH_NOTE: Record<DepthMode, string> = {
+  true: 'Dashed lines: typical EPL depth by role.',
+  stretch: 'Depth stretched for readability.',
+  league: 'Height = how advanced compared with all EPL outfield players.',
+}
 
 const ROLE_NAMES: Record<Role, string> = {
   GK: 'Goalkeeper',
@@ -22,7 +28,7 @@ function formatDate(iso: string) {
   return new Date(`${iso}Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
-export default function PitchCard({ plot }: { plot: Plot }) {
+export default function PitchCard({ plot, depth = 'true' }: { plot: Plot; depth?: DepthMode }) {
   const state = STATE_TEXT[plot.state]
   const hasGhosts = plot.dots.some((d) => d.is_ghost)
   const hasLinks = plot.dots.some((d) => d.link_group !== null)
@@ -46,7 +52,11 @@ export default function PitchCard({ plot }: { plot: Plot }) {
         </div>
       </header>
 
-      <Pitch dots={plot.dots} title={`${plot.team_name}, gameweek ${plot.gw}: real average positions`} />
+      <Pitch
+        dots={plot.dots}
+        depth={depth}
+        title={`${plot.team_name}, gameweek ${plot.gw}: real average positions`}
+      />
 
       <footer className="card-foot">
         <ul className="legend">
@@ -74,7 +84,7 @@ export default function PitchCard({ plot }: { plot: Plot }) {
           )}
         </ul>
         <p className="card-note">
-          {state.note} Attacking upward.
+          {state.note} Attacking upward. {DEPTH_NOTE[depth]}
           {plot.data_as_of && ` Positions as of ${formatDate(plot.data_as_of)}.`}
         </p>
       </footer>

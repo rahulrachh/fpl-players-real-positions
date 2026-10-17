@@ -113,6 +113,29 @@ input:focus-visible {
   color: var(--muted);
 }
 
+.view-switch {
+  display: flex;
+  margin-bottom: 0.75rem;
+  border: 1px solid var(--card-line);
+  border-radius: 8px;
+  background: var(--card);
+  padding: 3px;
+  gap: 3px;
+}
+
+.view-switch button {
+  flex: 1;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.88rem;
+  background: transparent;
+  color: var(--muted);
+}
+
+.view-switch button[aria-pressed='true'] {
+  background: var(--grass);
+  color: #fff;
+}
+
 /* Gameweek card */
 
 .pitch-card {
@@ -314,6 +337,20 @@ input:focus-visible {
 
 .pitch-lines .goal {
   stroke-width: 0.25;
+}
+
+.reference line {
+  stroke: #fff;
+  stroke-width: 0.2;
+  stroke-dasharray: 0.9 0.9;
+  opacity: 0.45;
+}
+
+.reference text {
+  fill: #fff;
+  opacity: 0.6;
+  font-weight: 600;
+  font-stretch: 80%;
 }
 
 .link {
