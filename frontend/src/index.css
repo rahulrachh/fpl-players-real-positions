@@ -29,8 +29,10 @@
   --ghost: #9aa59e;
 }
 
+/* Dark: the device's setting unless light was picked with the theme switch,
+   or picked there. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --page: #111a15;
     --ink: #e8efe9;
     --muted: #93a39a;
@@ -38,6 +40,20 @@
     --card-line: #2c3b33;
     --error: #ff8a7a;
   }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --page: #111a15;
+  --ink: #e8efe9;
+  --muted: #93a39a;
+  --card: #19251f;
+  --card-line: #2c3b33;
+  --error: #ff8a7a;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
 }
 
 * {
@@ -54,6 +70,40 @@ main {
   max-width: 34rem;
   margin: 0 auto;
   padding: 1.5rem 1rem 3rem;
+}
+
+.site-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.3rem;
+  height: 2.3rem;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--card-line);
+  background: var(--card);
+  color: var(--ink);
+}
+
+.theme-toggle:hover {
+  border-color: var(--muted);
+}
+
+.theme-toggle svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .site-head h1 {

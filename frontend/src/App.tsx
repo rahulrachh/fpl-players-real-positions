@@ -8,6 +8,7 @@ import { type FormEvent, useEffect, useState } from 'react'
 
 import { ApiError, fetchPlot, type Plot } from './api'
 import PitchCard from './PitchCard'
+import ThemeToggle from './ThemeToggle'
 
 const GW_ERRORS: Record<string, (gw: string) => string> = {
   gameweek_before_team_started: (gw) => `This team hadn't joined FPL yet in ${gw}.`,
@@ -159,8 +160,11 @@ function App() {
   return (
     <main>
       <header className="site-head">
-        <h1>Real Shape</h1>
-        <p>Where your FPL team actually played.</p>
+        <div>
+          <h1>Real Shape</h1>
+          <p>Where your FPL team actually played.</p>
+        </div>
+        <ThemeToggle />
       </header>
 
       <form className="team-form" onSubmit={submit}>
