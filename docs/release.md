@@ -30,7 +30,7 @@ From `backend/`:
    git add backend/data/fpl.db backend/data/player_overrides.csv docs/mapping-coverage.md
    git commit -m "Data: sync after GW<n>"
    ```
-5. **Deploy**: from the repo root, `vercel deploy --prod` (or `git push` if the Vercel project is connected to the git repository). First-time setup: `docs/setup.md`, Deploying.
+5. **Deploy**: `git push` to `main`. The Vercel project is connected to the GitHub repository (https://github.com/rahulrachh/fpl-players-real-positions), so every push to `main` deploys to production. `vercel deploy --prod` from the repo root still works without a push. First-time setup: `docs/setup.md`, Deploying.
 6. **Check the live site**: load a team; the card's "Positions as of" date shows this sync's time.
 
 ## What a run does

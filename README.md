@@ -3,6 +3,13 @@
 ## Summary
 FPL shows a team as a tidy formation, but managers pick attacking "defenders" and "midfielders". This app plots where a team's players actually played, using real per-match average positions from Sofascore. Enter an FPL team ID, see the team's real shape for the latest gameweek, step back through earlier gameweeks, and export the graphic as an image. Data is refreshed by an offline script and shipped with each deployment. Planner mode and the Claude roast are planned for v1.
 
+## Screenshots
+Live at **https://fpl-real-shape.vercel.app**. Owner's team, gameweek 8:
+
+| The gameweek card | Hover / tap a player: points breakdown | Phone, dark theme |
+|---|---|---|
+| ![Gameweek card: the team's real average positions on a pitch, circles sized by points](docs/screenshots/readme/card-light.png) | ![Match details box over the captain's dot: minutes, goal, bonus, captain x2, total 16 pts](docs/screenshots/readme/details-box.png) | ![The full page on a phone in the dark theme](docs/screenshots/readme/phone-dark.png) |
+
 ## Tech stack
 - Python 3.11+
 - FastAPI
