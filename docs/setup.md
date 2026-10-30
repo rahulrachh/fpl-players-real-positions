@@ -6,6 +6,9 @@ FPL Real Shape Visualizer: enter an FPL team ID and see where the team's players
 - **Web app** (what is deployed): a React page (`frontend/`) and a FastAPI API (`backend/app/`) that reads the bundled SQLite database `backend/data/fpl.db` **read-only** and calls the public FPL API live for team picks.
 - **Offline scripts** (owner's machine only): sync from FPL + Sofascore, player mapping and Alembic migrations. They are the only code that writes `fpl.db`. The database file is committed and shipped with each deployment; there is no hosted database and no cron.
 
+## Tech stack
+Python 3.12, FastAPI, SQLAlchemy + Alembic, SQLite (backend); React, Vite, TypeScript (frontend); Vercel (hosting).
+
 ## Prerequisites
 - [uv](https://docs.astral.sh/uv/) (it installs the pinned Python 3.12 from `.python-version` if missing)
 - Node.js 20+ and npm

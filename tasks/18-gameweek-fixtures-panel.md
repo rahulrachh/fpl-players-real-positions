@@ -32,7 +32,7 @@ While looking at a team's points, see every match of that gameweek and its score
 
 ## Wrap-up (required: last step of every task)
 - [ ] Update this task's **Status** and the table in `tasks/README.md`.
-- [ ] Update the root `README.md`: add this task under **Tasks completed** with a short summary of the work done, and set **Next task** to the next task and its file path (for a 🛑 task: "waiting for owner approval on task NN").
+- [ ] Update `tasks/PROGRESS.md`: add this task under **Tasks completed** with a short summary of the work done, and set **Next task** to the next task and its file path (for a 🛑 task: "waiting for owner approval on task NN"). (The root `README.md` is the public project page; it no longer holds progress.)
 
 ## Notes
 - Owner decisions (2026-10-30): right of the card on desktop, below it on phones; top 3 by FPL points in that match, ties included; highlight the team's starters only, both in the expanded list and as a badge on the collapsed row; not in the exported image.
