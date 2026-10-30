@@ -2,19 +2,14 @@
 // bench and the legend.
 // Kept self-contained: the image export (exportImage.ts) draws exactly this card.
 
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 import type { BenchPlayer, Plot, Role } from './api'
 import { exportFilename } from './exportImage'
+import { MatchDetailsBox } from './MatchDetails'
 import Pitch from './Pitch'
 import ShareButton from './ShareButton'
-
-const ROLE_NAMES: Record<Role, string> = {
-  GK: 'Goalkeeper',
-  DEF: 'Defender',
-  MID: 'Midfielder',
-  FWD: 'Forward',
-}
+import { type DetailsTrigger, ROLE_NAMES, useMatchDetails } from './useMatchDetails'
 
 const CHIP_NAMES: Record<string, string> = {
   bboost: 'Bench Boost',
@@ -70,14 +65,21 @@ function GwArrow({ direction, nav }: { direction: 'prev' | 'next'; nav: GwNav })
 }
 
 // Empty under Bench Boost (everyone is on the pitch), so not shown then.
-function Bench({ players }: { players: BenchPlayer[] }) {
+function Bench({ players, details }: { players: BenchPlayer[]; details: DetailsTrigger }) {
   return (
     <section className="bench" aria-label="Bench">
       <h3>Bench</h3>
       <ol>
         {players.map((p) => (
-          <li key={p.fpl_id} title={`${p.name} (${p.role}, ${p.club})`}>
-            <span className={`bench-card role-${p.role}`}>
+          <li key={p.fpl_id}>
+            <span
+              className={`bench-card role-${p.role}`}
+              {...details(
+                `bench-${p.fpl_id}`,
+                { kind: 'bench', player: p },
+                `${p.name} (${p.role}, ${p.club}): ${p.points} pts. Match details`,
+              )}
+            >
               <span className="bench-name">{p.web_name}</span>
               <span className="bench-points">{p.points}</span>
             </span>
@@ -91,90 +93,103 @@ function Bench({ players }: { players: BenchPlayer[] }) {
 
 export default function PitchCard({ plot, nav }: { plot: Plot; nav?: GwNav }) {
   const card = useRef<HTMLElement>(null)
+  // Wraps the card exactly; the details box sits in it, outside the card, so
+  // the image export never draws it.
+  const frame = useRef<HTMLDivElement>(null)
+  const details = useMatchDetails(frame)
+  // Another gameweek or team: the open box belongs to the old one.
+  const { close } = details
+  useEffect(() => close(), [plot, close])
   const state = stateText(plot)
   const hasGhosts = plot.dots.some((d) => d.is_ghost)
   const hasLinks = plot.dots.some((d) => d.link_group !== null)
   return (
-    <article className="pitch-card" ref={card}>
-      <header className="card-head">
-        <div className="card-team">
-          <h2>{plot.team_name}</h2>
-          <p>{plot.manager_name}</p>
-        </div>
-        <div className="card-gw">
-          {nav && <GwArrow direction="prev" nav={nav} />}
-          <div className="gw-center">
-            <span className="gw-label">GW{plot.gw}</span>
-            <span className={`state state-${plot.state}`}>{state.badge}</span>
+    <div className="pitch-card-frame" ref={frame}>
+      <article className="pitch-card" ref={card}>
+        <header className="card-head">
+          <div className="card-team">
+            <h2>{plot.team_name}</h2>
+            <p>{plot.manager_name}</p>
           </div>
-          {nav && <GwArrow direction="next" nav={nav} />}
+          <div className="card-gw">
+            {nav && <GwArrow direction="prev" nav={nav} />}
+            <div className="gw-center">
+              <span className="gw-label">GW{plot.gw}</span>
+              <span className={`state state-${plot.state}`}>{state.badge}</span>
+            </div>
+            {nav && <GwArrow direction="next" nav={nav} />}
+          </div>
+          <div className="card-score">
+            <p className="score">
+              <span className="score-number">{plot.points}</span>
+              <span className="score-unit">pts</span>
+            </p>
+            {plot.transfers_cost > 0 && <p className="hit">−{plot.transfers_cost} transfer hit</p>}
+            {plot.chip && <span className={`chip chip-${plot.chip}`}>{CHIP_NAMES[plot.chip] ?? plot.chip}</span>}
+          </div>
+        </header>
+
+        <div className="pitch-wrap">
+          <Pitch
+            dots={plot.dots}
+            chip={plot.chip}
+            title={`${plot.team_name}, gameweek ${plot.gw}: real average positions`}
+            details={details.trigger}
+          />
+          <ShareButton
+            card={card}
+            filename={exportFilename(plot.team_id, plot.gw)}
+            title={`${plot.team_name}, GW${plot.gw}: Real Shape`}
+          />
         </div>
-        <div className="card-score">
-          <p className="score">
-            <span className="score-number">{plot.points}</span>
-            <span className="score-unit">pts</span>
-          </p>
-          {plot.transfers_cost > 0 && <p className="hit">−{plot.transfers_cost} transfer hit</p>}
-          {plot.chip && <span className={`chip chip-${plot.chip}`}>{CHIP_NAMES[plot.chip] ?? plot.chip}</span>}
-        </div>
-      </header>
 
-      <div className="pitch-wrap">
-        <Pitch
-          dots={plot.dots}
-          chip={plot.chip}
-          title={`${plot.team_name}, gameweek ${plot.gw}: real average positions`}
-        />
-        <ShareButton
-          card={card}
-          filename={exportFilename(plot.team_id, plot.gw)}
-          title={`${plot.team_name}, GW${plot.gw}: Real Shape`}
-        />
-      </div>
+        {plot.bench.length > 0 && <Bench players={plot.bench} details={details.trigger} />}
 
-      {plot.bench.length > 0 && <Bench players={plot.bench} />}
-
-      <footer className="card-foot">
-        <ul className="legend">
-          {(Object.keys(ROLE_NAMES) as Role[]).map((role) => (
-            <li key={role}>
-              <span className={`key role-${role}`} />
-              {ROLE_NAMES[role]}
+        <footer className="card-foot">
+          <ul className="legend">
+            {(Object.keys(ROLE_NAMES) as Role[]).map((role) => (
+              <li key={role}>
+                <span className={`key role-${role}`} />
+                {ROLE_NAMES[role]}
+              </li>
+            ))}
+            <li>
+              {plot.chip === '3xc' ? (
+                <>
+                  <span className="key key-captain key-triple">TC</span>
+                  Triple captain
+                </>
+              ) : (
+                <>
+                  <span className="key key-captain">C</span>
+                  Captain
+                </>
+              )}
             </li>
-          ))}
-          <li>
-            {plot.chip === '3xc' ? (
-              <>
-                <span className="key key-captain key-triple">TC</span>
-                Triple captain
-              </>
-            ) : (
-              <>
-                <span className="key key-captain">C</span>
-                Captain
-              </>
+            {hasLinks && (
+              <li>
+                <span className="key key-link" />
+                Double gameweek, both matches
+              </li>
             )}
-          </li>
-          {hasLinks && (
-            <li>
-              <span className="key key-link" />
-              Double gameweek, both matches
-            </li>
-          )}
-          {hasGhosts && (
-            <li>
-              <span className="key key-ghost" />
-              No match, on the sideline
-            </li>
-          )}
-        </ul>
-        <p className="card-note">
-          {state.note} Attacking upward. Height: how far forward compared with every Premier League outfield
-          player. Circles show the points each player scored for the team (the captain's multiplied); bigger
-          circle, more points within this team this gameweek.
-          {plot.data_as_of && ` Positions as of ${formatDate(plot.data_as_of)}.`}
-        </p>
-      </footer>
-    </article>
+            {hasGhosts && (
+              <li>
+                <span className="key key-ghost" />
+                No match, on the sideline
+              </li>
+            )}
+          </ul>
+          <p className="card-note">
+            {state.note} Attacking upward. Height: how far forward compared with every Premier League outfield
+            player. Circles show the points each player scored for the team (the captain's multiplied); bigger
+            circle, more points within this team this gameweek.
+            {plot.data_as_of && ` Positions as of ${formatDate(plot.data_as_of)}.`}
+          </p>
+        </footer>
+      </article>
+      {details.open && (
+        <MatchDetailsBox open={details.open} frame={frame} dots={plot.dots} onClose={details.close} />
+      )}
+    </div>
   )
 }

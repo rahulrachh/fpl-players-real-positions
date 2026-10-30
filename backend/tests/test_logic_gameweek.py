@@ -77,6 +77,7 @@ def make_team(
             is_vice_captain=i == vice,
             auto_sub="out" if i in outs else "in" if i in ins else None,
             points=i,
+            matches=[],
             player=Player(
                 id=i,
                 web_name=f"P{i}",

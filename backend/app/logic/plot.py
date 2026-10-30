@@ -11,7 +11,7 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy.orm import Session
 
-from app.fpl.team import GameweekStatus, TeamGameweek
+from app.fpl.team import GameweekStatus, PickMatch, TeamGameweek, TeamPick
 from app.logic.depth import POOL_MIN_MINUTES, rank_depth
 from app.logic.gameweek import (
     GameweekState,
@@ -24,6 +24,7 @@ from app.logic.positions import GhostReason
 from app.logic.repository import (
     load_data_as_of,
     load_depth_pool,
+    load_fixture_ids,
     load_match_positions,
     load_positions_synced,
     load_sofascore_ids,
@@ -64,8 +65,15 @@ class PlotDot(_Model):
     # progress): his own, doubled for the captain (tripled with Triple
     # Captain). The dots of the XI add up to the gameweek score before hits.
     points: int
+    # 2 for the captain (3 with Triple Captain), else 1: `points` is his own
+    # points times this.
+    multiplier: int
     # A bench player drawn because of Bench Boost (slot 12-15).
     from_bench: bool
+    # His matches of the gameweek with the points breakdown (the hover box).
+    # A linked double-gameweek dot has only the match its position came from;
+    # every other dot has all of them.
+    matches: list[PickMatch]
 
 
 class BenchPlayer(_Model):
@@ -79,6 +87,7 @@ class BenchPlayer(_Model):
     points: int
     # Locked only: a picked starter FPL auto-subbed off (did not play).
     subbed_off: bool
+    matches: list[PickMatch]
 
 
 class Plot(_Model):
@@ -124,6 +133,16 @@ def neighbour_gameweeks(
     return prev_gw, next_gw
 
 
+def _dot_matches(
+    pick: TeamPick, match_ids: tuple[int, ...], fixture_ids: dict[int, int]
+) -> list[PickMatch]:
+    """The pick's matches behind one dot: those of `match_ids` (a linked
+    double-gameweek dot), or all of them when empty or not linked to FPL."""
+    fixtures = {fixture_ids[m] for m in match_ids if m in fixture_ids}
+    own = [m for m in pick.matches if m.fixture_id in fixtures]
+    return own or pick.matches
+
+
 def build_plot(team: TeamGameweek, session: Session, latest_gw: int | None) -> Plot:
     state = team_state(team, load_positions_synced(session, team.gameweek))
     sofascore_ids = load_sofascore_ids(session, [p.player.id for p in team.picks])
@@ -133,10 +152,15 @@ def build_plot(team: TeamGameweek, session: Session, latest_gw: int | None) -> P
     pool = load_depth_pool(session, POOL_MIN_MINUTES)
     multiplier = captain_multiplier(team)
 
+    built = build_dots(team, state, sofascore_ids, rows)
+    fixture_ids = load_fixture_ids(session, {m for d in built if d.link_group for m in d.match_ids})
+
     dots = []
-    for dot in build_dots(team, state, sofascore_ids, rows):
+    for dot in built:
         player = players[dot.fpl_id]
+        pick = picks[dot.fpl_id]
         y = _round(dot.y)
+        dot_multiplier = multiplier if dot.is_captain else 1
         dots.append(
             PlotDot(
                 fpl_id=dot.fpl_id,
@@ -154,8 +178,10 @@ def build_plot(team: TeamGameweek, session: Session, latest_gw: int | None) -> P
                 link_group=dot.link_group,
                 replaces=dot.replaces,
                 depth_pct=rank_depth(pool, dot.role, y),
-                points=picks[dot.fpl_id].points * (multiplier if dot.is_captain else 1),
+                points=pick.points * dot_multiplier,
+                multiplier=dot_multiplier,
                 from_bench=dot.slot > 11,
+                matches=_dot_matches(pick, dot.match_ids if dot.link_group else (), fixture_ids),
             )
         )
     bench = [
@@ -167,6 +193,7 @@ def build_plot(team: TeamGameweek, session: Session, latest_gw: int | None) -> P
             club=p.player.club.short_name,
             points=p.points,
             subbed_off=state is GameweekState.LOCKED and p.auto_sub == "out",
+            matches=p.matches,
         )
         for p in bench_picks(team, state)
     ]

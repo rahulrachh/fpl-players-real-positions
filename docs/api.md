@@ -25,7 +25,7 @@ The web app reads the bundled read-only `fpl.db` and live FPL data. It never cal
 | `prev_gw` / `next_gw` | The neighbouring gameweek to step to, or `null` at an edge. `prev_gw` stops at the team's first gameweek (and GW1). `next_gw` stops at the newest gameweek whose deadline has passed (so also at GW38). |
 | `data_as_of` | End of the latest finished offline sync (`sync_runs.finished_at`, UTC, no offset), or `null` if never synced. |
 | `dots` | One per XI player in slot order (slots 12-15 for the bench under Bench Boost). A double-gameweek player on opposite flanks has two. |
-| `bench` | The 4 bench players in bench order: `fpl_id`, `name`, `web_name`, `role`, `club`, `points` (their own), `subbed_off` (locked only: a picked starter FPL auto-subbed off). After auto-subs when locked, as picked in preview. Empty under Bench Boost (they are dots). |
+| `bench` | The 4 bench players in bench order: `fpl_id`, `name`, `web_name`, `role`, `club`, `points` (their own), `subbed_off` (locked only: a picked starter FPL auto-subbed off), `matches` (as on a dot, below). After auto-subs when locked, as picked in preview. Empty under Bench Boost (they are dots). |
 
 Each dot:
 
@@ -43,8 +43,45 @@ Each dot:
 | `link_group` | Same value (the FPL ID) on the two linked dots of a double gameweek, otherwise `null`. |
 | `replaces` | Locked only: FPL ID of the picked starter this auto-sub replaced. |
 | `points` | The points the player scored for the team (`event/{gw}/live`, live while in progress): his own, doubled for the captain, tripled with Triple Captain. The dots add up to the gameweek score before hits. |
+| `multiplier` | 2 for the captain (3 with Triple Captain), else 1: `points` = his own points × `multiplier`. |
 | `from_bench` | A bench player drawn because of Bench Boost. |
+| `matches` | His matches of the gameweek for the match details box, in kick-off order (two in a double gameweek, none in a blank one, or if FPL has no live data for him). A **linked double-gameweek dot** (`link_group` set) has only the match its position came from (`matches.fpl_fixture_id` of its stored match); every other dot, including one averaged dot, has all of them. Live from FPL like `points`. See below. |
 | `depth_pct` | How far forward the dot is: percentile (0-100, 1 decimal, ties count half) of `y` among every outfield player-match in the database (defenders, midfielders and forwards together; a player-match counts at 60+ minutes). `null` for a goalkeeper or a ghost. The pitch draws it as the dot's height (`app/logic/depth.py`). |
+
+Each match (`event/{gw}/live/` `explain` joined with `fixtures/`, see `docs/fpl-api.md`):
+
+| Field | Meaning |
+|---|---|
+| `fixture_id` | FPL fixture ID. |
+| `home_club` / `away_club` | Club short names. |
+| `is_home` / `opponent` | From the player's side. `null` when his current club played in neither side (he has moved since); show `home_club` v `away_club` then. |
+| `kickoff` | UTC, or `null` if not scheduled. |
+| `state` | `not_started` / `live` / `finished` (`finished_provisional` counts as finished). |
+| `home_score` / `away_score` | `null` before kick-off, live while played. |
+| `minutes` | Minutes he played; 0 = did not play. |
+| `stats` | One row per stat that scored or cost points, in FPL's order: `identifier`, `label` (as on the FPL site, except "Minutes" and "Def. Con."), `value`, `points`. Empty when he did not play. |
+| `points` | Sum of `stats`: his points from this match. Over all of a player's matches this equals his own points; times `multiplier` it is the dot's `points`. |
+
+Sample (GW8, the owner's captain, recorded 2026-10-30):
+```json
+{
+  "fpl_id": 411, "web_name": "Haaland", "is_captain": true, "points": 16, "multiplier": 2,
+  "matches": [
+    {
+      "fixture_id": 72, "home_club": "AVL", "away_club": "MCI", "is_home": false, "opponent": "AVL",
+      "kickoff": "2026-10-24T11:30:00Z", "state": "finished", "home_score": 2, "away_score": 1,
+      "minutes": 90,
+      "stats": [
+        {"identifier": "minutes", "label": "Minutes", "value": 90, "points": 2},
+        {"identifier": "goals_scored", "label": "Goals scored", "value": 1, "points": 4},
+        {"identifier": "bonus", "label": "Bonus", "value": 2, "points": 2}
+      ],
+      "points": 8
+    }
+  ]
+}
+```
+A bench player who did not play (same gameweek): `{"fpl_id": 165, "web_name": "João Pedro", "points": 0, "subbed_off": true, "matches": [{"fixture_id": 73, "home_club": "CHE", "away_club": "TOT", "is_home": true, "opponent": "TOT", "kickoff": "2026-10-24T16:30:00Z", "state": "finished", "home_score": 0, "away_score": 2, "minutes": 0, "stats": [], "points": 0}]}`.
 
 ## Errors
 Same codes as the team endpoint, as `{code, detail}`:

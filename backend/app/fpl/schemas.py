@@ -91,6 +91,9 @@ class Fixture(_Model):
     started: bool | None
     finished: bool
     finished_provisional: bool
+    # None until the match kicks off; live while it is played.
+    team_h_score: int | None = None
+    team_a_score: int | None = None
 
 
 # --- entry/{id}/ and entry/{id}/history/ -------------------------------------
@@ -179,9 +182,27 @@ class LiveStats(_Model):
     total_points: int
 
 
+class LiveExplainStat(_Model):
+    # minutes, goals_scored, assists, clean_sheets, ... (see `docs/fpl-api.md`).
+    identifier: str
+    value: int
+    points: int
+
+
+class LiveExplain(_Model):
+    """How the player's points add up in one fixture. A player whose club
+    played but who did not gets one `minutes` row with value 0."""
+
+    fixture: int
+    stats: list[LiveExplainStat]
+
+
 class LiveElement(_Model):
     id: int
     stats: LiveStats
+    # One entry per fixture of the gameweek (two in a double gameweek, none
+    # in a blank one). Its points add up to `stats.total_points`.
+    explain: list[LiveExplain] = []
 
 
 class EventLive(_Model):

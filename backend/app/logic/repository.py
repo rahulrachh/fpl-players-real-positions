@@ -6,7 +6,14 @@ from datetime import datetime
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.db.models import FplPlayer, Gameweek, PlayerIdMap, PlayerMatchPosition, SyncRun
+from app.db.models import (
+    FplPlayer,
+    Gameweek,
+    Match,
+    PlayerIdMap,
+    PlayerMatchPosition,
+    SyncRun,
+)
 from app.logic.depth import outfield_pool
 from app.logic.positions import MatchPosition
 
@@ -51,6 +58,16 @@ def load_match_positions(
             )
         )
     return result
+
+
+def load_fixture_ids(session: Session, match_ids: Iterable[int]) -> dict[int, int]:
+    """Stored match ID → FPL fixture ID, for the matches linked to one."""
+    rows = session.execute(
+        select(Match.id, Match.fpl_fixture_id).where(
+            Match.id.in_(list(match_ids)), Match.fpl_fixture_id.is_not(None)
+        )
+    )
+    return {match_id: fixture_id for match_id, fixture_id in rows}
 
 
 def load_depth_pool(session: Session, min_minutes: int) -> list[float]:

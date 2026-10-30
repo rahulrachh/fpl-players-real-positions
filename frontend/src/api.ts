@@ -70,6 +70,28 @@ export const fetchTeamGameweek = (teamId: number, gw: number) =>
 
 // Response of GET /api/team/{id}/plot/{gw} (backend/app/logic/plot.py, docs/api.md).
 
+// One line of FPL's points breakdown ("Goals scored 1 → 6").
+export type StatPoints = { identifier: string; label: string; value: number; points: number }
+
+// One of the player's matches in the gameweek, with how his points add up.
+export type PickMatch = {
+  fixture_id: number
+  // Club short names. is_home / opponent are null when the player's current
+  // club played in neither side (he has moved since).
+  home_club: string
+  away_club: string
+  is_home: boolean | null
+  opponent: string | null
+  kickoff: string | null
+  state: 'not_started' | 'live' | 'finished'
+  home_score: number | null
+  away_score: number | null
+  minutes: number
+  // Only the stats that scored or cost points.
+  stats: StatPoints[]
+  points: number
+}
+
 export type PlotDot = {
   fpl_id: number
   name: string
@@ -92,8 +114,13 @@ export type PlotDot = {
   // The points the player scored for the team (live while in progress): his
   // own, doubled for the captain (tripled with Triple Captain).
   points: number
+  // 2 for the captain (3 with Triple Captain), else 1.
+  multiplier: number
   // A bench player drawn because of Bench Boost.
   from_bench: boolean
+  // His matches of the gameweek (the details box). A linked double-gameweek
+  // dot has only the match its position came from.
+  matches: PickMatch[]
 }
 
 export type BenchPlayer = {
@@ -105,6 +132,7 @@ export type BenchPlayer = {
   points: number
   // Locked only: a picked starter FPL auto-subbed off (did not play).
   subbed_off: boolean
+  matches: PickMatch[]
 }
 
 export type Plot = {

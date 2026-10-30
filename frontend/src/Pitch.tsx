@@ -5,6 +5,7 @@
 import { useMemo } from 'react'
 
 import type { PlotDot } from './api'
+import type { DetailsTrigger } from './useMatchDetails'
 import {
   type LaidDot,
   layoutDots,
@@ -90,13 +91,17 @@ function Label({ d }: { d: LaidDot }) {
   )
 }
 
-function Dot({ d }: { d: LaidDot }) {
+function Dot({ d, details }: { d: LaidDot; details?: DetailsTrigger }) {
   const { dot, cx, cy, r } = d
   // Two characters (10+, or a minus) need a smaller size to fit the circle.
   const size = String(dot.points).length > 1 ? r * 0.9 : r * 1.05
+  const summary = `${dot.name} (${dot.role}, ${dot.club}): ${dot.points} pts${dot.is_captain ? ', captain' : ''}`
+  // A "from GWx" dot shows an earlier match, so it has no details box.
+  const trigger =
+    details && dot.from_gw === null ? details(d.key, { kind: 'dot', dot }, `${summary}. Match details`) : null
   return (
-    <g className={`dot role-${dot.role}`}>
-      <title>{`${dot.name} (${dot.role}, ${dot.club}): ${dot.points} pts${dot.is_captain ? ', captain' : ''}`}</title>
+    <g className={`dot role-${dot.role}`} {...trigger}>
+      {!trigger && <title>{summary}</title>}
       <circle className="dot-body" cx={cx} cy={cy} r={r} />
       <text className="dot-points" x={cx} y={cy + size * 0.36} fontSize={size} textAnchor="middle">
         {dot.points}
@@ -134,7 +139,9 @@ function Ghost({ d }: { d: LaidDot }) {
   )
 }
 
-export default function Pitch({ dots, title, chip }: { dots: PlotDot[]; title: string; chip: string | null }) {
+type Props = { dots: PlotDot[]; title: string; chip: string | null; details?: DetailsTrigger }
+
+export default function Pitch({ dots, title, chip, details }: Props) {
   const layout = useMemo(() => layoutDots(dots), [dots])
   return (
     <svg className="pitch" viewBox={`0 0 ${VIEW_W} ${VIEW_H}`} role="img" aria-label={title}>
@@ -170,7 +177,7 @@ export default function Pitch({ dots, title, chip }: { dots: PlotDot[]; title: s
       {[...layout.dots]
         .sort((a, b) => b.r - a.r)
         .map((d) => (
-          <Dot key={d.key} d={d} />
+          <Dot key={d.key} d={d} details={details} />
         ))}
       {layout.dots.map(
         (d) => d.dot.is_captain && <Armband key={`${d.key}-armband`} d={d} triple={chip === '3xc'} />,

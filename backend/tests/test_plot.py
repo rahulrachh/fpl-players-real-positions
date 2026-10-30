@@ -86,7 +86,12 @@ def db(session):  # noqa: F811
 
 @pytest.fixture
 def fake():
-    return FakeFpl()
+    fake = FakeFpl()
+    # The recorded bootstrap has only clubs 1-3: the recorded GW6 fixtures
+    # (ARS v 13, AVL v 4) are played against BOU instead.
+    for fixture in fake.routes["/api/fixtures/"][:2]:
+        fixture["team_a"] = 3
+    return fake
 
 
 def client_for(service, db):
@@ -162,6 +167,8 @@ def test_captain_dot_carries_multiplied_points(fake, db, chip, multiplier):
     body = client_for(make_service(fake), db).get("/api/team/1234/plot/6").json()
     captain = next(d for d in body["dots"] if d["is_captain"])
     assert captain["points"] == 5 * multiplier
+    assert captain["multiplier"] == multiplier
+    assert all(d["multiplier"] == 1 for d in body["dots"] if not d["is_captain"])
     assert body["chip"] == chip
 
 
@@ -253,3 +260,153 @@ def test_only_fpl_requests(api, fake):
     api.get("/api/team/1234/plot/6")
     api.get("/api/team/1234/plot/latest")
     assert fake.requests and all(path.startswith("/api/") for path in fake.requests)
+
+
+# --- Match details (the hover box) ---------------------------------------------
+
+
+def explain(fixture: int, minutes: int, *extra: tuple[str, int, int]) -> dict:
+    stats = [("minutes", minutes, 2 if minutes >= 60 else 1 if minutes else 0), *extra]
+    return {
+        "fixture": fixture,
+        "stats": [
+            {"identifier": i, "value": v, "points": p, "points_modification": 0}
+            for i, v, p in stats
+        ],
+    }
+
+
+def live_with(fake, fpl_id: int, *explains: dict) -> None:
+    live = load("live-gw6.json")
+    total = sum(s["points"] for e in explains for s in e["stats"])
+    stats = {**live["elements"][0]["stats"], "total_points": total}
+    live["elements"].append({"id": fpl_id, "stats": stats, "explain": list(explains)})
+    fake.routes["/api/event/6/live/"] = live
+
+
+def test_match_details_normal_match(api):
+    body = api.get("/api/team/1234/plot/6").json()
+    raya = next(d for d in body["dots"] if d["fpl_id"] == 1)
+    # Recorded: Raya (ARS) kept goal for 90 minutes in ARS 2-1, 4 saves.
+    (match,) = raya["matches"]
+    assert match == {
+        "fixture_id": 51,
+        "home_club": "ARS",
+        "away_club": "BOU",
+        "is_home": True,
+        "opponent": "BOU",
+        "kickoff": "2026-10-10T11:30:00Z",
+        "state": "finished",
+        "home_score": 2,
+        "away_score": 1,
+        "minutes": 90,
+        "stats": [
+            {"identifier": "minutes", "label": "Minutes", "value": 90, "points": 2},
+            {"identifier": "saves", "label": "Saves", "value": 4, "points": 1},
+        ],
+        "points": 3,
+    }
+    assert raya["points"] == 3 and raya["multiplier"] == 1
+
+
+def test_match_details_did_not_play(fake, db):
+    # 115 (AVL) was in the squad of AVL v BOU but did not play: one minutes row
+    # with value 0, no points.
+    live_with(fake, 115, explain(52, 0))
+    body = client_for(make_service(fake), db).get("/api/team/1234/plot/6").json()
+    app.dependency_overrides.clear()
+    (match,) = next(d for d in body["dots"] if d["fpl_id"] == 115)["matches"]
+    assert (match["opponent"], match["is_home"], match["minutes"]) == ("BOU", True, 0)
+    assert (match["stats"], match["points"]) == ([], 0)
+    # A player missing from the live data has no matches.
+    assert next(d for d in body["dots"] if d["fpl_id"] == 4)["matches"] == []
+
+
+def test_match_details_on_bench(fake, db):
+    live_with(fake, 58, explain(52, 90, ("goals_scored", 1, 5)))
+    body = client_for(make_service(fake), db).get("/api/team/1234/plot/6").json()
+    app.dependency_overrides.clear()
+    bench = next(b for b in body["bench"] if b["fpl_id"] == 58)
+    assert [m["points"] for m in bench["matches"]] == [7]
+    assert bench["matches"][0]["stats"][1]["label"] == "Goals scored"
+
+
+def double_gameweek(fake, db, second_x: float) -> list[dict]:
+    """115 (AVL, stored at x 17 in match 6000 = fixture 52, at home to BOU)
+    plays a second GW6 match away at ARS (fixture 60), stored at `second_x`."""
+    db.get(Match, 6000).fpl_fixture_id = 52
+    db.add(
+        Match(
+            id=6001,
+            fpl_fixture_id=60,
+            gw=6,
+            home_club_id=1,
+            away_club_id=2,
+            kickoff=datetime(2026, 9, 29, 19),
+            finished=True,
+        )
+    )
+    db.add(
+        PlayerMatchPosition(
+            match_id=6001,
+            sofascore_player_id=sofa(115),
+            avg_x=second_x,
+            avg_y=20.0,
+            points_count=30,
+            kickoff=datetime(2026, 9, 29, 19),
+            gw=6,
+        )
+    )
+    db.commit()
+    fixtures = fake.routes["/api/fixtures/"]
+    fixtures.append(
+        {**fixtures[1], "id": 60, "team_h": 1, "team_a": 2, "kickoff_time": "2026-10-13T19:00:00Z"}
+    )
+    fake.routes["/api/fixtures/"] = fixtures
+    live_with(fake, 115, explain(52, 90, ("assists", 1, 3)), explain(60, 30))
+    body = client_for(make_service(fake), db).get("/api/team/1234/plot/6").json()
+    app.dependency_overrides.clear()
+    return [d for d in body["dots"] if d["fpl_id"] == 115]
+
+
+def test_match_details_double_gameweek_two_dots(fake, db):
+    left, right = double_gameweek(fake, db, second_x=80.0)
+    assert left["link_group"] == right["link_group"] == 115
+    # Each dot carries only the match its position came from; both show the
+    # gameweek's points.
+    assert [m["fixture_id"] for m in left["matches"]] == [52]
+    assert [m["fixture_id"] for m in right["matches"]] == [60]
+    assert (left["matches"][0]["points"], right["matches"][0]["points"]) == (5, 1)
+    assert (right["matches"][0]["is_home"], right["matches"][0]["opponent"]) == (False, "ARS")
+    assert left["points"] == right["points"] == 6
+
+
+def test_match_details_double_gameweek_one_dot(fake, db):
+    (dot,) = double_gameweek(fake, db, second_x=25.0)
+    assert dot["link_group"] is None
+    # Both matches, in kick-off order.
+    assert [m["fixture_id"] for m in dot["matches"]] == [52, 60]
+    assert sum(m["points"] for m in dot["matches"]) == dot["points"] == 6
+
+
+@pytest.mark.parametrize(
+    ("started", "finished_provisional", "finished", "state", "score"),
+    [
+        (False, False, False, "not_started", None),
+        (True, False, False, "live", 1),
+        (True, True, False, "finished", 1),
+    ],
+)
+def test_match_details_state(fake, db, started, finished_provisional, finished, state, score):
+    raya_fixture = fake.routes["/api/fixtures/"][0]
+    raya_fixture.update(
+        started=started,
+        finished_provisional=finished_provisional,
+        finished=finished,
+        team_h_score=score,
+        team_a_score=score,
+    )
+    body = client_for(make_service(fake), db).get("/api/team/1234/plot/6").json()
+    app.dependency_overrides.clear()
+    (match,) = next(d for d in body["dots"] if d["fpl_id"] == 1)["matches"]
+    assert (match["state"], match["home_score"], match["away_score"]) == (state, score, score)

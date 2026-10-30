@@ -723,3 +723,157 @@ button:disabled {
   opacity: 0.6;
   cursor: default;
 }
+
+/* Match details box (MatchDetails.tsx): beside the card, never inside it, so
+   the image export leaves it out. */
+
+.pitch-card-frame {
+  position: relative;
+}
+
+.dot[role='button'],
+.bench-card[role='button'] {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dot[role='button']:focus {
+  outline: none;
+}
+
+/* Hover only where there is a pointer that hovers: on a phone a tapped
+   element keeps :hover, so the outline would stick. */
+.dot[role='button']:focus-visible .dot-body {
+  stroke: var(--captain);
+  stroke-width: 0.7;
+}
+
+.bench-card[role='button']:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 1px;
+}
+
+@media (hover: hover) {
+  .dot[role='button']:hover .dot-body {
+    stroke: var(--captain);
+    stroke-width: 0.7;
+  }
+
+  .bench-card[role='button']:hover {
+    outline: 2px solid var(--ink);
+    outline-offset: 1px;
+  }
+}
+
+.details {
+  position: absolute;
+  z-index: 2;
+  width: min(9rem, calc(100% - 16px));
+  padding: 0.45rem 0.55rem;
+  border: 1px solid var(--card-line);
+  border-radius: 10px;
+  background: var(--card);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  color: var(--ink);
+  font-size: 0.72rem;
+  line-height: 1.25;
+  cursor: default;
+}
+
+.details-hover {
+  pointer-events: none;
+}
+
+.details p {
+  margin: 0;
+}
+
+.details-head {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--card-line);
+}
+
+.details-role {
+  flex: none;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  border: 1px solid var(--card-line);
+}
+
+.details-role.role-GK { background: var(--gk); }
+.details-role.role-DEF { background: var(--def); }
+.details-role.role-MID { background: var(--mid); }
+.details-role.role-FWD { background: var(--fwd); }
+
+.details-name {
+  font-weight: 750;
+  font-size: 0.8rem;
+}
+
+.details-sub,
+.details-minutes {
+  color: var(--muted);
+}
+
+.details-match {
+  padding: 0.25rem 0;
+  border-bottom: 1px solid var(--card-line);
+}
+
+.details-stats {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.details-stats th {
+  padding: 0.05rem 0;
+  font-weight: 400;
+  text-align: left;
+}
+
+.details-stats td {
+  padding: 0.05rem 0 0.05rem 0.4rem;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.details-value {
+  color: var(--muted);
+}
+
+.details-pts {
+  width: 1.8rem;
+  font-weight: 650;
+}
+
+.details-subtotal th,
+.details-subtotal td {
+  border-top: 1px dashed var(--card-line);
+  font-weight: 650;
+}
+
+.details-foot {
+  padding-top: 0.25rem;
+}
+
+.details-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.details-line > :last-child {
+  white-space: nowrap;
+}
+
+.details-total {
+  margin-top: 0.1rem;
+  font-weight: 800;
+  font-size: 0.8rem;
+}

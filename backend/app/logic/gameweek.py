@@ -64,6 +64,8 @@ def gameweek_state(finished: bool, positions_synced: bool) -> GameweekState:
 class Point:
     x: float
     y: float
+    # The matches averaged into this point.
+    match_ids: tuple[int, ...]
 
 
 def combine_matches(matches: Sequence[MatchPosition], flank_margin: float) -> list[Point]:
@@ -86,6 +88,7 @@ def _average(matches: Sequence[MatchPosition]) -> Point:
     return Point(
         x=sum(m.x for m in matches) / len(matches),
         y=sum(m.y for m in matches) / len(matches),
+        match_ids=tuple(m.match_id for m in matches),
     )
 
 
@@ -107,6 +110,8 @@ class Dot:
     link_group: int | None
     # Locked only: the picked starter this auto-sub replaced.
     replaces: int | None
+    # The stored matches (`matches.id`) this dot's position comes from: one of
+    # the two for a linked double-gameweek dot, all of them for an averaged one.
     match_ids: tuple[int, ...]
 
     @property
@@ -207,16 +212,31 @@ def build_dots(
             is_captain=fpl_id == captain_id,
             from_gw=from_gw,
             replaces=replaced.get(fpl_id) if state is GameweekState.LOCKED else None,
-            match_ids=tuple(m.match_id for m in matches),
         )
         points = combine_matches(matches, flank_margin)
         if not points:
-            dots.append(Dot(**common, x=None, y=None, ghost_reason=ghost_reason, link_group=None))
+            dots.append(
+                Dot(
+                    **common,
+                    x=None,
+                    y=None,
+                    ghost_reason=ghost_reason,
+                    link_group=None,
+                    match_ids=(),
+                )
+            )
             continue
         link_group = fpl_id if len(points) > 1 else None
         for point in points:
             dots.append(
-                Dot(**common, x=point.x, y=point.y, ghost_reason=None, link_group=link_group)
+                Dot(
+                    **common,
+                    x=point.x,
+                    y=point.y,
+                    ghost_reason=None,
+                    link_group=link_group,
+                    match_ids=point.match_ids,
+                )
             )
     return dots
 

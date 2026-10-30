@@ -11,7 +11,7 @@ the gameweek's points (nothing changes after that), otherwise for the short
 FPL TTL. A cache hit makes no FPL call at all.
 """
 
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from datetime import UTC, datetime
 from enum import StrEnum
 from functools import lru_cache
@@ -26,7 +26,7 @@ from app.config import get_settings
 from app.db.models import FplPlayer
 from app.fpl.client import FplClient, FplNotFound, FplSchemaError, get_fpl_client
 from app.fpl.reference import ROLE_BY_ELEMENT_TYPE
-from app.fpl.schemas import BootstrapStatic, Event
+from app.fpl.schemas import BootstrapStatic, Event, Fixture, LiveElement
 
 
 class TeamError(Exception):
@@ -88,6 +88,38 @@ class Player(_Model):
     club: Club
 
 
+class StatPoints(_Model):
+    """One line of FPL's points breakdown ("Goals scored 1 → 6")."""
+
+    # FPL's stat identifier (`docs/fpl-api.md`) and its label on the FPL site.
+    identifier: str
+    label: str
+    value: int
+    points: int
+
+
+class PickMatch(_Model):
+    """One of the player's matches in the gameweek, with how his points add up."""
+
+    fixture_id: int
+    # Club short names. `is_home` / `opponent` are None when the player's
+    # current club played in neither side (he has moved since).
+    home_club: str
+    away_club: str
+    is_home: bool | None
+    opponent: str | None
+    kickoff: datetime | None
+    state: Literal["not_started", "live", "finished"]
+    # None until kick-off; live while the match is played.
+    home_score: int | None
+    away_score: int | None
+    minutes: int
+    # Only the stats that scored or cost points, in FPL's order.
+    stats: list[StatPoints]
+    # Sum of `stats`: his points from this match.
+    points: int
+
+
 class TeamPick(_Model):
     """One of the 15 picks, as FPL shows them after its automatic subs: an
     auto-subbed starter is on the bench and the bench player who replaced
@@ -113,6 +145,9 @@ class TeamPick(_Model):
     # The player's own FPL points for the gameweek (live while it is in
     # progress), before the captain multiplier.
     points: int
+    # His matches of the gameweek in kick-off order (two in a double
+    # gameweek, none in a blank one).
+    matches: list[PickMatch]
     player: Player
 
 
@@ -221,7 +256,13 @@ class TeamService:
             raise GameweekNotStarted(f"no picks for team {team_id} in gameweek {gw} yet") from None
 
         players = _players(session, bootstrap, [p.element for p in picks.picks])
-        points = {e.id: e.stats.total_points for e in self.client.event_live(gw).elements}
+        live = {e.id: e for e in self.client.event_live(gw).elements}
+        matches = _pick_matches(
+            [live[p.element] for p in picks.picks if p.element in live],
+            players,
+            self._fixtures(gw, live.values()),
+            {t.id: t.short_name for t in bootstrap.teams},
+        )
         subs_in = {s.element_in for s in picks.automatic_subs}
         subs_out = {s.element_out for s in picks.automatic_subs}
         team_picks = []
@@ -245,7 +286,8 @@ class TeamService:
                     else "out"
                     if pick.element in subs_out
                     else None,
-                    points=points.get(pick.element, 0),
+                    points=live[pick.element].stats.total_points if pick.element in live else 0,
+                    matches=matches.get(pick.element, []),
                     player=players[pick.element],
                 )
             )
@@ -276,6 +318,95 @@ class TeamService:
             ],
             picks=team_picks,
         )
+
+
+    def _fixtures(self, gw: int, live: Iterable[LiveElement]) -> dict[int, Fixture]:
+        """The gameweek's fixtures by ID; the whole season's if a player's
+        breakdown names a fixture not listed under this gameweek."""
+        fixtures = {f.id: f for f in self.client.fixtures(gw)}
+        named = {x.fixture for e in live for x in e.explain}
+        if not named <= fixtures.keys():
+            fixtures = {f.id: f for f in self.client.fixtures()}
+        return fixtures
+
+
+# Labels as on the FPL site's points breakdown, two shortened for the small
+# box (owner); an unknown stat shows its identifier.
+STAT_LABELS = {
+    "minutes": "Minutes",
+    "goals_scored": "Goals scored",
+    "assists": "Assists",
+    "clean_sheets": "Clean sheets",
+    "goals_conceded": "Goals conceded",
+    "own_goals": "Own goals",
+    "penalties_saved": "Penalties saved",
+    "penalties_missed": "Penalties missed",
+    "yellow_cards": "Yellow cards",
+    "red_cards": "Red cards",
+    "saves": "Saves",
+    "bonus": "Bonus",
+    "defensive_contribution": "Def. Con.",
+}
+
+
+def _match_state(fixture: Fixture) -> Literal["not_started", "live", "finished"]:
+    if not fixture.started:
+        return "not_started"
+    if fixture.finished or fixture.finished_provisional:
+        return "finished"
+    return "live"
+
+
+def _pick_matches(
+    live: list[LiveElement],
+    players: dict[int, Player],
+    fixtures: dict[int, Fixture],
+    club_names: dict[int, str],
+) -> dict[int, list[PickMatch]]:
+    """FPL ID → the player's matches, from the `explain` of `event/{gw}/live/`
+    joined with the fixture list. A fixture FPL does not list is skipped."""
+    result: dict[int, list[PickMatch]] = {}
+    for element in live:
+        club_id = players[element.id].club.id
+        matches = []
+        for explain in element.explain:
+            fixture = fixtures.get(explain.fixture)
+            if fixture is None:
+                continue
+            is_home = (
+                True if fixture.team_h == club_id else False if fixture.team_a == club_id else None
+            )
+            stats = [
+                StatPoints(
+                    identifier=s.identifier,
+                    label=STAT_LABELS.get(s.identifier, s.identifier),
+                    value=s.value,
+                    points=s.points,
+                )
+                for s in explain.stats
+                if s.points != 0
+            ]
+            matches.append(
+                PickMatch(
+                    fixture_id=fixture.id,
+                    home_club=club_names.get(fixture.team_h, "?"),
+                    away_club=club_names.get(fixture.team_a, "?"),
+                    is_home=is_home,
+                    opponent=None
+                    if is_home is None
+                    else club_names.get(fixture.team_a if is_home else fixture.team_h, "?"),
+                    kickoff=fixture.kickoff_time,
+                    state=_match_state(fixture),
+                    home_score=fixture.team_h_score,
+                    away_score=fixture.team_a_score,
+                    minutes=next((s.value for s in explain.stats if s.identifier == "minutes"), 0),
+                    stats=stats,
+                    points=sum(s.points for s in stats),
+                )
+            )
+        far_future = datetime.max.replace(tzinfo=UTC)
+        result[element.id] = sorted(matches, key=lambda m: m.kickoff or far_future)
+    return result
 
 
 def _players(session: Session, bootstrap: BootstrapStatic, ids: list[int]) -> dict[int, Player]:
