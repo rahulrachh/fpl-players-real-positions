@@ -789,11 +789,22 @@ button:disabled {
 }
 
 .details-head {
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--card-line);
+}
+
+.details-id {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  padding-bottom: 0.3rem;
-  border-bottom: 1px solid var(--card-line);
+}
+
+/* In the header the scoreline is a rounded chip row under the name; the
+   header's own line separates it from the points. */
+.details-head .details-fixture {
+  margin: 0.3rem 0 0;
+  border-bottom: 0;
+  border-radius: 6px;
 }
 
 .details-role {
@@ -817,6 +828,78 @@ button:disabled {
 .details-sub,
 .details-minutes {
   color: var(--muted);
+}
+
+/* The match: a tinted scoreboard band above a line, so it reads apart from
+   the points rows under it. */
+.details-fixture {
+  margin: 0 0 0.25rem;
+  padding: 0.2rem 0.3rem 0.25rem;
+  border-bottom: 1px solid var(--card-line);
+  border-radius: 6px 6px 0 0;
+  background: color-mix(in srgb, var(--ink) 7%, transparent);
+  text-align: center;
+}
+
+.details-scoreline {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.details-club {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.details-club.is-own {
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.details-home {
+  text-align: right;
+}
+
+.details-away {
+  text-align: left;
+}
+
+.details-score {
+  min-width: 2rem;
+  padding: 0.05rem 0.3rem;
+  border-radius: 4px;
+  background: var(--ink);
+  color: var(--card);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.details-score.is-live {
+  background: var(--fwd);
+  color: #fff;
+}
+
+.details-score.is-v {
+  min-width: 0;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.details-when {
+  margin-top: 0.1rem;
+  color: var(--muted);
+  font-size: 0.62rem;
+}
+
+.details-fixture:has(.is-live) .details-when {
+  color: var(--fwd);
+  font-weight: 750;
 }
 
 .details-match {

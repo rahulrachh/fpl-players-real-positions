@@ -1,4 +1,4 @@
-// The match details box: who a player played, for how long and how his FPL
+// The match details box: the match(es) a player played and how his FPL
 // points add up. Used for pitch dots and bench cards; ghosts and "from GWx"
 // dots have none. Opened and closed by `useMatchDetails`.
 //
@@ -83,16 +83,34 @@ function boxName(name: string, webName: string) {
   return short.split(' ').includes(first) ? short : `${first} ${short}`
 }
 
-function Header({ name, webName, club, role }: { name: string; webName: string; club: string; role: Role }) {
+// Name, club and role; with a single match its scoreline goes right under
+// them, above the line. Two matches keep a scoreline on each breakdown so
+// the points stay with their match.
+function Header({
+  name,
+  webName,
+  club,
+  role,
+  matches,
+}: {
+  name: string
+  webName: string
+  club: string
+  role: Role
+  matches: PickMatch[]
+}) {
   return (
     <header className="details-head">
-      <span className={`details-role role-${role}`} aria-hidden="true" />
-      <div>
-        <p className="details-name">{boxName(name, webName)}</p>
-        <p className="details-sub">
-          {club} · {ROLE_NAMES[role]}
-        </p>
+      <div className="details-id">
+        <span className={`details-role role-${role}`} aria-hidden="true" />
+        <div>
+          <p className="details-name">{boxName(name, webName)}</p>
+          <p className="details-sub">
+            {club} · {ROLE_NAMES[role]}
+          </p>
+        </div>
       </div>
+      {matches.length === 1 && <Fixture m={matches[0]} club={club} />}
     </header>
   )
 }
@@ -101,14 +119,50 @@ function signed(points: number) {
   return points > 0 ? `+${points}` : points < 0 ? `−${-points}` : '0'
 }
 
+function kickoffText(iso: string | null) {
+  if (!iso) return 'TBC'
+  return new Date(iso).toLocaleString('en-GB', { weekday: 'short', hour: '2-digit', minute: '2-digit' })
+}
+
+function scoreline(m: PickMatch) {
+  const centre = m.state === 'not_started' ? 'v' : `${m.home_score ?? 0} – ${m.away_score ?? 0}`
+  return `${m.home_club} ${centre} ${m.away_club}`
+}
+
+// A small scoreboard above each breakdown, set apart from the points: the
+// two clubs (the player's in bold) around the score in a dark chip (red while
+// live), or "v" and the kickoff time before the match.
+function Fixture({ m, club }: { m: PickMatch; club: string }) {
+  const started = m.state !== 'not_started'
+  const side = (c: string, cls: string) => <span className={c === club ? `${cls} is-own` : cls}>{c}</span>
+  const label =
+    `${m.home_club} ${started ? `${m.home_score ?? 0}, ${m.away_club} ${m.away_score ?? 0}` : `v ${m.away_club}`}` +
+    (m.state === 'live' ? ', live' : '')
+  return (
+    <div className="details-fixture">
+      <p className="details-scoreline" aria-label={label}>
+        {side(m.home_club, 'details-club details-home')}
+        <span className={m.state === 'live' ? 'details-score is-live' : started ? 'details-score' : 'details-score is-v'}>
+          {started ? `${m.home_score ?? 0}–${m.away_score ?? 0}` : 'v'}
+        </span>
+        {side(m.away_club, 'details-club details-away')}
+      </p>
+      {m.state === 'live' && <p className="details-when">Live</p>}
+      {!started && <p className="details-when">{kickoffText(m.kickoff)}</p>}
+    </div>
+  )
+}
+
 // The minutes are the first breakdown row, so only a match without one says
-// why. `label` names the match in a double gameweek.
-function MatchBlock({ m, label }: { m: PickMatch; label: string | null }) {
+// why. In a double gameweek each match gets a subtotal.
+function MatchBlock({ m, club, several }: { m: PickMatch; club: string; several: boolean }) {
+  const didNotPlay = m.state !== 'not_started' && m.minutes === 0
+  // An unstarted single match has nothing under its scoreline in the header.
+  if (!several && !didNotPlay && m.stats.length === 0) return null
   return (
     <section className="details-match">
-      {label && <p className="details-minutes">{label}</p>}
-      {m.state === 'not_started' && <p className="details-minutes">Not played yet</p>}
-      {m.state !== 'not_started' && m.minutes === 0 && <p className="details-minutes">Did not play</p>}
+      {several && <Fixture m={m} club={club} />}
+      {didNotPlay && <p className="details-minutes">Did not play</p>}
       {m.stats.length > 0 && (
         <table className="details-stats">
           <tbody>
@@ -119,7 +173,7 @@ function MatchBlock({ m, label }: { m: PickMatch; label: string | null }) {
                 <td className="details-pts">{signed(s.points)}</td>
               </tr>
             ))}
-            {label && (
+            {several && (
               <tr className="details-subtotal">
                 <th scope="row">Match</th>
                 <td />
@@ -142,12 +196,12 @@ function Line({ label, value, strong }: { label: ReactNode; value: ReactNode; st
   )
 }
 
-function Matches({ matches }: { matches: PickMatch[] }) {
+function Matches({ matches, club }: { matches: PickMatch[]; club: string }) {
   if (matches.length === 0) return <p className="details-minutes">No match this gameweek</p>
   return (
     <>
-      {matches.map((m, i) => (
-        <MatchBlock key={m.fixture_id} m={m} label={matches.length > 1 ? `Match ${i + 1}` : null} />
+      {matches.map((m) => (
+        <MatchBlock key={m.fixture_id} m={m} club={club} several={matches.length > 1} />
       ))}
     </>
   )
@@ -155,7 +209,8 @@ function Matches({ matches }: { matches: PickMatch[] }) {
 
 function DotDetails({ dot, dots }: { dot: PlotDot; dots: PlotDot[] }) {
   // A double-gameweek dot on one flank carries its own match; the other
-  // match is on the linked dot, and the circle shows both.
+  // match is on the linked dot, and the circle shows both: its scoreline
+  // and points go in the footer.
   const own = new Set(dot.matches.map((m) => m.fixture_id))
   const other =
     dot.link_group === null
@@ -167,11 +222,11 @@ function DotDetails({ dot, dots }: { dot: PlotDot; dots: PlotDot[] }) {
   const base = [...dot.matches, ...other].reduce((sum, m) => sum + m.points, 0)
   return (
     <>
-      <Header name={dot.name} webName={dot.web_name} club={dot.club} role={dot.role} />
-      <Matches matches={dot.matches} />
+      <Header name={dot.name} webName={dot.web_name} club={dot.club} role={dot.role} matches={dot.matches} />
+      <Matches matches={dot.matches} club={dot.club} />
       <footer className="details-foot">
         {other.map((m) => (
-          <Line key={m.fixture_id} label="Other match" value={signed(m.points)} />
+          <Line key={m.fixture_id} label={scoreline(m)} value={signed(m.points)} />
         ))}
         {dot.multiplier > 1 && (
           <Line
@@ -188,8 +243,14 @@ function DotDetails({ dot, dots }: { dot: PlotDot; dots: PlotDot[] }) {
 function BenchDetails({ player }: { player: BenchPlayer }) {
   return (
     <>
-      <Header name={player.name} webName={player.web_name} club={player.club} role={player.role} />
-      <Matches matches={player.matches} />
+      <Header
+        name={player.name}
+        webName={player.web_name}
+        club={player.club}
+        role={player.role}
+        matches={player.matches}
+      />
+      <Matches matches={player.matches} club={player.club} />
       <footer className="details-foot">
         <Line label="Total" value={`${player.points} pts`} strong />
       </footer>

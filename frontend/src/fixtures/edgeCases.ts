@@ -1,7 +1,8 @@
 // Dev-only samples (?fixture=edges, ?fixture=bboost) with the cases the owner's
 // real team does not have yet: a ghost for each reason, a double-gameweek pair,
 // "from GWx", an auto-sub, Triple Captain, negative and double-digit scores, a
-// bench with a starter who did not play, and Bench Boost (15 dots).
+// bench with a starter who did not play, a live and an unstarted match, and
+// Bench Boost (15 dots).
 
 import type { BenchPlayer, PickMatch, Plot, PlotDot, StatPoints } from '../api'
 
@@ -94,11 +95,16 @@ export const edgeCases: Plot = {
     dot({ fpl_id: 7, web_name: 'Rice', role: 'MID', slot: 7, x: 50, y: 50, replaces: 99, depth_pct: 50, points: 3 }),
     dot({ fpl_id: 8, web_name: 'Ødegaard', role: 'MID', slot: 8, x: 51, y: 51, depth_pct: 54, points: 0 }),
     dot({ fpl_id: 9, web_name: 'Mbeumo', role: 'MID', slot: 9, is_ghost: true, ghost_reason: 'no_mapping' }),
-    dot({ fpl_id: 10, web_name: 'Haaland', role: 'FWD', slot: 10, x: 50, y: 88, depth_pct: 97, points: 13 }),
+    dot({ fpl_id: 10, web_name: 'Haaland', role: 'FWD', slot: 10, x: 50, y: 88, depth_pct: 97, points: 13,
+      // One dot for both matches, the second still on.
+      matches: [match(9), { ...match(4, 2), state: 'live', home_score: 1, away_score: 0 }] }),
     dot({ fpl_id: 11, web_name: 'Wissa', role: 'FWD', slot: 11, x: 12, y: 80, from_gw: 2, depth_pct: 88, points: 1 }),
   ],
   bench: [
-    bench({ fpl_id: 12, web_name: 'Kelleher', role: 'GK', points: 0 }),
+    bench({
+      fpl_id: 12, web_name: 'Kelleher', role: 'GK', points: 0,
+      matches: [{ ...match(0, 1, false), state: 'not_started', home_score: null, away_score: null }],
+    }),
     bench({ fpl_id: 99, web_name: 'Merino', role: 'MID', points: 0, subbed_off: true }),
     bench({ fpl_id: 14, web_name: 'Burn', role: 'DEF', points: 2 }),
     bench({ fpl_id: 15, web_name: 'Archer', role: 'FWD', points: 5 }),
