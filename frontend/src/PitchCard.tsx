@@ -1,5 +1,5 @@
 // One gameweek graphic: team name, gameweek, score and chip, the pitch, the
-// bench and the legend.
+// legend and the bench.
 // Kept self-contained: the image export (exportImage.ts) draws exactly this card.
 
 import { useEffect, useRef } from 'react'
@@ -136,9 +136,9 @@ export default function PitchCard({ plot, nav }: { plot: Plot; nav?: GwNav }) {
           />
         </div>
 
-        {plot.bench.length > 0 && <Bench players={plot.bench} details={details.trigger} />}
-
-        <footer className="card-foot">
+        {/* Between the pitch and the bench: right beside the fixtures panel,
+            whose role dots it also explains. */}
+        <div className="card-legend">
           <ul className="legend">
             {(Object.keys(ROLE_NAMES) as Role[]).map((role) => (
               <li key={role}>
@@ -159,7 +159,10 @@ export default function PitchCard({ plot, nav }: { plot: Plot; nav?: GwNav }) {
               </li>
             )}
           </ul>
-        </footer>
+        </div>
+
+        {plot.bench.length > 0 && <Bench players={plot.bench} details={details.trigger} />}
+
       </article>
       {details.open && (
         <MatchDetailsBox open={details.open} frame={frame} dots={plot.dots} onClose={details.close} />

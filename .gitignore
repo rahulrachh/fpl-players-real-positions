@@ -36,3 +36,7 @@ npm-debug.log*
 .idea/
 .DS_Store
 Thumbs.db
+
+# Working screenshots stay local; only the README images are committed
+docs/screenshots/*
+!docs/screenshots/readme/

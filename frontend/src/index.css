@@ -417,10 +417,9 @@ input:focus-visible {
 }
 
 /* Bench row under the pitch. */
+/* Last in the card, under the legend. */
 .bench {
-  margin-top: 0.5rem;
-  padding-bottom: 0.45rem;
-  border-bottom: 1px solid var(--card-line);
+  margin-top: 0.7rem;
 }
 
 .bench h3 {
@@ -490,13 +489,38 @@ input:focus-visible {
   color: var(--muted);
 }
 
-.card-foot {
-  margin-top: 0.45rem;
+/* Legend between the pitch and the bench. */
+.card-legend {
+  margin: 0.6rem 0 0;
+}
+
+.card-legend .key:not(.key-link) {
+  width: 0.85rem;
+  height: 0.85rem;
+  border-width: 1px;
+}
+
+/* Phones: smaller, so the four roles share one line. */
+@media (max-width: 30rem) {
+  .card-legend .legend {
+    gap: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+  }
+
+  .card-legend .legend li {
+    gap: 0.25rem;
+  }
+
+  .card-legend .key:not(.key-link) {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
 }
 
 .legend {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 0.35rem 0.9rem;
   margin: 0;
   padding: 0;
@@ -511,6 +535,7 @@ input:focus-visible {
 }
 
 .key {
+  flex: none;
   display: inline-grid;
   place-items: center;
   width: 1.1rem;
@@ -1197,8 +1222,7 @@ button:disabled {
   main {
     /* Card width: the whole pitch fits in the window. About 12rem of the
        height goes to the page header, card header and a margin; the pitch is
-       83 wide by 111 tall; 2rem + 2px is the card's padding and border. At
-       most 36rem on tall screens, never tiny. */
+       83 wide by 111 tall; 2rem + 2px is the card's padding and border. At most 36rem on tall screens, never tiny. */
     --card-w: clamp(22rem, calc((100vh - 12rem) * 83 / 111 + 2rem + 2px), 36rem);
     max-width: 66rem;
     padding-top: 1.25rem;
