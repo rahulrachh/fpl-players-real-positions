@@ -5,6 +5,7 @@
 import { useEffect, useRef } from 'react'
 
 import type { BenchPlayer, Plot, Role } from './api'
+import { stateText } from './cardText'
 import { exportFilename } from './exportImage'
 import { MatchDetailsBox } from './MatchDetails'
 import Pitch from './Pitch'
@@ -17,27 +18,6 @@ const CHIP_NAMES: Record<string, string> = {
   freehit: 'Free Hit',
   wildcard: 'Wildcard',
   manager: 'Assistant Manager',
-}
-
-function stateText(plot: Plot): { badge: string; note: string } {
-  if (plot.state === 'locked') {
-    return { badge: 'Full time', note: 'Average positions in this gameweek, after auto-subs.' }
-  }
-  if (plot.status === 'finished') {
-    return {
-      badge: 'Preview',
-      note: `GW${plot.gw} has finished, but its positions aren't in yet, so each player of the picked XI is shown from his most recent match.`,
-    }
-  }
-  return {
-    badge: 'Preview',
-    note: 'Gameweek in progress: the picked XI, each from his most recent match. Points are live.',
-  }
-}
-
-function formatDate(iso: string) {
-  // data_as_of is UTC without an offset.
-  return new Date(`${iso}Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
 // Gameweeks the arrows go to (null = disabled). Left out for a static card.
@@ -101,6 +81,9 @@ export default function PitchCard({ plot, nav }: { plot: Plot; nav?: GwNav }) {
   const { close } = details
   useEffect(() => close(), [plot, close])
   const state = stateText(plot)
+  // The score against the gameweek's average of all FPL teams, beside the score.
+  const average = plot.summary?.average_score ?? null
+  const avgDiff = average === null ? null : plot.points - average
   const hasGhosts = plot.dots.some((d) => d.is_ghost)
   const hasLinks = plot.dots.some((d) => d.link_group !== null)
   return (
@@ -123,6 +106,16 @@ export default function PitchCard({ plot, nav }: { plot: Plot; nav?: GwNav }) {
             <p className="score">
               <span className="score-number">{plot.points}</span>
               <span className="score-unit">pts</span>
+              {avgDiff !== null && (
+                <span
+                  className={avgDiff >= 0 ? 'score-vs-avg is-up' : 'score-vs-avg is-down'}
+                  title={`${average} gameweek average`}
+                >
+                  ({avgDiff > 0 ? '+' : avgDiff < 0 ? '−' : '±'}
+                  {Math.abs(avgDiff)})
+                  <span className="sr-only"> against the gameweek average</span>
+                </span>
+              )}
             </p>
             {plot.transfers_cost > 0 && <p className="hit">−{plot.transfers_cost} transfer hit</p>}
             {plot.chip && <span className={`chip chip-${plot.chip}`}>{CHIP_NAMES[plot.chip] ?? plot.chip}</span>}
@@ -153,19 +146,6 @@ export default function PitchCard({ plot, nav }: { plot: Plot; nav?: GwNav }) {
                 {ROLE_NAMES[role]}
               </li>
             ))}
-            <li>
-              {plot.chip === '3xc' ? (
-                <>
-                  <span className="key key-captain key-triple">TC</span>
-                  Triple captain
-                </>
-              ) : (
-                <>
-                  <span className="key key-captain">C</span>
-                  Captain
-                </>
-              )}
-            </li>
             {hasLinks && (
               <li>
                 <span className="key key-link" />
@@ -179,12 +159,6 @@ export default function PitchCard({ plot, nav }: { plot: Plot; nav?: GwNav }) {
               </li>
             )}
           </ul>
-          <p className="card-note">
-            {state.note} Attacking upward. Height: how far forward compared with every Premier League outfield
-            player. Circles show the points each player scored for the team (the captain's multiplied); bigger
-            circle, more points within this team this gameweek.
-            {plot.data_as_of && ` Positions as of ${formatDate(plot.data_as_of)}.`}
-          </p>
         </footer>
       </article>
       {details.open && (

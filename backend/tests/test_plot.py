@@ -7,6 +7,7 @@ import sys
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
+import httpx
 import pytest
 from fastapi.testclient import TestClient
 
@@ -410,3 +411,81 @@ def test_match_details_state(fake, db, started, finished_provisional, finished, 
     app.dependency_overrides.clear()
     (match,) = next(d for d in body["dots"] if d["fpl_id"] == 1)["matches"]
     assert (match["state"], match["home_score"], match["away_score"]) == (state, score, score)
+
+
+# --- summary (the panel beside the pitch) -----------------------------------
+
+
+def test_summary(api, fake):
+    fake.routes["/api/entry/1234/history/"] = load("entry-history.json")
+    bootstrap = fake.routes["/api/bootstrap-static/"]
+    gw6 = next(e for e in bootstrap["events"] if e["id"] == 6)
+    gw6.update(
+        average_entry_score=52,
+        highest_score=121,
+        most_captained=4,
+        top_element_info={"id": 25, "points": 18},
+    )
+    bootstrap["total_players"] = 1_000_000
+
+    summary = api.get("/api/team/1234/plot/6").json()["summary"]
+
+    assert summary["average_score"] == 52 and summary["highest_score"] == 121
+    assert (summary["gw_rank"], summary["overall_rank"], summary["previous_overall_rank"]) == (
+        948989,
+        1,
+        1,
+    )
+    assert summary["total_points"] == load("entry-history.json")["current"][-1]["total_points"]
+    assert (summary["bank"], summary["squad_value"], summary["points_on_bench"]) == (1, 1017, 6)
+    # GW rank 948,989 of 1,000,000 teams; overall rank 1.
+    assert (summary["gw_rank_pct"], summary["overall_rank_pct"]) == (94.9, 0.0)
+    assert summary["most_captained"] == {"id": 4, "web_name": "Gabriel", "points": None}
+    assert summary["top_player"] == {"id": 25, "web_name": "Gyökeres", "points": 18}
+    # Every gameweek of the season (8 in the recorded bootstrap); GW7-8 not
+    # played yet: 0 points.
+    assert [(g["gw"], g["played"], g["points"]) for g in summary["season"]] == [
+        (1, True, 97),
+        (2, True, 119),
+        (3, True, 90),
+        (4, True, 99),
+        (5, True, 63),
+        (6, True, 77),
+        (7, False, 0),
+        (8, False, 0),
+    ]
+    assert [g["chip"] for g in summary["season"]] == [
+        "bboost",
+        None,
+        "3xc",
+        "wildcard",
+        "freehit",
+        None,
+        None,
+        None,
+    ]
+
+
+def test_summary_left_out_when_history_fails(api, fake):
+    fake.routes["/api/entry/1234/history/"] = httpx.Response(503, text="busy")
+
+    response = api.get("/api/team/1234/plot/6")
+
+    assert response.status_code == 200
+    assert response.json()["summary"] is None
+    assert len(response.json()["dots"]) == 11
+
+
+def test_summary_unknown_until_fpl_ranks(api, fake):
+    history = load("entry-history.json")
+    for row in history["current"]:
+        row["rank"] = row["overall_rank"] = None
+    fake.routes["/api/entry/1234/history/"] = history
+    gw6 = next(e for e in fake.routes["/api/bootstrap-static/"]["events"] if e["id"] == 6)
+    gw6.update(average_entry_score=0, highest_score=None)
+
+    summary = api.get("/api/team/1234/plot/6").json()["summary"]
+
+    assert summary["gw_rank"] is summary["overall_rank"] is None
+    assert summary["gw_rank_pct"] is summary["overall_rank_pct"] is None
+    assert summary["average_score"] is summary["highest_score"] is None

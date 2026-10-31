@@ -349,7 +349,7 @@ STAT_LABELS = {
 }
 
 
-def _match_state(fixture: Fixture) -> Literal["not_started", "live", "finished"]:
+def match_state(fixture: Fixture) -> Literal["not_started", "live", "finished"]:
     if not fixture.started:
         return "not_started"
     if fixture.finished or fixture.finished_provisional:
@@ -396,7 +396,7 @@ def _pick_matches(
                     if is_home is None
                     else club_names.get(fixture.team_a if is_home else fixture.team_h, "?"),
                     kickoff=fixture.kickoff_time,
-                    state=_match_state(fixture),
+                    state=match_state(fixture),
                     home_score=fixture.team_h_score,
                     away_score=fixture.team_a_score,
                     minutes=next((s.value for s in explain.stats if s.identifier == "minutes"), 0),

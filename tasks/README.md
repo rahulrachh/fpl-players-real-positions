@@ -23,4 +23,4 @@ MVP task breakdown (Gameweek mode only). Planner and roast are v1: see `v1-backl
 | 15 | [Image export](15-image-export.md) | done (2026-10-17) |
 | 16 | [Deploy-readiness + Vercel deployment](16-deploy-vercel.md) 🛑 👤 | done (approved 2026-10-17) |
 | 17 | [Player match details box (hover / tap)](17-player-match-details.md) | done (2026-10-30) |
-| 18 | [Gameweek fixtures panel with top 3 players](18-gameweek-fixtures-panel.md) | todo |
+| 18 | [Gameweek fixtures panel with top 3 players](18-gameweek-fixtures-panel.md) | done (2026-10-31) |

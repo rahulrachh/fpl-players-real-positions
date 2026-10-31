@@ -17,6 +17,13 @@ class _Model(BaseModel):
 # --- bootstrap-static/ -------------------------------------------------------
 
 
+class TopElement(_Model):
+    """A gameweek's top-scoring player."""
+
+    id: int
+    points: int
+
+
 class Event(_Model):
     """A gameweek."""
 
@@ -27,6 +34,14 @@ class Event(_Model):
     is_previous: bool
     is_current: bool
     is_next: bool
+    # Average and highest gameweek score of all FPL teams; 0 / None until FPL
+    # has them (live while the gameweek is in progress).
+    average_entry_score: int = 0
+    highest_score: int | None = None
+    # FPL ID of the most captained player; the gameweek's top scorer and his
+    # points. None until the gameweek has started.
+    most_captained: int | None = None
+    top_element_info: TopElement | None = None
 
 
 class Team(_Model):
@@ -63,6 +78,8 @@ class Element(_Model):
 
 
 class BootstrapStatic(_Model):
+    # Number of FPL teams (for rank percentages).
+    total_players: int | None = None
     events: list[Event]
     teams: list[Team]
     element_types: list[ElementType]
@@ -132,6 +149,10 @@ class EntryEventHistory(_Model):
     event_transfers: int
     event_transfers_cost: int
     points_on_bench: int
+    # Gameweek rank and overall rank after this gameweek; None while FPL has
+    # not ranked it yet.
+    rank: int | None = None
+    overall_rank: int | None = None
 
 
 class ChipPlay(_Model):

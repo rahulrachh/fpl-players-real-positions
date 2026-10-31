@@ -21,6 +21,7 @@ from app.logic.gameweek import (
     team_state,
 )
 from app.logic.positions import GhostReason
+from app.logic.summary import GameweekSummary
 from app.logic.repository import (
     load_data_as_of,
     load_depth_pool,
@@ -113,6 +114,9 @@ class Plot(_Model):
     # In bench order (see `app/logic/gameweek.py`); empty under Bench Boost,
     # when the bench is drawn on the pitch.
     bench: list[BenchPlayer]
+    # The team's gameweek in numbers and its season so far (the summary panel);
+    # None if FPL's history could not be loaded.
+    summary: GameweekSummary | None = None
 
 
 # Decimals kept in x / y: a hundredth of the pitch is ~1 m.

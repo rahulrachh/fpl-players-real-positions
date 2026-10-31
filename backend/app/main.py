@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from app.config import get_settings
 from app.db.session import get_ro_session
 from app.fpl.client import FplError
+from app.fpl.fixtures import FixturesService, GameweekFixtures, get_fixtures_service
 from app.fpl.team import (
     GameweekBeforeTeamStarted,
     GameweekNotStarted,
@@ -22,6 +23,7 @@ from app.fpl.team import (
     get_team_service,
 )
 from app.logic.plot import Plot, build_plot
+from app.logic.summary import build_summary
 
 settings = get_settings()
 logging.basicConfig(level=settings.log_level.upper())
@@ -101,7 +103,7 @@ def team_plot_latest(
             raise
         latest -= 1
         team = service.load_team_gameweek(team_id, latest, session)
-    return build_plot(team, session, latest)
+    return _with_summary(build_plot(team, session, latest), service)
 
 
 @app.get("/api/team/{team_id}/plot/{gw}")
@@ -112,7 +114,29 @@ def team_plot(
     service: TeamService = Depends(get_team_service),
 ) -> Plot:
     team = service.load_team_gameweek(team_id, gw, session)
-    return build_plot(team, session, service.latest_gameweek())
+    return _with_summary(build_plot(team, session, service.latest_gameweek()), service)
+
+
+def _with_summary(plot: Plot, service: TeamService) -> Plot:
+    """Adds the summary panel's numbers. The graphic does not need them, so
+    if FPL's history fails the plot is still returned, without a summary."""
+    try:
+        history = service.client.entry_history(plot.team_id)
+        bootstrap = service.client.bootstrap_static()
+    except FplError as exc:
+        logger.warning("summary for team %s GW%s left out: %s", plot.team_id, plot.gw, exc)
+        return plot
+    return plot.model_copy(update={"summary": build_summary(plot.gw, history, bootstrap)})
+
+
+@app.get("/api/gameweek/{gw}/fixtures")
+def gameweek_fixtures(
+    gw: int = Path(ge=1),
+    service: FixturesService = Depends(get_fixtures_service),
+) -> GameweekFixtures:
+    """The gameweek's matches and scores, each with its top 3 players by FPL
+    points. The same for every team (the website highlights the team's own)."""
+    return service.gameweek_fixtures(gw)
 
 
 @app.get("/api/gameweeks/latest")

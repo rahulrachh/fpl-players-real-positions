@@ -153,7 +153,55 @@ export type Plot = {
   data_as_of: string | null
   dots: PlotDot[]
   bench: BenchPlayer[]
+  // The summary beside the pitch; null if FPL's history could not be loaded.
+  summary?: GameweekSummary | null
+}
+
+// The team's gameweek in numbers and its season so far (backend/app/logic/summary.py).
+export type GameweekSummary = {
+  // Of all FPL teams; null until FPL has them.
+  average_score: number | null
+  highest_score: number | null
+  gw_rank: number | null
+  overall_rank: number | null
+  // Rank as a share of all FPL teams, in percent ("top 7%").
+  gw_rank_pct: number | null
+  overall_rank_pct: number | null
+  previous_overall_rank: number | null
+  // Of all FPL teams this gameweek; the top player carries his points.
+  most_captained: { id: number; web_name: string } | null
+  top_player: { id: number; web_name: string; points: number | null } | null
+  total_points: number
+  transfers: number
+  transfers_cost: number
+  // Tenths of £m; squad_value includes the bank.
+  bank: number
+  squad_value: number
+  points_on_bench: number
+  // Every gameweek of the season; unplayed ones have played false and 0 points.
+  season: { gw: number; played: boolean; points: number; chip: string | null }[]
 }
 
 export const fetchPlot = (teamId: number, gw: number | 'latest') =>
   getJson<Plot>(`/api/team/${teamId}/plot/${gw}`)
+
+// Response of GET /api/gameweek/{gw}/fixtures (backend/app/fpl/fixtures.py, docs/api.md).
+
+export type TopPlayer = { id: number; web_name: string; club: string; role: Role; points: number }
+
+export type FixtureSummary = {
+  id: number
+  kickoff: string | null
+  state: 'not_started' | 'live' | 'finished'
+  home_club: { id: number; name: string; short_name: string }
+  away_club: { id: number; name: string; short_name: string }
+  home_score: number | null
+  away_score: number | null
+  // Top 3 by FPL points in this match (ties for 3rd included), highest first.
+  // Empty until kick-off.
+  top_players: TopPlayer[]
+}
+
+export type GameweekFixtures = { gw: number; data_checked: boolean; fixtures: FixtureSummary[] }
+
+export const fetchGameweekFixtures = (gw: number) => getJson<GameweekFixtures>(`/api/gameweek/${gw}/fixtures`)

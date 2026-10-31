@@ -7,6 +7,10 @@
 import { type FormEvent, useEffect, useState } from 'react'
 
 import { ApiError, fetchPlot, type Plot } from './api'
+import FixturesPanel from './FixturesPanel'
+import SummaryPanel from './SummaryPanel'
+import InfoTip from './InfoTip'
+import { cardNote, HOW_TO_READ } from './cardText'
 import PitchCard from './PitchCard'
 import ThemeToggle from './ThemeToggle'
 
@@ -161,23 +165,26 @@ function App() {
     <main>
       <header className="site-head">
         <div>
-          <h1>Real Shape</h1>
+          <h1>
+            Real Shape
+            <InfoTip text={plot && !fixture ? cardNote(plot) : HOW_TO_READ} />
+          </h1>
           <p>Where your FPL team actually played.</p>
         </div>
+        <form className="team-form" onSubmit={submit}>
+          <label htmlFor="team-id">FPL team ID</label>
+          <input
+            id="team-id"
+            inputMode="numeric"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="e.g. 2020649"
+          />
+          <button type="submit">Show shape</button>
+        </form>
         <ThemeToggle />
       </header>
 
-      <form className="team-form" onSubmit={submit}>
-        <label htmlFor="team-id">FPL team ID</label>
-        <input
-          id="team-id"
-          inputMode="numeric"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="e.g. 2020649"
-        />
-        <button type="submit">Show shape</button>
-      </form>
 
       {inputError && <p className="error">{inputError}</p>}
       {!fixture && teamId === null && (
@@ -211,11 +218,15 @@ function App() {
         </div>
       )}
       {plot && (
-        <div className={loading && !fixture ? 'card-slot is-loading' : 'card-slot'} aria-busy={loading && !fixture}>
-          <PitchCard
-            plot={plot}
-            nav={fixture ? undefined : { prev: prevGw, next: nextGw, go: setGw }}
-          />
+        <div className="gw-layout">
+          <div className={loading && !fixture ? 'card-slot is-loading' : 'card-slot'} aria-busy={loading && !fixture}>
+            <PitchCard
+              plot={plot}
+              nav={fixture ? undefined : { prev: prevGw, next: nextGw, go: setGw }}
+            />
+          </div>
+          {!fixture && <FixturesPanel plot={plot} />}
+          {!fixture && <SummaryPanel plot={plot} go={setGw} />}
         </div>
       )}
 

@@ -1,6 +1,6 @@
 # API
 
-**Task:** 12 · **Code:** `backend/app/main.py` (routes), `backend/app/logic/plot.py` (plot response) · **Tests:** `backend/tests/test_plot.py`, `backend/tests/test_fpl_team.py`
+**Task:** 12 · **Code:** `backend/app/main.py` (routes), `backend/app/logic/plot.py` (plot response) · **Tests:** `backend/tests/test_plot.py`, `backend/tests/test_fpl_team.py`, `backend/tests/test_fpl_fixtures.py` (fixtures endpoint, task 18)
 
 The web app reads the bundled read-only `fpl.db` and live FPL data. It never calls Sofascore. `app.main` does not even import the positions adapter, the sync code or `curl_cffi`, and a test checks this. The server log for plot requests shows only `fantasy.premierleague.com` calls.
 
@@ -12,6 +12,7 @@ The web app reads the bundled read-only `fpl.db` and live FPL data. It never cal
 | `GET /api/team/{team_id}/gameweek/{gw}` | The team's 15 picks (task 05, `TeamGameweek`). |
 | `GET /api/team/{team_id}/plot/{gw}` | **The gameweek graphic** (below). |
 | `GET /api/team/{team_id}/plot/latest` | Same, for the newest gameweek whose deadline has passed. Right after a deadline, until FPL serves that gameweek's picks, it falls back to the gameweek before. |
+| `GET /api/gameweek/{gw}/fixtures` | The gameweek's matches with scores and each match's top 3 players (task 18, [below](#fixtures-response)). |
 
 ## Plot response
 | Field | Meaning |
@@ -26,6 +27,7 @@ The web app reads the bundled read-only `fpl.db` and live FPL data. It never cal
 | `data_as_of` | End of the latest finished offline sync (`sync_runs.finished_at`, UTC, no offset), or `null` if never synced. |
 | `dots` | One per XI player in slot order (slots 12-15 for the bench under Bench Boost). A double-gameweek player on opposite flanks has two. |
 | `bench` | The 4 bench players in bench order: `fpl_id`, `name`, `web_name`, `role`, `club`, `points` (their own), `subbed_off` (locked only: a picked starter FPL auto-subbed off), `matches` (as on a dot, below). After auto-subs when locked, as picked in preview. Empty under Bench Boost (they are dots). |
+| `summary` | The panel beside the pitch (task 18, `backend/app/logic/summary.py`): `average_score` / `highest_score` of all FPL teams (`null` until FPL has them), `gw_rank`, `overall_rank` and `previous_overall_rank` (`null` while unranked / in the team's first gameweek), `gw_rank_pct` / `overall_rank_pct` (rank as a percent of all FPL teams, from `total_players`), `most_captained` `{id, web_name}` and `top_player` `{id, web_name, points}` of all FPL teams this gameweek (`null` until FPL has them), `total_points`, `transfers`, `transfers_cost`, `bank`, `squad_value` (tenths of £m, value includes the bank), `points_on_bench`, and `season`: `[{gw, played, points, chip}]` for every gameweek of the season (unplayed ones `played: false`, 0 points). From FPL's `entry/{id}/history/` (fetched fresh, 60 s cache, so the season includes gameweeks played after a cached team gameweek) and the gameweek in `bootstrap-static/`. `null` if the history can't be loaded; the rest of the plot is still returned. |
 
 Each dot:
 
@@ -82,6 +84,27 @@ Sample (GW8, the owner's captain, recorded 2026-10-30):
 }
 ```
 A bench player who did not play (same gameweek): `{"fpl_id": 165, "web_name": "João Pedro", "points": 0, "subbed_off": true, "matches": [{"fixture_id": 73, "home_club": "CHE", "away_club": "TOT", "is_home": true, "opponent": "TOT", "kickoff": "2026-10-24T16:30:00Z", "state": "finished", "home_score": 0, "away_score": 2, "minutes": 0, "stats": [], "points": 0}]}`.
+
+## Fixtures response
+`GET /api/gameweek/{gw}/fixtures` (`backend/app/fpl/fixtures.py`). The same for every team, so the website highlights the team's starters itself from the plot response. Built live from FPL's `fixtures/?event=`, `event/{gw}/live/` and `bootstrap-static/` (no database). Cached per gameweek: 24 h once FPL has checked it (`data_checked`), otherwise 60 s.
+
+| Field | Meaning |
+|---|---|
+| `gw`, `data_checked` | The gameweek, and whether FPL has checked its points (final). |
+| `fixtures[]` | One per match, in kick-off order (ties by fixture ID). |
+| `.id`, `.kickoff` | FPL fixture ID; kick-off (UTC, `null` if not scheduled). |
+| `.state` | `not_started` / `live` / `finished` (FPL's `finished` or `finished_provisional`). |
+| `.home_club`, `.away_club` | `{id, name, short_name}`. |
+| `.home_score`, `.away_score` | `null` until kick-off; live during the match. |
+| `.top_players[]` | Top 3 by FPL points **in this match** (both sides), highest first, everyone tied with 3rd included. Points are the sum of the player's `explain` stats for this fixture, so a double-gameweek player has separate points in each of his matches. Only players who played (minutes > 0). Empty until kick-off. Each: `{id, web_name, club, role, points}` (`club` = current club short name, `points` before any captain multiplier). |
+
+Errors: `404 gameweek_out_of_range`, `422` for a non-positive gameweek, `503 fpl_unavailable`.
+
+Sample row (GW8, a tie for 3rd):
+```json
+{"id": 73, "kickoff": "2026-10-24T16:30:00Z", "state": "finished", "home_club": {"id": 6, "name": "Chelsea", "short_name": "CHE"}, "away_club": {"id": 19, "name": "Spurs", "short_name": "TOT"}, "home_score": 0, "away_score": 2, "top_players": [{"id": 514, "web_name": "Tel", "club": "TOT", "role": "MID", "points": 11}, {"id": 496, "web_name": "Kinsky", "club": "TOT", "role": "GK", "points": 9}, {"id": 112, "web_name": "Van Hecke", "club": "TOT", "role": "DEF", "points": 7}, {"id": 525, "web_name": "Fernandes", "club": "TOT", "role": "MID", "points": 7}]}
+```
+An unstarted match has `"state": "not_started"`, `null` scores and `"top_players": []`.
 
 ## Errors
 Same codes as the team endpoint, as `{code, detail}`:
