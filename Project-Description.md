@@ -1,7 +1,7 @@
 # FPL Real Shape Visualizer: Spec (v0)
 
 > **Scope changes (2026-10-16), these override the text below:**
-> - **Planner mode is moved to v1.** The MVP is Gameweek mode only. Planner sections and milestone 7 are kept for reference; do not build them. See `tasks/v1-backlog/planner.md`.
+> - **Planner mode is moved to v1.** The MVP is Gameweek mode only. Planner sections and milestone 7 are kept for reference. **Update 2026-10-31:** Planner design agreed in `docs/planner-design.md` (overrides the Planner sections below where they differ); tasks 19-22.
 > - **Claude roast is moved to v1.** No live Claude API calls from the site; the plan is pre-generated roasts per shape bucket, shipped with each deployment. See `tasks/v1-backlog/roast.md`.
 > - **Data is refreshed offline.** The owner runs a sync script locally that updates a SQLite file; the file is committed and shipped with each deployment, and the site opens it read-only. New data goes live only on deploy. No online worker, no hosted database.
 > - **The MVP is deployed to Vercel** (free Hobby plan). Task breakdown: `tasks/README.md`.

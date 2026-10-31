@@ -7,7 +7,7 @@
 - **Only offline scripts write it** (Alembic, the sync script, ID mapping), through the read-write engine. The owner runs them locally, then commits the file; new data goes live on deploy.
 - **The website opens it read-only**: SQLite URI `mode=ro` (plus `immutable=1` when `DATABASE_IMMUTABLE=true`, as on Vercel) and `PRAGMA query_only = ON`. Any write raises. See `backend/app/db/engine.py`.
 - Both engines turn on `PRAGMA foreign_keys` (SQLite leaves it off by default). Alembic turns it off while migrating, because batch mode rebuilds tables.
-- **Not stored:** team picks (fetched live from FPL, task 05). Planner and roast tables are v1 (`tasks/v1-backlog/`).
+- **Not stored:** team picks (fetched live from FPL, task 05). Planner adds no tables (squads live in the browser and share links, see `planner-design.md`). Roast tables are v1 (`tasks/v1-backlog/`).
 
 ## Conventions
 - Primary keys are the source's own IDs (FPL or Sofascore), so a re-sync updates rows in place. Only `sync_runs` has its own auto-increment ID.
